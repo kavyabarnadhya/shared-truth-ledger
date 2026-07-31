@@ -1,0 +1,25 @@
+{
+  "key": "cdbfe556d6e4bf703305be8b4eb1e740",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate indep_event.launch_date@2026-07-24T23:59:59+05:30",
+  "promptSha": "46c16a27eae06c599264677d851a9c4f3801d2b5e84bc5a19ad88ecf3c0505ff",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: indep_event.launch_date\n\nLive claims:\n- M-001#1 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"12 August\" | span: \"Working assumption is we go live 12 August\"\n- M-002#1 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"15 August\" | span: \"Go-live is 15 August\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same entity (indep_event.launch_date) but assign different dates (12 August vs 15 August), which cannot both be true.\", \"conflicting_claim_ids\": [\"M-001#1\", \"M-002#1\"], \"confidence\": 0.95}",
+    "usage": {
+      "inputTokens": 355,
+      "outputTokens": 141
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 1584,
+  "recordedAt": "2026-07-31T19:17:28.325+00:00"
+}

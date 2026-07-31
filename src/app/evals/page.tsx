@@ -179,6 +179,29 @@ export default function EvalsPage() {
             </div>
           </div>
 
+          {report.escalation && (
+            <>
+              <h2 className="section-heading">Confidence-gated escalation router</h2>
+              <p className="claim-state-label">
+                {report.escalation.escalated === 0
+                  ? "No bucket in this run self-reported confidence below the fixed threshold (0.6) — the router did not fire. Reported as-is, not tuned to look otherwise."
+                  : `${report.escalation.escalated} bucket${report.escalation.escalated === 1 ? "" : "s"} self-reported confidence below the fixed threshold (0.6) and received a second, richer call. The escalated verdict changed the outcome in ${report.escalation.verdictChanged} of ${report.escalation.escalated}.`}
+                {report.escalation.escalatedBuckets.length > 0 && (
+                  <>
+                    {" "}
+                    Escalated: {report.escalation.escalatedBuckets.map((b, i) => (
+                      <span key={b}>
+                        {i > 0 && ", "}
+                        <span className="mono-cell">{b}</span>
+                      </span>
+                    ))}
+                    .
+                  </>
+                )}
+              </p>
+            </>
+          )}
+
           <h2 className="section-heading">Adjudication (headline scenarios)</h2>
           <AdjudicationTable scores={report.adjudication} />
 

@@ -5,6 +5,14 @@
  * model from emitting UPDATE, RESOLVED_BY_SUPERSESSION,
  * RESOLVED_BY_CORRECTION, or AMBIGUOUS_REFERENT, which are pre-rules' job.
  * `full7` allows the entire vocabulary, for the judge-scope comparison.
+ *
+ * `confidence` (binary scope only) is optional and self-reported by the
+ * model, 0-1. It backs the confidence-gated escalation router in
+ * pipeline.ts: when present and below ESCALATION_CONFIDENCE_THRESHOLD, a
+ * second call is issued with the BINARY_ESCALATED_SYSTEM prompt variant
+ * (still this same schema — escalation asks for more reasoning, not a
+ * different output shape). Absent on older recordings and on full7, which
+ * never asks for it.
  */
 
 import { z } from "zod";
@@ -14,6 +22,7 @@ export const BinaryVerdictSchema = z
     verdict: z.enum(["CONTRADICTION", "COMPATIBLE"]),
     rationale: z.string().max(400),
     conflicting_claim_ids: z.array(z.string()).default([]),
+    confidence: z.number().min(0).max(1).optional(),
   })
   .strict();
 

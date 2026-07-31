@@ -1,0 +1,25 @@
+{
+  "key": "795de5bfd1b9fd097e8cac5155213b93",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate indep_event.success_criteria@2026-07-15T23:59:59+05:30",
+  "promptSha": "84c712708a913644b2fa7a6c9b2b2781221fc8ee95f1fc791fa50b6a7f0a7caf",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event). CL-010 states success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU and states success should be session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"], \"confidence\": 0.95}",
+    "usage": {
+      "inputTokens": 399,
+      "outputTokens": 210
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 1834,
+  "recordedAt": "2026-07-31T18:34:09.717+00:00"
+}

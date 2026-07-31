@@ -1,0 +1,25 @@
+{
+  "key": "41b40c08c8511bf1de5c120ccaa01e33",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
+  "promptSha": "9394bd0a8842e46cc156ece7ad4021425d2736db5ccf77b59111397d8bc8ffde",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-002 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"2026-08-15\" | span: \"Sharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-001 asserts the launch date is 2026-08-12, while CL-002 asserts it is 2026-08-15. Both refer to the same attribute (indep_event.launch_date) and cannot both be true.\", \"conflicting_claim_ids\": [\"CL-001\", \"CL-002\"], \"confidence\": 1.0}",
+    "usage": {
+      "inputTokens": 415,
+      "outputTokens": 193
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2388,
+  "recordedAt": "2026-07-31T18:34:01.861+00:00"
+}

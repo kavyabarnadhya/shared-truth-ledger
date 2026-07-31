@@ -144,7 +144,15 @@ export function parseExtractionResponse(rawText: string): ExtractionParseResult 
 // ---------------------------------------------------------------------------
 
 export type AdjudicationParseResult =
-  | { ok: true; verdict: VerdictKind; rationale: string; conflictingClaimIds: string[]; repairSteps: string[] }
+  | {
+      ok: true;
+      verdict: VerdictKind;
+      rationale: string;
+      conflictingClaimIds: string[];
+      repairSteps: string[];
+      /** Self-reported by the model, binary scope only. Absent on full7 and on any response that didn't include it. */
+      confidence: number | undefined;
+    }
   | { ok: false; error: string; repairSteps: string[] };
 
 export function parseAdjudicationResponse(rawText: string, judgeScope: JudgeScope): AdjudicationParseResult {
@@ -161,11 +169,18 @@ export function parseAdjudicationResponse(rawText: string, judgeScope: JudgeScop
       repairSteps: repaired.stepsFired,
     };
   }
+  // Full7VerdictOutput has no `confidence` field at all; only binary's
+  // schema does, and even there it's optional. Narrow explicitly rather
+  // than relying on `in` to narrow across the schema union.
+  const confidence: number | undefined =
+    judgeScope === "binary" ? (validated.data as { confidence?: number }).confidence : undefined;
+
   return {
     ok: true,
     verdict: validated.data.verdict as VerdictKind,
     rationale: validated.data.rationale,
     conflictingClaimIds: validated.data.conflicting_claim_ids,
     repairSteps: repaired.stepsFired,
+    confidence,
   };
 }

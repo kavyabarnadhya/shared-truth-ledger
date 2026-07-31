@@ -1,0 +1,25 @@
+{
+  "key": "b1753fa4be1982560e810328ba66c250",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+  "promptSha": "d6ec32956191d987e0d15d993f34b431294faa37afc6c6e41c6524b1910f83bb",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: build_194.release_readiness\n\nLive claims:\n- CL-060 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"not ready, open P1\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect. This is not release-ready.\"\n- CL-061 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"shipping Friday\" | span: \"We're shipping 1.9.4 on Friday. It's already in the store review queue.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-060 states Build 1.9.4 is not release-ready due to an open P1 (token animation desync on reconnect). CL-061 states the same build is shipping Friday and already in the store review queue. A build with an open P1 that is explicitly not release-ready cannot simultaneously be in the store review queue and scheduled for release.\", \"conflicting_claim_ids\": [\"CL-060\", \"CL-061\"], \"confidence\": 0.95}",
+    "usage": {
+      "inputTokens": 385,
+      "outputTokens": 253
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2135,
+  "recordedAt": "2026-07-31T18:34:27.370+00:00"
+}
