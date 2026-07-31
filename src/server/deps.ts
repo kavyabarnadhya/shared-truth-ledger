@@ -15,6 +15,9 @@ import type {
   Thread,
   PipelineDeps,
   JudgeScope,
+  ModelClient,
+  ModelConfig,
+  ModelRequest,
 } from "../core/types.ts";
 import { fixedClock, parseInstant, EVAL_AS_OF_DEFAULT, type Instant } from "../core/time.ts";
 import { ReplayModelClient, InMemoryRecordingStore } from "../core/model/client.ts";
@@ -109,6 +112,37 @@ export interface BuildDepsOptions {
   extractionPromptVersion?: number;
 }
 
+/**
+ * Two ReplayModelClient instances, one per tier — mirrors
+ * core/eval/run-eval.ts's extractionClient/adjudicationClient split.
+ * ReplayModelClient's cache key falls back to its constructor-supplied
+ * promptVersion whenever a request doesn't pass one explicitly (only the
+ * escalated adjudication call in pipeline.ts does), so a single shared
+ * client here would silently key every adjudication call on the extraction
+ * prompt's version — wrong whenever the two diverge, and it did diverge
+ * this session when the adjudication prompt was bumped to add the
+ * confidence self-report. `deps.model` stays a single ModelClient from the
+ * caller's point of view: PipelineDeps.model is one field, and both
+ * pipelines index into request.tier via this router.
+ */
+class TieredReplayClient implements ModelClient {
+  readonly mode = "replay" as const;
+  readonly config: ModelConfig;
+  private readonly extraction: ReplayModelClient;
+  private readonly adjudication: ReplayModelClient;
+
+  constructor(extraction: ReplayModelClient, adjudication: ReplayModelClient) {
+    this.config = extraction.config;
+    this.extraction = extraction;
+    this.adjudication = adjudication;
+  }
+
+  call(req: ModelRequest) {
+    const client = req.tier === "adjudication" ? this.adjudication : this.extraction;
+    return client.call(req);
+  }
+}
+
 export function buildDeps(opts: BuildDepsOptions): PipelineDeps & { source: MessageSource; cast: CastEntry[] } {
   const config = getConfig(opts.configId ?? "free");
   const judgeScope = opts.judgeScope ?? "binary";
@@ -117,7 +151,9 @@ export function buildDeps(opts: BuildDepsOptions): PipelineDeps & { source: Mess
   const clock = fixedClock(opts.asOf ?? EVAL_AS_OF_DEFAULT);
 
   const recordings = loadRecordingsFromDisk();
-  const replayClient = new ReplayModelClient(config, recordings, opts.extractionPromptVersion ?? EXTRACTION_PROMPT.PROMPT_VERSION);
+  const extractionReplay = new ReplayModelClient(config, recordings, opts.extractionPromptVersion ?? EXTRACTION_PROMPT.PROMPT_VERSION);
+  const adjudicationReplay = new ReplayModelClient(config, recordings, ADJUDICATION_PROMPT_VERSION);
+  const replayClient = new TieredReplayClient(extractionReplay, adjudicationReplay);
 
   if (opts.mode === "replay") {
     return { source, model: replayClient, clock, config, judgeScope, cast };
