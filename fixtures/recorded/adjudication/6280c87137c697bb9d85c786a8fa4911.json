@@ -1,0 +1,25 @@
+{
+  "key": "6280c87137c697bb9d85c786a8fa4911",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate reward_config.live_state@2026-07-24T23:59:59+05:30",
+  "promptSha": "a59795ff5f6ea095eb55e77a13f897849fb3fb5888495b034ef1da72f3894d3c",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: reward_config.live_state\n\nLive claims:\n- CL-080 | deepak.menon | 23 Jul 2026, 1:20 PM IST | value: \"old Holi table visible\" | span: \"Steady trickle of reports that players are still seeing the old Holi reward table in the shop.\"\n- CL-081 | meera.iyer | 23 Jul 2026, 1:52 PM IST | value: \"new config live since 18th\" | span: \"The reward config was updated on the 18th. It's live.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"deepak.menon reports players are still seeing the old Holi reward table, while meera.iyer states the new reward config has been live since the 18th. These are conflicting claims about the same referent (reward_config.live_state) from different people, with neither resolved.\", \"conflicting_claim_ids\": [\"CL-080\", \"CL-081\"]}",
+    "usage": {
+      "inputTokens": 440,
+      "outputTokens": 334
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2359,
+  "recordedAt": "2026-07-31T19:02:36.650+00:00"
+}

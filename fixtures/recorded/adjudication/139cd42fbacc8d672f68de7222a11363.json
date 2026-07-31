@@ -1,0 +1,25 @@
+{
+  "key": "139cd42fbacc8d672f68de7222a11363",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
+  "promptSha": "4bc343501dcb491af40be327710a788ea8a64b15cb4490c817e71a86cf4d1b8a",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-002 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"2026-08-15\" | span: \"Sharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Two different people (meera.iyer and priya.raghunathan) provide conflicting launch dates (2026-08-12 vs 2026-08-15) for the same referent (indep_event.launch_date). Neither claim has been superseded, withdrawn, or resolved.\", \"conflicting_claim_ids\": [\"CL-001\", \"CL-002\"]}",
+    "usage": {
+      "inputTokens": 481,
+      "outputTokens": 321
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2029,
+  "recordedAt": "2026-07-31T18:44:30.732+00:00"
+}

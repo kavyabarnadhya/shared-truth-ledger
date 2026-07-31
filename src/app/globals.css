@@ -15,6 +15,7 @@
   --settled-bg: #e7eef2;
   --highlight: #ffe17a;    /* span highlight — the only saturated colour */
   --highlight-ink: #3a2e00;
+  --accent: #6a4fc4;       /* restrained brand tint — wordmark glyph + sidebar active-state only */
 
   --space-1: 0.375rem;
   --space-2: 0.75rem;
@@ -44,6 +45,7 @@
     --settled-bg: #1c2c34;
     --highlight: #7a5c00;
     --highlight-ink: #fff3c9;
+    --accent: #a996e8;
   }
 }
 
@@ -107,35 +109,166 @@ a { color: inherit; }
 }
 
 /* ---------------------------------------------------------------------
- * Tab nav
+ * Wordmark — glyph + name. The glyph and the sidebar's active nav state
+ * are the only two places --accent appears; everything else stays on the
+ * original six-colour palette.
  * ------------------------------------------------------------------- */
 
-.tab-nav {
-  display: flex;
-  gap: var(--space-3);
-  border-bottom: 1px solid var(--rule);
-  padding: 0 var(--space-3);
-  max-width: 960px;
-  margin: 0 auto;
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-weight: 700;
+  font-size: var(--size-heading);
+  color: var(--ink);
 }
 
-.tab-nav__link {
-  display: inline-block;
-  padding: var(--space-2) 0;
+.wordmark__glyph {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+/* ---------------------------------------------------------------------
+ * App shell — left sidebar on wide viewports, top bar under ~720px.
+ * Sidebar carries brand + nav + a static workspace label + a footer note
+ * telling the reviewer nothing is required of them. Main content keeps
+ * the original single-column instrument body untouched (.page below).
+ * ------------------------------------------------------------------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  align-items: stretch;
+}
+
+.app-sidebar {
+  flex: 0 0 220px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  border-right: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.app-sidebar__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 var(--space-1);
+}
+
+.app-sidebar__workspace {
+  font-size: var(--size-caption);
+  color: var(--muted);
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.app-sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 6px;
   color: var(--muted);
   text-decoration: none;
-  border-bottom: 2px solid transparent;
   font-size: var(--size-body);
 }
 
-.tab-nav__link:hover {
+.app-sidebar__nav-item:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--rule) 40%, transparent);
+}
+
+.app-sidebar__nav-item[data-active="true"] {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  font-weight: 600;
+}
+
+.app-sidebar__nav-glyph {
+  font-family: var(--font-mono);
+  width: 1.2em;
+  text-align: center;
+}
+
+.app-sidebar__footer {
+  margin-top: auto;
+  padding: var(--space-2) var(--space-1) 0 var(--space-1);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.app-sidebar__footer p {
+  margin: 0;
+  font-size: var(--size-caption);
+  color: var(--muted);
+}
+
+.app-sidebar__footer-link {
+  font-size: var(--size-caption);
+  color: var(--muted);
+}
+
+.app-sidebar__footer-link:hover {
   color: var(--ink);
 }
 
-.tab-nav__link[data-active="true"] {
-  color: var(--ink);
-  border-bottom-color: var(--settled);
-  font-weight: 600;
+.app-shell__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    gap: var(--space-2);
+  }
+
+  .app-sidebar__brand {
+    flex: 1 1 auto;
+    padding: 0;
+  }
+
+  .app-sidebar__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1 1 100%;
+    gap: var(--space-1);
+  }
+
+  .app-sidebar__footer {
+    margin-top: 0;
+    flex: 1 1 100%;
+    border-top: none;
+    padding: 0;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 /* ---------------------------------------------------------------------
@@ -216,6 +349,27 @@ a { color: inherit; }
 .bucket-row__details {
   padding: var(--space-2) var(--space-1) var(--space-3) var(--space-1);
   border-bottom: 1px solid var(--rule);
+}
+
+/* Loading placeholder matching bucket-row's height exactly — muted fill,
+ * no shimmer/pulse (motion-restraint rule: a product has loading states,
+ * not an animation demo). */
+.bucket-row-skeleton {
+  height: calc(1.5em + 2 * var(--space-2));
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-1);
+}
+
+.bucket-row-skeleton::before {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 0.9em;
+  border-radius: 3px;
+  background: var(--rule);
 }
 
 /* ---------------------------------------------------------------------
@@ -420,4 +574,257 @@ a { color: inherit; }
   border-color: var(--conflict);
   color: var(--conflict);
   background: var(--conflict-bg);
+}
+
+/* ---------------------------------------------------------------------
+ * App shell — left sidebar on wide viewports, collapsing to a top bar
+ * under ~720px. Product framing lives here; the existing one-column
+ * instrument body (.page, max-width 960px) is unchanged inside it.
+ * ------------------------------------------------------------------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  flex: 0 0 220px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--rule);
+  padding: var(--space-3) var(--space-2);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.app-sidebar__brand {
+  margin-bottom: var(--space-3);
+}
+
+.app-sidebar__workspace {
+  color: var(--muted);
+  font-size: var(--size-caption);
+  margin-top: var(--space-1);
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--size-body);
+}
+
+.app-sidebar__nav-item:hover {
+  background: color-mix(in srgb, var(--rule) 40%, transparent);
+  color: var(--ink);
+}
+
+.app-sidebar__nav-item[data-active="true"] {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.app-sidebar__nav-glyph {
+  font-family: var(--font-mono);
+  width: 1.2em;
+  text-align: center;
+}
+
+.app-sidebar__footer {
+  color: var(--muted);
+  font-size: var(--size-caption);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-2);
+}
+
+.app-sidebar__footer p {
+  margin: 0 0 var(--space-1) 0;
+}
+
+.app-sidebar__footer-link {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.app-sidebar__footer-link:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.app-shell__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: var(--space-2) var(--space-3);
+    overflow-x: auto;
+  }
+
+  .app-sidebar__brand {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .app-sidebar__workspace {
+    margin-top: 0;
+  }
+
+  .app-sidebar__nav {
+    flex-direction: row;
+    gap: var(--space-1);
+  }
+
+  .app-sidebar__nav-item {
+    padding: var(--space-1);
+    font-size: var(--size-caption);
+  }
+
+  .app-sidebar__footer {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Wordmark — the one place --accent shows up besides sidebar active-state.
+ * ------------------------------------------------------------------- */
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.wordmark__glyph {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.wordmark__name {
+  font-weight: 700;
+  font-size: var(--size-heading);
+}
+
+/* ---------------------------------------------------------------------
+ * Overview screen — stat row (labeled numbers, not cards/tiles/gradients)
+ * and CTA row.
+ * ------------------------------------------------------------------- */
+
+.stat-row {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin: var(--space-3) 0;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.stat-item__value {
+  font-family: var(--font-mono);
+  font-size: var(--size-title);
+}
+
+.stat-item__label {
+  color: var(--muted);
+  font-size: var(--size-caption);
+}
+
+.cta-row {
+  display: flex;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.cta-row a {
+  color: var(--settled);
+  text-decoration: none;
+  font-size: var(--size-body);
+}
+
+.cta-row a:hover {
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------
+ * Skeleton loading state — muted block matching row height, no shimmer
+ * (motion-restraint rule: a loading state should not animate).
+ * ------------------------------------------------------------------- */
+
+.skeleton-row {
+  height: 2.75rem;
+  margin-bottom: 1px;
+  background: color-mix(in srgb, var(--rule) 55%, transparent);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---------------------------------------------------------------------
+ * Hosted deck (/deck) — three keyboard-navigable slides, same tokens as
+ * the rest of the site so it reads as part of Quorum, not a separate
+ * artifact pasted in.
+ * ------------------------------------------------------------------- */
+
+.deck-page__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.deck-slide {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: var(--space-3);
+  min-height: 60vh;
+}
+
+.deck-slide section > *:first-child {
+  margin-top: 0;
+}
+
+.deck-page__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }

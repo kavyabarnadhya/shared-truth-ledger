@@ -1760,55 +1760,30 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2844,
     "recordedAt": "2026-07-31T14:05:11.336+00:00"
   },
-  "03886b764d9d8d6f3f096d63589969a6": {
-    "key": "03886b764d9d8d6f3f096d63589969a6",
+  "09c18460ceb9be7c66749f4dd81707b4": {
+    "key": "09c18460ceb9be7c66749f4dd81707b4",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
-    "promptSha": "bf62aabaa106ded5b9b400d869ba778733158e43884dc8afea3758ad8e9151ca",
+    "step": "adjudicate art_capacity.allocation@2026-07-24T23:59:59+05:30",
+    "promptSha": "01bfaa84bea3c3b453facb861e64708e2b4e870b66cd48abd6833da05edfd1c4",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: d7_retention.trend\n\nLive claims:\n- CL-030 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp WoW\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- CL-031 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"down 3pp since 1.9.3\" | span: \"D7 is down, not up. My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: art_capacity.allocation\n\nLive claims:\n- CL-070 | sana.kulkarni | 20 Jul 2026, 2:25 PM IST | value: \"2 artists to Onam\" | span: \"Heads up, I'm moving two artists onto the Onam board set from tomorrow so we hit that milestone.\"\n- CL-071 | priya.raghunathan | 21 Jul 2026, 10:40 AM IST | value: \"fully on Independence assets\" | span: \"Art is fully committed to the Independence assets through the 5th, so we're covered on the visual side.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-030 reports D7 retention up 1.8pp week-over-week, while CL-031 reports D7 retention down 3pp since the 1.9.3 patch. These are different time comparisons (WoW vs. since a patch) and can both be true simultaneously — D7 retention could be rising week-over-week while still being lower than it was at the time of the 1.9.3 patch.\", \"conflicting_claim_ids\": []}",
+      "text": "Let me analyze these two claims to determine if they are mutually incompatible.\n\nCL-070: sana.kulkarni says \"Heads up, I'm moving two artists onto the Onam board set from tomorrow so we hit that milestone.\" This indicates that 2 artists are being allocated to Onam.\n\nCL-071: priya.raghunathan says \"Art is fully committed to the Independence assets through the 5th, so we're covered on the visual side.\" This indicates that art resources are fully committed to Independence assets.\n\nThe question is whether these two claims are about the same thing and whether they conflict.\n\nBoth are about art capacity allocation. CL-070 is about moving 2 artists to Onam. CL-071 is about art being fully committed to Independence assets.\n\nThe key question: Can art be fully committed to Independence assets while also moving 2 artists to Onam? If \"fully committed\" means all art resources are tied up on Independence, then moving artists to Onam would be incompatible. But if \"fully committed\" just means the Independence assets are covered (but not necessarily that ALL art resources are exclusively on Independence), then they could be compatible.\n\nThe phrase \"fully committed to the Independence assets\" suggests that all art resources are dedicated to Independence. If that's the case, then moving 2 artists to Onam would contradict that statement.\n\nHowever, \"fully committed\" could mean \"sufficiently committed\" or \"completely covered\" rather than \"exclusively allocated.\" The difference between \"fully committed\" and \"exclusively committed\" is important.\n\nAlso, the timing matters: CL-070 is dated 20 Jul 2026 and CL-071 is dated 21 Jul 2026. CL-070 says \"from tomorrow\" (so starting 21 Jul), and CL-071 says art is \"fully committed to Independence assets through the 5th.\"\n\nIf art is fully committed to Independence through the 5th, and on the 21st they're moving 2 artists to Onam, that could be a conflict if those artists were part of the Independence allocation.\n\nBut \"fully committed\" doesn't necessarily mean \"all resources exclusively on Independence\" - it could mean \"we have enough coverage on Independence.\" The two claims could be about different time periods or different subsets of art resources.\n\nGiven the ambiguity, I think these are potentially conflicting but not definitively so. The phrase \"fully committed\" is strong but could be interpreted as \"sufficiently covered.\"\n\nActually, let me reconsider. \"Art is fully committed to the Independence assets\" - this is a pretty strong statement. If art is FULLY committed to Independence, then moving artists to Onam would be incompatible. But if it just means \"we're covered on Independence,\" then it's compatible.\n\nI think the most natural reading of \"fully committed\" is that all art resources are dedicated to Independence, which would conflict with moving 2 artists to Onam. But there's enough ambiguity that I'm not 100% certain.\n\nI'll go with CONTRADICTION with moderate confidence, since \"fully committed\" strongly implies exclusive allocation to Independence, which conflicts with moving artists to Onam.\n\nWait, let me reconsider more carefully. The referent is \"art_capacity.allocation.\" Both claims are about how art capacity is allocated. CL-070 says 2 artists are being moved to Onam. CL-071 says art is fully committed to Independence. If art capacity is fully committed to Independence, you can't simultaneously move 2 artists to Onam - that would mean not fully committed to Independence anymore.\n\nYes, I think these are contradictory.",
       "usage": {
-        "inputTokens": 369,
+        "inputTokens": 381,
         "outputTokens": 800
       },
       "finishReason": "length"
     },
-    "latencyMs": 5820,
-    "recordedAt": "2026-07-31T14:45:36.608+00:00"
-  },
-  "04fce5dfbc083ddeaff18b99d0305528": {
-    "key": "04fce5dfbc083ddeaff18b99d0305528",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate indep_event.success_criteria@2026-07-15T23:59:59+05:30",
-    "promptSha": "5601ba3597ed386d040743b29ff07e9d0476349f93cd1844f4acbfc5f1447d53",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 states success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU and states success should be session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
-      "usage": {
-        "inputTokens": 371,
-        "outputTokens": 205
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 1770,
-    "recordedAt": "2026-07-31T14:40:52.887+00:00"
+    "latencyMs": 3475,
+    "recordedAt": "2026-07-31T18:34:19.217+00:00"
   },
   "0aa1971e3b378b4188787727f29c296a": {
     "key": "0aa1971e3b378b4188787727f29c296a",
@@ -1835,6 +1810,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2304,
     "recordedAt": "2026-07-31T14:56:11.565+00:00"
   },
+  "139cd42fbacc8d672f68de7222a11363": {
+    "key": "139cd42fbacc8d672f68de7222a11363",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
+    "promptSha": "4bc343501dcb491af40be327710a788ea8a64b15cb4490c817e71a86cf4d1b8a",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-002 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"2026-08-15\" | span: \"Sharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Two different people (meera.iyer and priya.raghunathan) provide conflicting launch dates (2026-08-12 vs 2026-08-15) for the same referent (indep_event.launch_date). Neither claim has been superseded, withdrawn, or resolved.\", \"conflicting_claim_ids\": [\"CL-001\", \"CL-002\"]}",
+      "usage": {
+        "inputTokens": 481,
+        "outputTokens": 321
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2029,
+    "recordedAt": "2026-07-31T18:44:30.732+00:00"
+  },
   "14ca3a965e1003d97b14ef875463f4bd": {
     "key": "14ca3a965e1003d97b14ef875463f4bd",
     "tier": "adjudication",
@@ -1860,30 +1860,105 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 3779,
     "recordedAt": "2026-07-31T14:55:46.162+00:00"
   },
-  "1d8b1d200a492dd7afba28cfa4ad8d6c": {
-    "key": "1d8b1d200a492dd7afba28cfa4ad8d6c",
+  "16ca17b4ecc48642a00332e09997db29": {
+    "key": "16ca17b4ecc48642a00332e09997db29",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-18T23:59:59+05:30",
-    "promptSha": "5b89f350d96b272d64988f0846cb1aad8604e6a809594bf767d5abf291c208f9",
+    "judgeScope": "full7",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
+    "promptSha": "7f2d0ea573115889b81101a7025cfbb7da9c6c199a8dba4c0780520aa6bc290c",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
       "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims assert ownership of the final sign-off on the live ops calendar, but they name different individuals (priya.raghunathan vs. meera.iyer). These cannot both be true at the same time.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"]}",
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Two live claims from different people (priya.raghunathan and meera.iyer) directly conflict on who holds sign-off ownership for the live ops calendar. Both reference the Holi precedent but draw opposite conclusions, and neither has been resolved or superseded.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"]}",
       "usage": {
-        "inputTokens": 354,
-        "outputTokens": 144
+        "inputTokens": 448,
+        "outputTokens": 292
       },
       "finishReason": "stop"
     },
-    "latencyMs": 4119,
-    "recordedAt": "2026-07-31T14:50:42.347+00:00"
+    "latencyMs": 2436,
+    "recordedAt": "2026-07-31T19:02:28.273+00:00"
+  },
+  "1b355e350abcd6bd3ae370a40ad85f78": {
+    "key": "1b355e350abcd6bd3ae370a40ad85f78",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate reward_config.live_state@2026-07-24T23:59:59+05:30",
+    "promptSha": "78d8a74fe7a7bca07c08b1b54aeec7f5ae7c87b226f4da9c321edaf5c5d68bcd",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: reward_config.live_state\n\nLive claims:\n- CL-080 | deepak.menon | 23 Jul 2026, 1:20 PM IST | value: \"old Holi table visible\" | span: \"Steady trickle of reports that players are still seeing the old Holi reward table in the shop.\"\n- CL-081 | meera.iyer | 23 Jul 2026, 1:52 PM IST | value: \"new config live since 18th\" | span: \"The reward config was updated on the 18th. It's live.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-080 reports that players are still seeing the old Holi reward table, implying the old config is live. CL-081 states the new reward config has been live since the 18th. Both cannot be true at the same time for the same live_state referent.\", \"conflicting_claim_ids\": [\"CL-080\", \"CL-081\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 374,
+        "outputTokens": 182
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1863,
+    "recordedAt": "2026-07-31T18:39:13.362+00:00"
+  },
+  "24fe9bb93576a784766910211dbfff26": {
+    "key": "24fe9bb93576a784766910211dbfff26",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
+    "promptSha": "0cba5d06b07644dfa70c0114de76634da2fad81fc9779d8fb57914608f0df2e7",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: d7_retention.trend\n\nLive claims:\n- CL-030 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp WoW\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- CL-031 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"down 3pp since 1.9.3\" | span: \"D7 is down, not up. My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "We have two live claims about the same referent: d7_retention.trend.\n\nCL-030 (neha.bhatt): D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\nCL-031 (arjun.rao): D7 is down, not up. My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\n\nThese are conflicting: one says up 1.8pp WoW, the other says down 3pp since 1.9.3 patch. They are from different people, and neither has been resolved (both are live). The question is whether this is a contradiction, update, resolved by supersession, resolved by correction, ambiguous referent, compatible, or contested.\n\nThey are clearly conflicting on the direction of D7 retention trend. One says up, one says down. They are both live claims about the same referent (d7_retention.trend). There's no indication that one superseded the other or that one was corrected. They are from different people with different data cuts (neha.bhatt says \"driven mostly by the returning-player cohort\", arjun.rao says \"My cut on paid installs\"). This could be an ambiguous referent if they are actually talking about different things (different cohorts or time windows). But the referent is specified as d7_retention.trend. However, the claims might be about different segments: neha.bhatt's claim might be about overall D7 retention or a specific cohort, while arjun.rao's claim is about paid installs cut. The prompt says \"the same referent\". The referent is d7_retention.trend. If they are both talking about the same metric but different segments, that could be ambiguous. But the question is: \"Decide the relationship between a set of live claims about the same referent.\" The referent is d7_retention.trend. The claims are about D7 retention trend. One says up 1.8pp WoW, the other says down 3pp since 1.9.3 patch. They could be about different time periods or segments. The phrase \"driven mostly by the returning-player cohort\" suggests neha.bhatt might be looking at a specific cohort, while arjun.rao says \"My cut on paid installs\" which is a different segment. So they might not be directly contradictory if they refer to different sub-segments of D7 retention. However, the referent is d7_retention.trend, which is a single metric. If they are both claiming the trend for the same metric but with different numbers, that's a contradiction. But if they are about different cuts (returning-player cohort vs paid installs), then the referent might be ambiguous. The prompt says \"the same referent\" but the claims might be about different aspects. The verdict options include \"AMBIGUOUS_REFERENT\" if the claims only appear to conflict because they are actually about different things.\n\nLet's analyze: CL-030 says D7 retention is up 1.8pp WoW, driven by returning-player cohort. CL-031 says D7 is down 3pp since 1.9.3 patch for paid installs cut. These could be two different metrics: overall D7 retention vs paid installs D7 retention. Or they could be the same metric but different time windows (WoW vs since patch). The referent is d7_retention.trend. If the referent is the overall trend, then both are claiming the trend but with different directions. That would be a contradiction. But if the referent is just \"d7_retention.trend\" and they are both talking about it, but one is WoW and one",
+      "usage": {
+        "inputTokens": 463,
+        "outputTokens": 800
+      },
+      "finishReason": "length"
+    },
+    "latencyMs": 4088,
+    "recordedAt": "2026-07-31T18:57:57.833+00:00"
+  },
+  "25c99cd91f90f16eb9b7e66e07431147": {
+    "key": "25c99cd91f90f16eb9b7e66e07431147",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate art_capacity.allocation@2026-07-24T23:59:59+05:30",
+    "promptSha": "fd1d348a39763736ce8f30f6c6d74676eba2b1e6b006e26d25269c5a92b6a64e",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: art_capacity.allocation\n\nLive claims:\n- CL-070 | sana.kulkarni | 20 Jul 2026, 2:25 PM IST | value: \"2 artists to Onam\" | span: \"Heads up, I'm moving two artists onto the Onam board set from tomorrow so we hit that milestone.\"\n- CL-071 | priya.raghunathan | 21 Jul 2026, 10:40 AM IST | value: \"fully on Independence assets\" | span: \"Art is fully committed to the Independence assets through the 5th, so we're covered on the visual side.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "Let me analyze the relationship between these two live claims about the same referent \"art_capacity.allocation.\"\n\nCL-070 (sana.kulkarni): States that 2 artists are being moved onto the Onam board set from tomorrow. This is about allocating artist capacity to Onam.\n\nCL-071 (priya.raghunathan): States that art is fully committed to Independence assets through the 5th. This is about art capacity being allocated to Independence assets.\n\nThe question is whether these two claims conflict. Both are about art capacity allocation, but they seem to be about different projects/assets (Onam vs. Independence). However, the referent is \"art_capacity.allocation\" — a single shared resource. If art capacity is being moved to Onam (CL-070), and simultaneously is fully committed to Independence assets (CL-071), there could be a conflict if the same artists/capacity is being double-allocated.\n\nBut looking more carefully:\n- CL-070 talks about moving 2 artists onto the Onam board set \"from tomorrow\"\n- CL-071 says art is \"fully committed\" to Independence assets \"through the 5th\"\n\nThese could be about different time periods or different aspects of art capacity. The Onam allocation starts \"from tomorrow\" (July 21 or 22), while Independence assets are covered \"through the 5th\" (July 5). If the 5th is before the Onam allocation starts, there's no temporal overlap and thus no conflict.\n\nWait, let me reconsider the dates. CL-070 is dated 20 Jul 2026, and CL-071 is dated 21 Jul 2026. The Onam allocation starts \"from tomorrow\" (July 21 or 22). The Independence assets are covered \"through the 5th\" — this could be July 5, which is before both claims were made, or it could be a different date.\n\nActually, \"through the 5th\" most likely refers to July 5, 2026, which is in the past relative to both claims (July 20-21). So CL-071 is reporting on a past allocation that has already been completed, while CL-070 is about a future allocation starting tomorrow.\n\nIn that case, these are about different time periods and don't conflict. They're compatible — different allocations at different times.\n\nBut wait — the referent is \"art_capacity.allocation\" as a single concept. If the same art capacity pool is being discussed, and both claims are live (current), then there could be a tension: one says capacity is being shifted to Onam, the other says it's fully committed to Independence.\n\nHowever, the most natural reading is that these are about different time windows and different projects, so they don't actually conflict. They're compatible statements about art capacity allocation at different times or to different projects.\n\nLet me reconsider: \"AMBIGUOUS_REFERENT\" — the claims only appear to conflict because they are actually about different things. This seems fitting because Onam and Independence assets are different projects/assets, and the timeframes may not overlap.\n\nActually, I think \"COMPATIBLE\" is the right call here. The claims don't conflict — one is about Onam allocation starting tomorrow, the other is about Independence assets being covered through the 5th. These are different allocations that don't necessarily conflict.\n\nBut let me reconsider \"AMBIGUOUS_REFERENT\" — this is for when claims appear to conflict but are about different things. Do they appear to conflict? They both talk about art capacity allocation, which is the same",
+      "usage": {
+        "inputTokens": 447,
+        "outputTokens": 800
+      },
+      "finishReason": "length"
+    },
+    "latencyMs": 4153,
+    "recordedAt": "2026-07-31T18:57:38.863+00:00"
   },
   "26753058604aed16d7b57dc5f9de846a": {
     "key": "26753058604aed16d7b57dc5f9de846a",
@@ -1910,105 +1985,155 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 3137,
     "recordedAt": "2026-07-31T15:05:56.679+00:00"
   },
-  "28f4a24053f613c5e7a4622170cf927c": {
-    "key": "28f4a24053f613c5e7a4622170cf927c",
+  "2ca6f9e65f4fead22e58acc119107837": {
+    "key": "2ca6f9e65f4fead22e58acc119107837",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate reward_config.live_state@2026-07-24T23:59:59+05:30",
-    "promptSha": "7591ac54b53a54518d44c071a7f0870403e698e5b68580198fd0dcbeda8a3c3a",
+    "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+    "promptSha": "85eefa08f6deaac1f4e564bb25a2d908555f6a0a9ea2566ab1060917c766f583",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: reward_config.live_state\n\nLive claims:\n- CL-080 | deepak.menon | 23 Jul 2026, 1:20 PM IST | value: \"old Holi table visible\" | span: \"Steady trickle of reports that players are still seeing the old Holi reward table in the shop.\"\n- CL-081 | meera.iyer | 23 Jul 2026, 1:52 PM IST | value: \"new config live since 18th\" | span: \"The reward config was updated on the 18th. It's live.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: build_194.release_readiness\n\nLive claims:\n- M-060#0 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"has an open P1 — token animation desyncs on reconnect\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\n- M-061#1 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"already in the store review queue\" | span: \"It's already in the store review queue.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-081 states the new reward config is live since the 18th, which means the old Holi reward table should no longer be visible. CL-080 states players are still seeing the old Holi reward table. These cannot both be true simultaneously.\", \"conflicting_claim_ids\": [\"CL-080\", \"CL-081\"]}",
+      "text": "Let me analyze these two claims to determine if they are mutually incompatible.\n\nClaim M-060#0: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\nClaim M-061#1: \"It's already in the store review queue.\"\n\nThe first claim states there is an open P1 bug (token animation desyncs on reconnect) in Build 1.9.4.\nThe second claim states that something (presumably the fix for this issue, or the build itself) is already in the store review queue.\n\nThese two claims are about the same referent: build_194.release_readiness.\n\nAre they incompatible? \n- M-060 says there's an open P1 bug in the build.\n- M-061 says it's already in the store review queue.\n\nHaving an open P1 bug and being in the store review queue are not necessarily mutually exclusive. A build could have an open P1 bug and still be in the store review queue (though it might be unusual). However, if M-061 is referring to the fix for the P1 bug being in the store review queue, that could also be compatible — the bug exists in the current build, but the fix is already queued for review.\n\nWait, let me reconsider. The referent is \"build_194.release_readiness.\" \n\nM-060 says the build has an open P1 bug.\nM-061 says \"it's already in the store review queue\" — this likely refers to the build or the fix being in the store review queue.\n\nIf the build itself is in the store review queue while having an open P1, that's not necessarily contradictory — it just means it's in review despite having a known issue. But if the context implies that having an open P1 would prevent it from being in the store review queue (or vice versa), then they could be incompatible.\n\nActually, thinking more carefully: if M-061 is saying the build (or the fix) is already in the store review queue, and M-060 is saying there's still an open P1 bug, these could be compatible if:\n1. The build with the bug is in review (unlikely but possible)\n2. The fix for the bug is in review while the bug still exists in the current build\n\nBut they could also be incompatible if:\n- Being in the store review queue implies the P1 is resolved/fixed\n- Having an open P1 means it shouldn't be in the store review queue yet\n\nThe key question is whether \"already in the store review queue\" refers to the build itself or to a fix/feature. Given the context of release readiness and an open P1, it seems like M-061 might be saying the fix is in the store review queue, which would be compatible with the bug still being open in the current build.\n\nHowever, if M-061 is referring to the build being in the store review queue despite having an open P1, that's not strictly contradictory — just inadvisable.\n\nI think these are actually compatible. The existence of an open P1 bug doesn't logically prevent something from being in the store review queue (maybe the fix is in review, or maybe the build is in review despite the bug). They don't directly contradict each other.\n\nLet me reconsider once more. The referent is \"build_194.release_readiness.\" M-060 says there's an open P1. M-061 says it's in the store review queue. For release readiness, having an open P1 and being in store review could be seen as contradictory states",
       "usage": {
-        "inputTokens": 346,
-        "outputTokens": 236
+        "inputTokens": 382,
+        "outputTokens": 800
       },
-      "finishReason": "stop"
+      "finishReason": "length"
     },
-    "latencyMs": 1745,
-    "recordedAt": "2026-07-31T14:46:02.435+00:00"
+    "latencyMs": 3170,
+    "recordedAt": "2026-07-31T19:08:13.685+00:00"
   },
-  "2fc22fe02079831c0b7ee929f98e7cd0": {
-    "key": "2fc22fe02079831c0b7ee929f98e7cd0",
+  "3639c30ebe10dbaf799d8ed6cb71e891": {
+    "key": "3639c30ebe10dbaf799d8ed6cb71e891",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate indep_event.success_criteria@2026-07-24T23:59:59+05:30",
-    "promptSha": "5601ba3597ed386d040743b29ff07e9d0476349f93cd1844f4acbfc5f1447d53",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts ARPDAU lift over a 7-day window as the measure of success, while CL-011 explicitly rejects ARPDAU and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same event.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
-      "usage": {
-        "inputTokens": 371,
-        "outputTokens": 207
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 4154,
-    "recordedAt": "2026-07-31T14:45:46.779+00:00"
-  },
-  "30a4c0c5053ac6955d2b4b1be799f3b2": {
-    "key": "30a4c0c5053ac6955d2b4b1be799f3b2",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate indep_event.launch_date@2026-07-10T11:20:00+05:30",
-    "promptSha": "399f0fa07abb1708124f42fe0558c9854af5e1bc4352be78ffd51c5b4b75c25b",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12. CL-180a describes the event running 7 days from go-live and confirms Meera owns the config freeze, which is consistent with CL-001. No conflicting launch dates or mutually exclusive facts are present.\", \"conflicting_claim_ids\": []}",
-      "usage": {
-        "inputTokens": 366,
-        "outputTokens": 295
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 1663,
-    "recordedAt": "2026-07-31T14:50:57.740+00:00"
-  },
-  "3b373baf6c7f658526509a3417979aed": {
-    "key": "3b373baf6c7f658526509a3417979aed",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
+    "judgeScope": "full7",
     "step": "adjudicate tournament.scope@2026-07-24T23:59:59+05:30",
-    "promptSha": "bb700c0553d0ef96c1f5d08077afc3248baeb00252b8b9f32e47269c9e1bed24",
+    "promptSha": "697367a1ff2ceda97f2ad0d0896300ed70127f3a80cc0a17019a4efd9abe7d2c",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
       "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-040 states the tournament scope is 'leaderboard only, brackets cut,' explicitly excluding brackets. CL-041 states work is underway on 'bracket seeding rules,' implying brackets are included in the scope. These cannot both be true simultaneously for the same tournament scope.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer states the tournament mode is a flat leaderboard with brackets cut, while rohan.desai states bracket seeding rules are being developed for the same tournament. These are conflicting claims about tournament.scope from different people, neither of which has been resolved or superseded.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
       "usage": {
-        "inputTokens": 348,
-        "outputTokens": 230
+        "inputTokens": 442,
+        "outputTokens": 238
       },
       "finishReason": "stop"
     },
-    "latencyMs": 1677,
-    "recordedAt": "2026-07-31T14:46:10.125+00:00"
+    "latencyMs": 1703,
+    "recordedAt": "2026-07-31T19:02:44.365+00:00"
+  },
+  "402b292fa603146f84140a7f6bef1cc4": {
+    "key": "402b292fa603146f84140a7f6bef1cc4",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate reward_config.tiers@2026-07-24T23:59:59+05:30",
+    "promptSha": "ee640317bc48e311077108cfe2e8233e7518f08ec627087a0ebcc3029c400699",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-190#0 refers to the design doc specifying 12 tiers, while M-191#0 refers to only 8 tiers being built in the config. These can both be true simultaneously — the design may call for 12 tiers while only 8 have been implemented.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 354,
+        "outputTokens": 202
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1574,
+    "recordedAt": "2026-07-31T19:13:00.300+00:00"
+  },
+  "404d9f44e0fab0665bb7a671f4789315": {
+    "key": "404d9f44e0fab0665bb7a671f4789315",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate indep_event.success_criteria@2026-07-15T23:59:59+05:30",
+    "promptSha": "ae2d10eb657e4ecb332b7de06239ab42fe8cc737c0916631380599c022ccf5b1",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer and rohan.desai provide mutually exclusive definitions of success for indep_event: ARPDAU lift vs. session depth/returning players. Neither claim has been withdrawn or superseded.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+      "usage": {
+        "inputTokens": 465,
+        "outputTokens": 204
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1805,
+    "recordedAt": "2026-07-31T18:44:38.542+00:00"
+  },
+  "41b40c08c8511bf1de5c120ccaa01e33": {
+    "key": "41b40c08c8511bf1de5c120ccaa01e33",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
+    "promptSha": "9394bd0a8842e46cc156ece7ad4021425d2736db5ccf77b59111397d8bc8ffde",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-002 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"2026-08-15\" | span: \"Sharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-001 asserts the launch date is 2026-08-12, while CL-002 asserts it is 2026-08-15. Both refer to the same attribute (indep_event.launch_date) and cannot both be true.\", \"conflicting_claim_ids\": [\"CL-001\", \"CL-002\"], \"confidence\": 1.0}",
+      "usage": {
+        "inputTokens": 415,
+        "outputTokens": 193
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2388,
+    "recordedAt": "2026-07-31T18:34:01.861+00:00"
+  },
+  "426c3b39518172657116cd89ad954d0f": {
+    "key": "426c3b39518172657116cd89ad954d0f",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-10T11:20:00+05:30",
+    "promptSha": "0bdfefef060024eff87ac08810d87af42d06bb4a881b2b7f079723f6227ba167",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12, while CL-180a states the event runs 7 days from go-live. The second claim is a duration statement that does not contradict the specific date in the first claim; both can be true simultaneously.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 394,
+        "outputTokens": 298
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2079,
+    "recordedAt": "2026-07-31T18:44:06.435+00:00"
   },
   "448b389f948039da77bfa566f1a62d34": {
     "key": "448b389f948039da77bfa566f1a62d34",
@@ -2035,6 +2160,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2395,
     "recordedAt": "2026-07-31T15:16:53.568+00:00"
   },
+  "4ce7d81286cc044c6e634708e074ebbd": {
+    "key": "4ce7d81286cc044c6e634708e074ebbd",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-10T15:41:00+05:30",
+    "promptSha": "0bdfefef060024eff87ac08810d87af42d06bb4a881b2b7f079723f6227ba167",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12. CL-180a describes the event duration as 7 days from go-live, which is a separate attribute (duration) and does not contradict the launch date. Both can be true simultaneously.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 394,
+        "outputTokens": 179
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2121,
+    "recordedAt": "2026-07-31T18:44:22.684+00:00"
+  },
   "56f1676a85d5ee281b4345442023bc7e": {
     "key": "56f1676a85d5ee281b4345442023bc7e",
     "tier": "adjudication",
@@ -2060,30 +2210,30 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2047,
     "recordedAt": "2026-07-31T15:01:24.881+00:00"
   },
-  "60cd922939182348bef27d2cb85619ec": {
-    "key": "60cd922939182348bef27d2cb85619ec",
+  "6280c87137c697bb9d85c786a8fa4911": {
+    "key": "6280c87137c697bb9d85c786a8fa4911",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
-    "promptSha": "5b89f350d96b272d64988f0846cb1aad8604e6a809594bf767d5abf291c208f9",
+    "judgeScope": "full7",
+    "step": "adjudicate reward_config.live_state@2026-07-24T23:59:59+05:30",
+    "promptSha": "a59795ff5f6ea095eb55e77a13f897849fb3fb5888495b034ef1da72f3894d3c",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: reward_config.live_state\n\nLive claims:\n- CL-080 | deepak.menon | 23 Jul 2026, 1:20 PM IST | value: \"old Holi table visible\" | span: \"Steady trickle of reports that players are still seeing the old Holi reward table in the shop.\"\n- CL-081 | meera.iyer | 23 Jul 2026, 1:52 PM IST | value: \"new config live since 18th\" | span: \"The reward config was updated on the 18th. It's live.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims assert ownership of the final sign-off on the live ops calendar, but they name different individuals (priya.raghunathan vs. meera.iyer). These cannot both be true at the same time.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"]}",
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"deepak.menon reports players are still seeing the old Holi reward table, while meera.iyer states the new reward config has been live since the 18th. These are conflicting claims about the same referent (reward_config.live_state) from different people, with neither resolved.\", \"conflicting_claim_ids\": [\"CL-080\", \"CL-081\"]}",
       "usage": {
-        "inputTokens": 354,
-        "outputTokens": 144
+        "inputTokens": 440,
+        "outputTokens": 334
       },
       "finishReason": "stop"
     },
-    "latencyMs": 1882,
-    "recordedAt": "2026-07-31T14:45:54.671+00:00"
+    "latencyMs": 2359,
+    "recordedAt": "2026-07-31T19:02:36.650+00:00"
   },
   "6786cff5c27ffba61a34b4bdc0470ef8": {
     "key": "6786cff5c27ffba61a34b4bdc0470ef8",
@@ -2110,55 +2260,130 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 3876,
     "recordedAt": "2026-07-31T15:01:16.827+00:00"
   },
-  "795ff2aa473e7a61a7e3efa554599d09": {
-    "key": "795ff2aa473e7a61a7e3efa554599d09",
+  "68341529539c49e0caab46515efb656f": {
+    "key": "68341529539c49e0caab46515efb656f",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate tournament.scope@2026-07-18T23:59:59+05:30",
-    "promptSha": "bb700c0553d0ef96c1f5d08077afc3248baeb00252b8b9f32e47269c9e1bed24",
+    "judgeScope": "full7",
+    "step": "adjudicate indep_event.launch_date@2026-07-10T11:20:00+05:30",
+    "promptSha": "245172b186c1d1b6bb97bd8f391dce2ed8be1ebea435198a45f9e5f11a8c9501",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-040 states the tournament scope is 'leaderboard only, brackets cut,' while CL-041 states the scope 'includes bracket seeding.' These are mutually exclusive claims about the same referent (tournament.scope).\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12 (12 August). CL-180a describes the event running for 7 days from go-live and confirms Meera owns the config freeze. CL-180a's '7 days from go-live' is a duration statement consistent with CL-001's specific date — it does not assert a different launch date. The claims are complementary, not conflicting.\", \"conflicting_claim_ids\": []}",
       "usage": {
-        "inputTokens": 348,
-        "outputTokens": 198
+        "inputTokens": 460,
+        "outputTokens": 518
       },
       "finishReason": "stop"
     },
-    "latencyMs": 1710,
-    "recordedAt": "2026-07-31T14:50:50.059+00:00"
+    "latencyMs": 2358,
+    "recordedAt": "2026-07-31T19:07:47.808+00:00"
   },
-  "7ae5065e57f66e13792a9bc23c679e47": {
-    "key": "7ae5065e57f66e13792a9bc23c679e47",
+  "697bdbbfe6eb6a19a3224762f6989afa": {
+    "key": "697bdbbfe6eb6a19a3224762f6989afa",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate reward_config.tiers@2026-07-24T23:59:59+05:30",
-    "promptSha": "9f1b4db0c1cb611cc8e6d1f30eea64e38013bac869ec5661bbfce5a1515d4369",
+    "step": "adjudicate reward_config.tiers@2026-07-10T11:20:00+05:30",
+    "promptSha": "c87c6b2956603459d75dd58558d318fe4544812f9778a7814966e87690d5cdf1",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: reward_config.tiers\n\nLive claims:\n- CL-190 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12\" | span: \"Reward table has 12 tiers in the design doc.\"\n- CL-191 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8\" | span: \"Config only has 8 tiers built.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-190#0 refers to 12 tiers in the design doc, while M-191#0 refers to 8 tiers built in the config. These can both be true simultaneously — the design doc may specify 12 tiers while only 8 have been implemented in the actual config.\", \"conflicting_claim_ids\": []}",
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-190 refers to 12 tiers in the design doc, while CL-191 refers to 8 tiers actually built in the config. A design doc can specify more tiers than are currently implemented, so both can be true simultaneously.\", \"conflicting_claim_ids\": [], \"confidence\": 0.9}",
       "usage": {
-        "inputTokens": 326,
-        "outputTokens": 209
+        "inputTokens": 347,
+        "outputTokens": 192
       },
       "finishReason": "stop"
     },
-    "latencyMs": 1783,
-    "recordedAt": "2026-07-31T17:21:53.809+00:00"
+    "latencyMs": 2092,
+    "recordedAt": "2026-07-31T18:44:14.535+00:00"
+  },
+  "795de5bfd1b9fd097e8cac5155213b93": {
+    "key": "795de5bfd1b9fd097e8cac5155213b93",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.success_criteria@2026-07-15T23:59:59+05:30",
+    "promptSha": "84c712708a913644b2fa7a6c9b2b2781221fc8ee95f1fc791fa50b6a7f0a7caf",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event). CL-010 states success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU and states success should be session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 399,
+        "outputTokens": 210
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1834,
+    "recordedAt": "2026-07-31T18:34:09.717+00:00"
+  },
+  "7ae1c1d62eca0dc9c93e0ca03e492875": {
+    "key": "7ae1c1d62eca0dc9c93e0ca03e492875",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+    "promptSha": "d47c29b2d7d7e5b03565df7997730a2599eec67d96e81da1407cc44bea0e53cc",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: build_194.release_readiness\n\nLive claims:\n- CL-060 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"not ready, open P1\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect. This is not release-ready.\"\n- CL-061 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"shipping Friday\" | span: \"We're shipping 1.9.4 on Friday. It's already in the store review queue.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Farah Qureshi claims build 1.9.4 is not release-ready due to an open P1 bug (token animation desync on reconnect), while Priya Raghunathan claims the same build is shipping on Friday and already in store review. These are conflicting assessments of the same referent from two different people, with no resolution indicated.\", \"conflicting_claim_ids\": [\"CL-060\", \"CL-061\"]}",
+      "usage": {
+        "inputTokens": 451,
+        "outputTokens": 497
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2859,
+    "recordedAt": "2026-07-31T18:57:47.739+00:00"
+  },
+  "7b82ce6a762e2f43d20052dc09206461": {
+    "key": "7b82ce6a762e2f43d20052dc09206461",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate reward_config.tiers@2026-07-10T11:20:00+05:30",
+    "promptSha": "7447f41a09e7fd08cddbbefbcec1f7aeb27c0978a62a1a3543bc42f2b600e0a0",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: reward_config.tiers\n\nLive claims:\n- CL-190 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12\" | span: \"Reward table has 12 tiers in the design doc.\"\n- CL-191 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8\" | span: \"Config only has 8 tiers built.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Two live claims from different authors (rohan.desai and meera.iyer) provide conflicting values for the same referent 'reward_config.tiers' — 12 vs 8 — and neither has been resolved or superseded.\", \"conflicting_claim_ids\": [\"CL-190\", \"CL-191\"]}",
+      "usage": {
+        "inputTokens": 413,
+        "outputTokens": 155
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1462,
+    "recordedAt": "2026-07-31T19:07:55.273+00:00"
   },
   "7b9fccb1ad8c854602545a523d58d726": {
     "key": "7b9fccb1ad8c854602545a523d58d726",
@@ -2210,30 +2435,30 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2156,
     "recordedAt": "2026-07-31T15:16:45.147+00:00"
   },
-  "83352f2789c0104b4a0062fd0dd9b4fb": {
-    "key": "83352f2789c0104b4a0062fd0dd9b4fb",
+  "85eca242137536e098ff116570ac6cbe": {
+    "key": "85eca242137536e098ff116570ac6cbe",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
-    "promptSha": "72695e5a77d3a333727e5eff054432aec01f3516235cb7898f27488d08879e82",
+    "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
+    "promptSha": "2318af0dc68d469a19d031ad398577fab71320205e8907b11a1ad428ead14176",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-002 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"2026-08-15\" | span: \"Sharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: d7_retention.trend\n\nLive claims:\n- CL-030 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp WoW\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- CL-031 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"down 3pp since 1.9.3\" | span: \"D7 is down, not up. My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-001 and CL-002 assign different launch dates (2026-08-12 vs 2026-08-15) to the same referent indep_event.launch_date, making them mutually exclusive.\", \"conflicting_claim_ids\": [\"CL-001\", \"CL-002\"]}",
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-030 asserts D7 retention is up 1.8pp WoW, while CL-031 asserts D7 is down 3pp since 1.9.3 and explicitly states 'D7 is down, not up.' These are direct negations of each other regarding the current direction of D7 retention.\", \"conflicting_claim_ids\": [\"CL-030\", \"CL-031\"], \"confidence\": 0.9}",
       "usage": {
-        "inputTokens": 387,
-        "outputTokens": 166
+        "inputTokens": 397,
+        "outputTokens": 331
       },
       "finishReason": "stop"
     },
-    "latencyMs": 2412,
-    "recordedAt": "2026-07-31T14:40:45.104+00:00"
+    "latencyMs": 1823,
+    "recordedAt": "2026-07-31T18:34:35.195+00:00"
   },
   "89ca2b3131c0f2b1fa4d550007d9ce3e": {
     "key": "89ca2b3131c0f2b1fa4d550007d9ce3e",
@@ -2260,55 +2485,55 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2372,
     "recordedAt": "2026-07-31T14:56:03.253+00:00"
   },
-  "8d8d6c2ccc1c1fbcdec2e97a1572e65b": {
-    "key": "8d8d6c2ccc1c1fbcdec2e97a1572e65b",
+  "8a14f1fc3c50f516356988993bfbf204": {
+    "key": "8a14f1fc3c50f516356988993bfbf204",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
-    "promptSha": "c2fd9574593d0e217e9d27542a9567e145d97c3079d756212d9bf9b5e9ffaaf8",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
+    "promptSha": "26d4a5cc751d64b18965e6be75fd7a405119b443c74e6ea743a6236d9fed9830",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: d7_retention.trend\n\nLive claims:\n- M-030#0 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp week on week, driven mostly by the returning-player cohort\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- M-031#1 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"off 3pp since the 1.9.3 patch\" | span: \"My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- M-020#0 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"held by Priya Raghunathan as producer\" | span: \"I'll hold final sign-off on the live ops calendar\"\n- M-021#0 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"sits with me\" | span: \"Calendar sign-off sits with me.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "Let me analyze these two claims about D7 retention.\n\nM-030#0: D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\nM-031#1: D7 retention is off 3pp since the 1.9.3 patch.\n\nThese are both about D7 retention but from different perspectives and timeframes. M-030 talks about a week-on-week increase of 1.8pp, while M-031 talks about a decline of 3pp since the 1.9.3 patch. These could be measuring different time periods or different baselines - one is week-on-week, the other is since a patch. They could both be true simultaneously if the patch happened more than a week ago and the week-on-week trend is different from the trend since the patch.\n\nHowever, let me think more carefully. M-030 says D7 retention is up 1.8pp week on week. M-031 says paid installs have D7 retention off 3pp since the 1.9.3 patch. These are measuring different things - one is a week-on-week comparison, the other is a comparison to a patch baseline. They could both be true if the patch caused a drop, but then the most recent week showed a partial recovery.\n\nWait, but the question is whether they are mutually incompatible. They are both about D7 retention but from different angles. They don't necessarily contradict each other. One could be true while the other is also true.\n\nActually, let me reconsider. M-030 is about D7 retention in general being up 1.8pp week on week. M-031 is about D7 retention being off 3pp since the 1.9.3 patch. These are different comparisons (week-on-week vs. since patch) and could coexist. They're not contradictory.\n\nBut wait - could they be contradictory? If the patch was applied within the last week, and retention is up 1.8pp week on week, that would mean retention went up after the patch, which contradicts M-031 saying it's off 3pp since the patch. But we don't know when the patch was applied relative to these claims.\n\nThe claims don't specify the exact same timeframe or baseline. M-030 is week-on-week, M-031 is since the 1.9.3 patch. Without knowing when the patch was applied, these could be compatible or incompatible.\n\nGiven the ambiguity, I think the safest interpretation is that they are measuring different things (different baselines/timeframes) and could both be true. They are not necessarily contradictory.\n\nActually, let me reconsider the referent: d7_retention.trend. Both are talking about the same metric - D7 retention trend. M-030 says it's up 1.8pp WoW. M-031 says it's down 3pp since the patch. If the patch was the previous week, then \"up 1.8pp week on week\" would mean it went up from the patch week, which would contradict \"off 3pp since the patch.\" But if the patch was earlier, they could both be true.\n\nSince we don't have enough context to determine the exact timeline, and the claims use different comparison baselines, I'll say they are COMPATIBLE because they could both be true under different timeframes.\n\nHmm, but actually the question says \"Differences in emphasis, scope, or wording are not incompatibility.\" So I need to focus on whether they can both be true simultaneously.\n\nThey can both be true if the patch was applied more than a week ago - the trend",
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"M-020#0 assigns the liveops_calendar.signoff_owner role to Priya Raghunathan, while M-021#0 assigns it to Meera Iyer. Both claims are about the same referent and cannot be true simultaneously.\", \"conflicting_claim_ids\": [\"M-020#0\", \"M-021#0\"], \"confidence\": 0.95}",
       "usage": {
-        "inputTokens": 376,
-        "outputTokens": 800
-      },
-      "finishReason": "length"
-    },
-    "latencyMs": 3553,
-    "recordedAt": "2026-07-31T17:21:29.333+00:00"
-  },
-  "8e6d6e24885a533374f2df7ef37fd70b": {
-    "key": "8e6d6e24885a533374f2df7ef37fd70b",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate reward_config.tiers@2026-07-10T11:20:00+05:30",
-    "promptSha": "77f703f9e5bfa67914d7a879d503a27702065477a4a8b86c95d4fb7c610d7c11",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: reward_config.tiers\n\nLive claims:\n- CL-190 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12\" | span: \"Reward table has 12 tiers in the design doc.\"\n- CL-191 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8\" | span: \"Config only has 8 tiers built.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the number of tiers in reward_config.tiers. CL-190 states 12 tiers (design doc), while CL-191 states 8 tiers (built config). These are mutually exclusive counts for the same entity.\", \"conflicting_claim_ids\": [\"CL-190\", \"CL-191\"]}",
-      "usage": {
-        "inputTokens": 319,
-        "outputTokens": 203
+        "inputTokens": 366,
+        "outputTokens": 476
       },
       "finishReason": "stop"
     },
-    "latencyMs": 1661,
-    "recordedAt": "2026-07-31T14:51:05.418+00:00"
+    "latencyMs": 2040,
+    "recordedAt": "2026-07-31T19:12:52.709+00:00"
+  },
+  "8c6d14c1cc7e505bea830224c6140d1c": {
+    "key": "8c6d14c1cc7e505bea830224c6140d1c",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate indep_event.success_criteria@2026-07-18T23:59:59+05:30",
+    "promptSha": "ae2d10eb657e4ecb332b7de06239ab42fe8cc737c0916631380599c022ccf5b1",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer and rohan.desai provide mutually exclusive definitions of success for indep_event: ARPDAU lift vs. session depth/returning players. Neither claim has been withdrawn or superseded.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+      "usage": {
+        "inputTokens": 465,
+        "outputTokens": 204
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2283,
+    "recordedAt": "2026-07-31T19:02:52.676+00:00"
   },
   "969c236233b05a8f71ed8f336bc35573": {
     "key": "969c236233b05a8f71ed8f336bc35573",
@@ -2335,31 +2560,6 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 3399,
     "recordedAt": "2026-07-31T15:21:30.498+00:00"
   },
-  "9c28cf73b8e4527706ea6f3e54545a83": {
-    "key": "9c28cf73b8e4527706ea6f3e54545a83",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
-    "promptSha": "3bf0bf3cff53556c0f6e99a6831085eb258c537e2d3ce454fd8bcbfb6efd5fda",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: build_194.release_readiness\n\nLive claims:\n- M-060#0 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"has an open P1 — token animation desyncs on reconnect\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\n- M-061#1 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"already in the store review queue\" | span: \"It's already in the store review queue.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-060#0 states Build 1.9.4 has an open P1 bug (token animation desyncs on reconnect). M-061#1 states something is already in the store review queue. Both can be true simultaneously — a build can have an open P1 bug and still be in the store review queue (e.g., the P1 is known but the build is under review for other reasons, or the fix is tracked separately). There is no logical contradiction.\", \"conflicting_claim_ids\": []}",
-      "usage": {
-        "inputTokens": 354,
-        "outputTokens": 578
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 6618,
-    "recordedAt": "2026-07-31T17:21:19.770+00:00"
-  },
   "9fa4271d9e2137502a335bdf9a633b12": {
     "key": "9fa4271d9e2137502a335bdf9a633b12",
     "tier": "adjudication",
@@ -2385,130 +2585,280 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 1816,
     "recordedAt": "2026-07-31T15:01:06.943+00:00"
   },
-  "a11469cb4038075deced5ede25de507f": {
-    "key": "a11469cb4038075deced5ede25de507f",
+  "a280fdb574751454797a45e19a58e6ce": {
+    "key": "a280fdb574751454797a45e19a58e6ce",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
     "judgeScope": "binary",
-    "step": "adjudicate indep_event.success_criteria@2026-07-18T23:59:59+05:30",
-    "promptSha": "5601ba3597ed386d040743b29ff07e9d0476349f93cd1844f4acbfc5f1447d53",
+    "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
+    "promptSha": "6bc9dae65a3d0cf85cadf9b3f9d47348c0faa2e5560246cda978855504934788",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: d7_retention.trend\n\nLive claims:\n- M-030#0 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp week on week, driven mostly by the returning-player cohort\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- M-031#1 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"off 3pp since the 1.9.3 patch\" | span: \"My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts ARPDAU lift over a 7-day window as the measure of success, while CL-011 explicitly rejects ARPDAU and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same event.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-030 reports D7 retention up 1.8pp week-on-week (recent trend), while M-031 reports D7 retention off 3pp since the 1.9.3 patch (longer-term trend relative to a specific event). These can both be true simultaneously if the patch caused a larger drop earlier and the most recent week shows a partial recovery. They also differ in scope (overall D7 retention vs. paid-installs D7 retention), which further supports compatibility.\", \"conflicting_claim_ids\": [], \"confidence\": 0.9}",
       "usage": {
-        "inputTokens": 371,
-        "outputTokens": 207
+        "inputTokens": 404,
+        "outputTokens": 646
       },
       "finishReason": "stop"
     },
-    "latencyMs": 12217,
-    "recordedAt": "2026-07-31T15:16:36.953+00:00"
+    "latencyMs": 2412,
+    "recordedAt": "2026-07-31T19:08:22.109+00:00"
   },
-  "a21e6a2e8582039f25142b5dbe22b2f6": {
-    "key": "a21e6a2e8582039f25142b5dbe22b2f6",
+  "a555c1006e472c32eea231b9d9b520b0": {
+    "key": "a555c1006e472c32eea231b9d9b520b0",
     "tier": "adjudication",
     "model": "inclusionai/ling-3.0-flash-free",
     "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate indep_event.launch_date@2026-07-24T23:59:59+05:30",
-    "promptSha": "0cc3293e6f8d33e275dffe8c83f817fb6fed91b0c647d80148d8bb8dac64c62d",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- M-001#1 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"12 August\" | span: \"Working assumption is we go live 12 August\"\n- M-002#1 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"15 August\" | span: \"Go-live is 15 August\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same referent 'indep_event.launch_date' but assign different dates ('12 August' vs '15 August'), which cannot both be true.\", \"conflicting_claim_ids\": [\"M-001#1\", \"M-002#1\"]}",
-      "usage": {
-        "inputTokens": 327,
-        "outputTokens": 138
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 1358,
-    "recordedAt": "2026-07-31T17:21:36.711+00:00"
-  },
-  "c5cfaf8584e46feea9bad99c182f4c9a": {
-    "key": "c5cfaf8584e46feea9bad99c182f4c9a",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate art_capacity.allocation@2026-07-24T23:59:59+05:30",
-    "promptSha": "ae0a8c78d3bfb87f021491233011dbb64b954472a2ddeafccff0c4bba4c7704e",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: art_capacity.allocation\n\nLive claims:\n- CL-070 | sana.kulkarni | 20 Jul 2026, 2:25 PM IST | value: \"2 artists to Onam\" | span: \"Heads up, I'm moving two artists onto the Onam board set from tomorrow so we hit that milestone.\"\n- CL-071 | priya.raghunathan | 21 Jul 2026, 10:40 AM IST | value: \"fully on Independence assets\" | span: \"Art is fully committed to the Independence assets through the 5th, so we're covered on the visual side.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "Let me analyze these two claims about art capacity allocation.\n\nCL-070: sana.kulkarni says \"2 artists to Onam\" - moving two artists onto the Onam board set from tomorrow.\nCL-071: priya.raghunathan says \"fully on Independence assets\" - art is fully committed to Independence assets through the 5th.\n\nThe referent is art_capacity.allocation. Both claims are about allocating art capacity (artists) to different projects/events.\n\nCL-070 allocates 2 artists to Onam.\nCL-071 states art is fully committed to Independence assets.\n\nThe question is whether these are mutually incompatible. They could be about different time periods or different artists. CL-070 is about moving artists to Onam \"from tomorrow\" (relative to 20 Jul, so starting 21 Jul). CL-071 says art is \"fully committed to Independence assets through the 5th\" - this could mean through July 5th (which would be in the past relative to these dates) or through some other date.\n\nWait, let me reconsider the dates. CL-070 is dated 20 Jul 2026, and CL-071 is dated 21 Jul 2026. If \"through the 5th\" means through July 5th, that's already past. But if it means through August 5th or some other 5th, it could overlap.\n\nActually, the key question is whether \"fully committed to Independence assets\" is compatible with \"moving 2 artists to Onam.\" If art is \"fully committed\" to Independence, that might mean all artists are allocated there, which would conflict with moving 2 to Onam. But it could also be that \"fully committed\" refers to a specific time period that has already passed (July 5th), and the Onam allocation starts from July 21st.\n\nThe phrase \"through the 5th\" is ambiguous - it could be July 5th (past) or another month's 5th. Given the context of July 20-21 dates, July 5th would be in the past, making CL-071 about a past allocation that no longer constrains current decisions.\n\nBut I need to be careful. The claims are about art_capacity.allocation. CL-070 is about allocating 2 artists to Onam going forward. CL-071 says art is fully committed to Independence through the 5th. If \"the 5th\" refers to a date that has already passed (July 5th), then these are about different time periods and are compatible. If \"the 5th\" refers to a future date that overlaps with the Onam allocation, then they could conflict.\n\nGiven the ambiguity, but considering that CL-071 is dated July 21 and says \"through the 5th\" - the most natural reading in context would be \"through the 5th\" of the current or next month. If it's July 5th, it's past. If it's August 5th, it could overlap with the Onam allocation starting July 21.\n\nHowever, the key incompatibility would be: if art is \"fully committed\" to Independence, can 2 artists also be moved to Onam? \"Fully committed\" suggests all capacity is allocated to Independence, which would conflict with allocating artists to Onam.\n\nBut these could also be about different time periods. The claims don't explicitly state they're about the same time frame.\n\nI think the most reasonable interpretation is that these are about different things or different time periods, and they are not necessarily contradictory. \"Fully committed to Independence",
-      "usage": {
-        "inputTokens": 353,
-        "outputTokens": 800
-      },
-      "finishReason": "length"
-    },
-    "latencyMs": 2927,
-    "recordedAt": "2026-07-31T14:41:01.837+00:00"
-  },
-  "c7a206b0ec216dc8e6cef2f9816c5bc3": {
-    "key": "c7a206b0ec216dc8e6cef2f9816c5bc3",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
-    "promptSha": "29f8210a20ffb345ee9c3a0358c71e215115eec13a73657532de153f19dab90e",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- M-020#0 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"held by Priya Raghunathan as producer\" | span: \"I'll hold final sign-off on the live ops calendar\"\n- M-021#0 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"sits with me\" | span: \"Calendar sign-off sits with me.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\n  \"verdict\": \"CONTRADICTION\",\n  \"rationale\": \"Both claims refer to the same referent (liveops_calendar.signoff_owner) but assign ownership to different individuals: Priya Raghunathan in M-020#0 and Meera Iyer in M-021#0. These assignments cannot both be true simultaneously.\",\n  \"conflicting_claim_ids\": [\"M-020#0\", \"M-021#0\"]\n}",
-      "usage": {
-        "inputTokens": 338,
-        "outputTokens": 404
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 3285,
-    "recordedAt": "2026-07-31T17:21:46.016+00:00"
-  },
-  "cebc9d7984980f53ddaaa6e015ddb4a7": {
-    "key": "cebc9d7984980f53ddaaa6e015ddb4a7",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
+    "judgeScope": "full7",
     "step": "adjudicate indep_event.launch_date@2026-07-10T15:41:00+05:30",
-    "promptSha": "399f0fa07abb1708124f42fe0558c9854af5e1bc4352be78ffd51c5b4b75c25b",
+    "promptSha": "245172b186c1d1b6bb97bd8f391dce2ed8be1ebea435198a45f9e5f11a8c9501",
     "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
       "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
       "temperature": 0,
       "maxOutputTokens": 800
     },
     "response": {
-      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12, while CL-180a states the event runs seven days from go-live. These are compatible: the go-live date of 12 August 2026 (from CL-001) can serve as the starting point for the 7-day event duration described in CL-180a. No contradiction exists.\", \"conflicting_claim_ids\": []}",
+      "text": "Let me analyze the relationship between these two live claims about the same referent (indep_event.launch_date).\n\nCL-001 (meera.iyer): States the launch date is \"2026-08-12\" (12 August). This is a specific date value.\nCL-180a (priya.raghunathan): States \"7 days from go-live\" — this is a relative duration claim, not a specific date. It also mentions Meera owns the config freeze.\n\nThese two claims are about the same referent (indep_event.launch_date). CL-001 gives a specific date (2026-08-12). CL-180a gives a relative duration (\"7 days from go-live\"). \n\nDo they conflict? CL-180a doesn't actually contradict CL-001 — it's a different kind of statement (a duration/relative claim vs. an absolute date). CL-180a could be interpreted as saying the event runs for 7 days starting from the go-live date, which is compatible with CL-001's date of 2026-08-12. CL-180a doesn't give a different launch date; it gives a duration.\n\nHowever, one could argue that CL-180a is ambiguous — \"7 days from go-live\" could mean the launch date is 7 days from now (which would be a different date), or the event runs for 7 days from the go-live date. Given the context and that it mentions Meera owns the config freeze (linking back to CL-001), it seems like CL-180a is describing the event duration, not contradicting the launch date.\n\nBut the question is whether these are conflicting claims about the same referent. CL-001 says launch_date = \"2026-08-12\". CL-180a says \"7 days from go-live\" — if interpreted as the launch date being 7 days from some reference point, it could conflict. But more naturally, CL-180a seems to be about the event duration, not the launch date itself.\n\nGiven the ambiguity in interpretation, and that CL-180a could be about the event duration rather than the launch date, these claims appear to be about different aspects or could be interpreted as non-conflicting.\n\nActually, let me reconsider. The referent is specifically \"indep_event.launch_date\". CL-001 directly assigns a date to this. CL-180a says \"7 days from go-live\" — this could be interpreted as a different value for the same referent (launch_date = 7 days from go-live), which would conflict with CL-001's specific date. But it could also be about the event duration.\n\nGiven the ambiguity, I think \"AMBIGUOUS_REFERENT\" might not be right either, because both are clearly about the same referent.\n\nLet me reconsider: \"CONTESTED\" seems appropriate — reasonable people could disagree about whether CL-180a is a conflicting claim about the launch date or a complementary claim about event duration.\n\nActually, I think the most fitting verdict is \"CONTESTED\" — CL-180a's \"7 days from go-live\" could be interpreted as either a conflicting date claim or a non-conflicting duration claim. Reasonable people could disagree.\n\nWait, let me reconsider once more. CL-180a says \"Event runs seven days from go-live\" — this is clearly about the event duration, not the launch date. It's a complementary claim. So they",
       "usage": {
-        "inputTokens": 366,
-        "outputTokens": 508
+        "inputTokens": 460,
+        "outputTokens": 800
+      },
+      "finishReason": "length"
+    },
+    "latencyMs": 3129,
+    "recordedAt": "2026-07-31T19:08:04.437+00:00"
+  },
+  "a59cd834285f5137b28e8efcb75bc741": {
+    "key": "a59cd834285f5137b28e8efcb75bc741",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate tournament.scope@2026-07-24T23:59:59+05:30",
+    "promptSha": "291b70b62bdb733e8741bf69387fca57bd1eeffce6ef480f93239a2adc23e02d",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-040 explicitly states the bracket system was cut for v1 and the tournament is a flat leaderboard only. CL-041 states that bracket seeding rules are being developed for the Tiranga tournament, implying brackets are included. These cannot both be true simultaneously about the same tournament scope.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 376,
+        "outputTokens": 259
       },
       "finishReason": "stop"
     },
-    "latencyMs": 2394,
-    "recordedAt": "2026-07-31T14:51:13.841+00:00"
+    "latencyMs": 1622,
+    "recordedAt": "2026-07-31T18:39:20.988+00:00"
+  },
+  "b1753fa4be1982560e810328ba66c250": {
+    "key": "b1753fa4be1982560e810328ba66c250",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+    "promptSha": "d6ec32956191d987e0d15d993f34b431294faa37afc6c6e41c6524b1910f83bb",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: build_194.release_readiness\n\nLive claims:\n- CL-060 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"not ready, open P1\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect. This is not release-ready.\"\n- CL-061 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"shipping Friday\" | span: \"We're shipping 1.9.4 on Friday. It's already in the store review queue.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-060 states Build 1.9.4 is not release-ready due to an open P1 (token animation desync on reconnect). CL-061 states the same build is shipping Friday and already in the store review queue. A build with an open P1 that is explicitly not release-ready cannot simultaneously be in the store review queue and scheduled for release.\", \"conflicting_claim_ids\": [\"CL-060\", \"CL-061\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 385,
+        "outputTokens": 253
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2135,
+    "recordedAt": "2026-07-31T18:34:27.370+00:00"
+  },
+  "b1a1d6b5fdbd414721d941826055f67f": {
+    "key": "b1a1d6b5fdbd414721d941826055f67f",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate indep_event.success_criteria@2026-07-24T23:59:59+05:30",
+    "promptSha": "ae2d10eb657e4ecb332b7de06239ab42fe8cc737c0916631380599c022ccf5b1",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer and rohan.desai provide mutually exclusive definitions of success for indep_event: ARPDAU lift vs. session depth/returning players. Neither claim has been withdrawn or superseded.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+      "usage": {
+        "inputTokens": 465,
+        "outputTokens": 204
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2339,
+    "recordedAt": "2026-07-31T19:17:12.727+00:00"
+  },
+  "bf4c8278ab10d928745ec4f649c559ae": {
+    "key": "bf4c8278ab10d928745ec4f649c559ae",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate tournament.scope@2026-07-18T23:59:59+05:30",
+    "promptSha": "697367a1ff2ceda97f2ad0d0896300ed70127f3a80cc0a17019a4efd9abe7d2c",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer states the tournament scope is 'leaderboard only, brackets cut,' while rohan.desai states the scope 'includes bracket seeding.' These are conflicting claims about the same referent (tournament.scope) from different people, and neither has been resolved or superseded.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
+      "usage": {
+        "inputTokens": 442,
+        "outputTokens": 241
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1801,
+    "recordedAt": "2026-07-31T19:17:20.575+00:00"
+  },
+  "c6fa58e49afbcba600fed66143cf2c2b": {
+    "key": "c6fa58e49afbcba600fed66143cf2c2b",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
+    "promptSha": "4a545ccf8044e8c89839d3df87ae881f7f00f4f171e8bff4bb735287258ae9e5",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims assert ownership of the final sign-off role for the live ops calendar. Priya claims it as producer, while Meera claims it as the person who owns the calendar sign-off. These are mutually exclusive assignments of the same responsibility.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 382,
+        "outputTokens": 173
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1449,
+    "recordedAt": "2026-07-31T18:39:05.491+00:00"
+  },
+  "ca740eadde65ae54c1f3b64b06ee7e35": {
+    "key": "ca740eadde65ae54c1f3b64b06ee7e35",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.success_criteria@2026-07-18T23:59:59+05:30",
+    "promptSha": "84c712708a913644b2fa7a6c9b2b2781221fc8ee95f1fc791fa50b6a7f0a7caf",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU as the primary metric and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 399,
+        "outputTokens": 215
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1785,
+    "recordedAt": "2026-07-31T18:39:28.822+00:00"
+  },
+  "cdbdec8c4d0f5a7d0ba217d0630a9c3e": {
+    "key": "cdbdec8c4d0f5a7d0ba217d0630a9c3e",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "full7",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-18T23:59:59+05:30",
+    "promptSha": "7f2d0ea573115889b81101a7025cfbb7da9c6c199a8dba4c0780520aa6bc290c",
+    "request": {
+      "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "Let me analyze the relationship between these two live claims about the same referent: liveops_calendar.signoff_owner.\n\nCL-020 (priya.raghunathan, 16 Jul 2026): Claims that priya.raghunathan holds final sign-off on the live ops calendar, referencing a precedent set for Holi.\n\nCL-021 (meera.iyer, 17 Jul 2026): Claims that calendar sign-off sits with meera.iyer, referencing a change made after Holi.\n\nBoth claims are about the same referent (liveops_calendar.signoff_owner) and both are live (not superseded or withdrawn).\n\nThe claims directly conflict: one says priya.raghunathan is the sign-off owner, the other says meera.iyer is.\n\nCL-021 was made after CL-020 (17 Jul vs 16 Jul). CL-021 references \"the change we made after Holi\" which suggests that the sign-off ownership was changed from someone (possibly priya.raghunathan) to meera.iyer after the Holi event. This suggests CL-021 is a newer claim that supersedes CL-020.\n\nHowever, both are currently live claims. The question is whether this is a contradiction or resolved by supersession.\n\nThe key phrase in CL-021: \"That was the whole point of the change we made after Holi.\" This indicates a deliberate change was made, and meera.iyer is asserting that the sign-off now belongs to her as a result of that change. This sounds like a resolution — the change after Holi settled the ownership.\n\nBut both claims are still live. If CL-021 is a higher-authority or newer claim that resolves the earlier one, it would be \"RESOLVED_BY_SUPERSESSION.\"\n\nWait, let me reconsider. Both are live claims. The fact that both are still present and neither has been withdrawn suggests they might be in conflict. But CL-021 explicitly references a change that was made, suggesting it supersedes CL-020.\n\nActually, looking more carefully: CL-020 was made on 16 Jul, CL-021 on 17 Jul. CL-021 references \"the change we made after Holi\" — this is a newer claim that explicitly states the ownership changed. This is a case where a later claim supersedes an earlier one, resolving the conflict.\n\nBut the question says \"Claims that were superseded, withdrawn, or reported have already been removed from what you see.\" So if CL-020 were superseded, it would have been removed. Since both are live, this suggests neither has been formally superseded yet.\n\nHmm, but the instructions say \"Claims that were superseded, withdrawn, or reported have already been removed from what you see.\" So both being live means neither has been removed. But they clearly conflict.\n\nGiven that both are live and conflicting, and there's no clear indication that one has been formally superseded or withdrawn, this seems like a CONTRADICTION — two live claims from different people that conflict and neither has been resolved.\n\nWait, let me reconsider the \"RESOLVED_BY_SUPERSESSION\" option. The description says \"a higher-authority person's claim has settled an earlier conflict.\" CL-021 is later in time and references a change that was made. But is meera.iyer a \"higher authority\"? We don't have explicit authority information.\n\nAlso, \"RESOLVED_BY_CORRECTION\" is \"someone withdrew their own claim in favor of someone else's.\" Neither claim has been withdrawn.\n\nGiven that both claims",
+      "usage": {
+        "inputTokens": 448,
+        "outputTokens": 800
+      },
+      "finishReason": "length"
+    },
+    "latencyMs": 17765,
+    "recordedAt": "2026-07-31T19:03:16.456+00:00"
+  },
+  "cdbfe556d6e4bf703305be8b4eb1e740": {
+    "key": "cdbfe556d6e4bf703305be8b4eb1e740",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-24T23:59:59+05:30",
+    "promptSha": "46c16a27eae06c599264677d851a9c4f3801d2b5e84bc5a19ad88ecf3c0505ff",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- M-001#1 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"12 August\" | span: \"Working assumption is we go live 12 August\"\n- M-002#1 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"15 August\" | span: \"Go-live is 15 August\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same entity (indep_event.launch_date) but assign different dates (12 August vs 15 August), which cannot both be true.\", \"conflicting_claim_ids\": [\"M-001#1\", \"M-002#1\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 355,
+        "outputTokens": 141
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1584,
+    "recordedAt": "2026-07-31T19:17:28.325+00:00"
+  },
+  "d0367bfe1f2652f3538f2f3ecee80440": {
+    "key": "d0367bfe1f2652f3538f2f3ecee80440",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-18T23:59:59+05:30",
+    "promptSha": "4a545ccf8044e8c89839d3df87ae881f7f00f4f171e8bff4bb735287258ae9e5",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims assert ownership of the final sign-off on the live ops calendar. CL-020 states priya.raghunathan holds it, while CL-021 states meera.iyer holds it. These cannot both be true simultaneously.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"], \"confidence\": 1.0}",
+      "usage": {
+        "inputTokens": 382,
+        "outputTokens": 178
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2117,
+    "recordedAt": "2026-07-31T18:39:36.946+00:00"
   },
   "d50b0c90be7dd8cc169f011d12fb2e87": {
     "key": "d50b0c90be7dd8cc169f011d12fb2e87",
@@ -2535,6 +2885,56 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2800,
     "recordedAt": "2026-07-31T15:06:05.509+00:00"
   },
+  "dd65a084a99db68c3a1a35cc66d252a2": {
+    "key": "dd65a084a99db68c3a1a35cc66d252a2",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate tournament.scope@2026-07-18T23:59:59+05:30",
+    "promptSha": "291b70b62bdb733e8741bf69387fca57bd1eeffce6ef480f93239a2adc23e02d",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-040 explicitly states the bracket system was cut for v1 and the tournament is a flat leaderboard only. CL-041 states that bracket seeding rules are being developed for the Tiranga tournament, implying brackets are included. These cannot both be true simultaneously about the same tournament scope.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 376,
+        "outputTokens": 259
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1653,
+    "recordedAt": "2026-07-31T18:57:28.656+00:00"
+  },
+  "e29a69b64a3be1fa9aed523228e134e9": {
+    "key": "e29a69b64a3be1fa9aed523228e134e9",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.success_criteria@2026-07-24T23:59:59+05:30",
+    "promptSha": "84c712708a913644b2fa7a6c9b2b2781221fc8ee95f1fc791fa50b6a7f0a7caf",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU as the primary metric and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 399,
+        "outputTokens": 215
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2077,
+    "recordedAt": "2026-07-31T18:57:20.975+00:00"
+  },
   "ebd89fa99f97ed48798c76eec2ab9a46": {
     "key": "ebd89fa99f97ed48798c76eec2ab9a46",
     "tier": "adjudication",
@@ -2559,31 +2959,6 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     },
     "latencyMs": 1864,
     "recordedAt": "2026-07-31T15:00:59.113+00:00"
-  },
-  "f7f298cc38901e4b594d2442cf06677c": {
-    "key": "f7f298cc38901e4b594d2442cf06677c",
-    "tier": "adjudication",
-    "model": "inclusionai/ling-3.0-flash-free",
-    "configId": "free",
-    "judgeScope": "binary",
-    "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
-    "promptSha": "f2d8d055399b723e99da10894c77175fa75505798ae8103ff6dba7241a4c6ce9",
-    "request": {
-      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
-      "user": "Referent: build_194.release_readiness\n\nLive claims:\n- CL-060 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"not ready, open P1\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect. This is not release-ready.\"\n- CL-061 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"shipping Friday\" | span: \"We're shipping 1.9.4 on Friday. It's already in the store review queue.\"",
-      "temperature": 0,
-      "maxOutputTokens": 800
-    },
-    "response": {
-      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-060 states Build 1.9.4 is not release-ready due to an open P1 (token animation desync on reconnect), while CL-061 states the same build is shipping Friday and already in the store review queue. A build that is not release-ready cannot simultaneously be shipping and in the store review queue.\", \"conflicting_claim_ids\": [\"CL-060\", \"CL-061\"]}",
-      "usage": {
-        "inputTokens": 357,
-        "outputTokens": 246
-      },
-      "finishReason": "stop"
-    },
-    "latencyMs": 5289,
-    "recordedAt": "2026-07-31T15:16:18.709+00:00"
   },
   "f8307d6dcca225a6695423aa55f4753c": {
     "key": "f8307d6dcca225a6695423aa55f4753c",
@@ -2637,4 +3012,4 @@ export const RECORDINGS: Record<string, RecordedCall> = {
   }
 } as unknown as Record<string, RecordedCall>;
 
-export const RECORDINGS_HASH = "a0b2f266c9a202d626359e8ff60f9e9843fe4bea6ade62c6484748bc1ec1dda4";
+export const RECORDINGS_HASH = "add167cf17072903d16576ef86d9f76f7dfbc02f548ab6553ec796e061e9a750";

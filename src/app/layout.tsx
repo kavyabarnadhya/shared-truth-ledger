@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { TabNav } from "@/components/TabNav";
+import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "Shared-Truth Ledger — Ludo Junction",
+  title: "Quorum — Tamarind Games",
   description:
     "What the team currently believes, and where it disagrees with itself.",
 };
@@ -14,8 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <TabNav />
-        {children}
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

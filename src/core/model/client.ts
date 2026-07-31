@@ -110,7 +110,7 @@ export class ReplayModelClient implements ModelClient {
       model: req.model,
       temperature: req.temperature,
       maxOutputTokens: req.maxOutputTokens,
-      promptVersion: this.promptVersion,
+      promptVersion: req.promptVersion ?? this.promptVersion,
       judgeScope: req.judgeScope ?? null,
       system: req.system,
       inputKey: req.inputKey,

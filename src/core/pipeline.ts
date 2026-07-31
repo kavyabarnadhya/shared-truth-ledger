@@ -34,6 +34,7 @@ import { projectAsOf, buildAmbiguityBuckets, type ClaimContext } from "./ledger.
 import { EXTRACTION_PROMPT } from "./prompts/extraction.ts";
 import { ADJUDICATION_PROMPT } from "./prompts/adjudication.ts";
 import { parseExtractionResponse, parseAdjudicationResponse } from "./parse/json-repair.ts";
+import { shouldEscalate } from "./router.ts";
 import { compareStrings } from "./util/stable-sort.ts";
 import { ReplayMissError, PromptDriftError } from "./model/client.ts";
 
@@ -324,7 +325,8 @@ export async function runAdjudicationPipeline(
       });
       trace.push(modelTrace);
 
-      const parsed = parseAdjudicationResponse(response.text, judgeScope);
+      let parsed = parseAdjudicationResponse(response.text, judgeScope);
+      let finalModelTrace = modelTrace;
       if (!parsed.ok) {
         verdicts.push({
           bucket_key: bucket.referent, asOf, judgeScope, verdict: "COMPATIBLE",
@@ -334,12 +336,44 @@ export async function runAdjudicationPipeline(
         continue;
       }
 
+      // Confidence-gated escalation router (binary scope only — the
+      // escalated prompt shares the binary schema, and full7's judge-scope
+      // comparison is a separate, deliberately unmodified configuration).
+      // If the primary call self-reported a confidence below the threshold,
+      // issue a second call with the richer step-by-step prompt and let its
+      // verdict win if it parses. Both calls stay in trace[] either way, so
+      // escalation is visible in the drill-down rather than only asserted.
+      if (judgeScope === "binary" && shouldEscalate(parsed.confidence)) {
+        const { response: escResponse, trace: escTrace } = await model.call({
+          tier: "adjudication",
+          model: model.config.models.adjudication,
+          system: ADJUDICATION_PROMPT.BINARY_ESCALATED_SYSTEM,
+          user,
+          temperature: model.config.temperature,
+          maxOutputTokens: model.config.maxOutputTokens,
+          inputKey,
+          step: `adjudicate ${bucket.referent}@${asOf} [escalated]`,
+          judgeScope,
+          promptVersion: ADJUDICATION_PROMPT.ESCALATED_PROMPT_VERSION,
+        });
+        trace.push(escTrace);
+        const escParsed = parseAdjudicationResponse(escResponse.text, judgeScope);
+        if (escParsed.ok) {
+          parsed = escParsed;
+          finalModelTrace = escTrace;
+        }
+        // If the escalated call fails to parse, the primary verdict stands
+        // (already in `parsed`) — escalation can only replace a verdict
+        // with a better one, never silently drop to fallback.
+      }
+
       const verdict: VerdictKind = bucket.contested ? "CONTESTED" : parsed.verdict;
       verdicts.push({
         bucket_key: bucket.referent, asOf, judgeScope, verdict,
         rationale: parsed.rationale, decidedBy: "model",
         conflictingClaimIds: [...parsed.conflictingClaimIds].sort(),
-        preRuleTrace: bucket.preRuleTrace, modelCall: modelTrace,
+        preRuleTrace: bucket.preRuleTrace, modelCall: finalModelTrace,
+        confidence: parsed.confidence,
       });
     } catch (err) {
       if (isHardReplayError(err)) throw err;

@@ -1,0 +1,25 @@
+{
+  "key": "68341529539c49e0caab46515efb656f",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate indep_event.launch_date@2026-07-10T11:20:00+05:30",
+  "promptSha": "245172b186c1d1b6bb97bd8f391dce2ed8be1ebea435198a45f9e5f11a8c9501",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: indep_event.launch_date\n\nLive claims:\n- CL-001 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"2026-08-12\" | span: \"Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\"\n- CL-180a | priya.raghunathan | 8 Jul 2026, 10:05 AM IST | value: \"7 days from go-live\" | span: \"Event runs seven days from go-live, and Meera owns the config freeze.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"CL-001 specifies the launch date as 2026-08-12 (12 August). CL-180a describes the event running for 7 days from go-live and confirms Meera owns the config freeze. CL-180a's '7 days from go-live' is a duration statement consistent with CL-001's specific date — it does not assert a different launch date. The claims are complementary, not conflicting.\", \"conflicting_claim_ids\": []}",
+    "usage": {
+      "inputTokens": 460,
+      "outputTokens": 518
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2358,
+  "recordedAt": "2026-07-31T19:07:47.808+00:00"
+}

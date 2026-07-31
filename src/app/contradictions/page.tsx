@@ -86,7 +86,7 @@ export default function ContradictionsPage() {
 
   return (
     <main className="page">
-      <h1 className="page-title">Contradictions</h1>
+      <h1 className="page-title">Signals</h1>
       <p className="page-subtitle">
         Open conflicts between live claims — what the team currently disagrees with itself about.
       </p>
@@ -101,7 +101,16 @@ export default function ContradictionsPage() {
       </div>
 
       {error && <div className="banner banner--warn">Could not load the ledger: {error}</div>}
-      {loading && <p className="claim-state-label">Building ledger...</p>}
+      {loading && (
+        <div aria-live="polite" aria-busy="true">
+          <span className="claim-state-label" style={{ display: "block", marginBottom: "var(--space-2)" }}>
+            Building ledger...
+          </span>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="bucket-row-skeleton" aria-hidden="true" />
+          ))}
+        </div>
+      )}
 
       {!loading && !error && (
         <>

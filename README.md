@@ -1,4 +1,7 @@
-# Shared-Truth Ledger
+# Quorum
+
+*(Internal repo/URL slug: `shared-truth-ledger` — kept as-is; renaming risked
+breaking the already-verified hosted deployment, out of scope for this pass.)*
 
 A ledger over a team's Slack and Gmail that extracts claims — who asserted
 what, about which referent, when — into persistent state, then detects when
@@ -141,13 +144,16 @@ which this project does not have access to and does not fabricate.
 ## 3. Architecture
 
 ```
-sources ──▶ noise gate ──▶ extraction ──▶ referent resolution ──▶ adjudication ──▶ ledger ──▶ surface
- (Slack/     (deterministic,  (cheap model,   (deterministic +      (strong model,    (persisted     (Contradictions /
-  Gmail       no model call)   per-message)    embeddings,           candidate         claims,         Ledger / Evals /
-  fixtures)                                    no LLM call)          pairs only)       verdicts,       Sandbox tabs)
-                                                                                        suppressions,
-                                                                                        watermark)
+sources ──▶ noise gate ──▶ extraction ──▶ referent resolution ──▶ pre-rules ──▶ adjudication ──▶ ledger ──▶ surface
+ (Slack/     (deterministic,  (cheap model,   (deterministic +      (deterministic,  (free model,     (persisted     (Overview /
+  Gmail       no model call)   per-message)    embeddings,           R0–R9)           both rungs,      claims,         Signals /
+  fixtures)                                    no LLM call)                           incl. the        verdicts,       Ledger / Evals /
+                                                                                       confidence-      suppressions,   Sandbox /
+                                                                                       gated escalation  watermark)     Architecture)
+                                                                                       router)
 ```
+
+This six-stage pipeline is also rendered live, from the real `LedgerSnapshot.trace` (not hand-drawn), on the **Architecture** tab (`/architecture`) — each stage shows real call counts, pre-rule decisions, and escalation counts for whatever ledger is currently loaded, plus a static panel on the MCP/adapter tool boundary (see §7).
 
 ### Named hooks
 
@@ -211,6 +217,56 @@ versus decided by code — is what gets reported. **Under `binary`, scenarios
 N1, N2, N3, and N10 pass by construction, not by model skill** — those four
 verdicts are the ones pre-rules own. Say so plainly here rather than let the
 per-scenario table imply the model earned them.
+
+### Confidence-gated escalation router — real model selection, free tier only
+
+A concrete second axis of model selection, not just prose: the primary
+binary adjudication call now self-reports a confidence (0–1) alongside its
+verdict. When that number is present and below a fixed, named constant
+(`ESCALATION_CONFIDENCE_THRESHOLD = 0.6`, `src/core/router.ts` — not tuned
+per-scenario, not tuned after seeing eval results), `runAdjudicationPipeline`
+(`src/core/pipeline.ts`) issues a second call using a richer prompt variant
+(`BINARY_ESCALATED_SYSTEM`, `src/core/prompts/adjudication.ts`) that asks the
+model to reason step by step before committing to a verdict. The escalated
+verdict wins if it parses; both calls land in `trace[]` regardless, so
+escalation is visible in the drill-down (and on the Architecture tab, §3
+above), not just asserted. **Both rungs stay on `inclusionai/ling-3.0-flash-free`
+— no call to any paid model is made or claimed anywhere in this router,
+including the escalated rung.** `STRONG_CONFIG` in `model/config.ts` documents
+the one-line production swap-in; it is not run.
+
+**Measured, not asserted:** across the full recorded set (every scored
+adjudication bucket, gold-claims pass, both judge scopes' underlying binary
+calls, plus the live-app pass on the extractor's own claims), **0 buckets
+self-reported confidence below the threshold, so the escalated call never
+fired.** This is the honest result of this recording run — the threshold was
+not lowered to force a nonzero escalation count, and the router unit tests
+(`src/core/pipeline.test.ts`) verify the gating logic itself works correctly
+(a synthetic low-confidence primary response does trigger the escalated call
+and its verdict wins; a high-confidence or confidence-omitting response does
+not) independent of what any particular recorded run happened to produce.
+
+**An honest regression, found and not hidden.** Re-recording the binary
+adjudication prompt to add the confidence self-report (`PROMPT_VERSION`
+bumped from 1 to 2 in `prompts/adjudication.ts`) necessarily re-ran every
+binary-scope call against the live free-tier model. On one previously-correct
+bucket — `reward_config.tiers@2026-07-10T11:20:00+05:30` (feeding scenario
+N10's first sub-case) — the newly recorded response came back **confidently
+wrong**: `COMPATIBLE` with self-reported `confidence: 0.9`, versus the old
+prompt's correct `CONTRADICTION` on the exact same gold claims. Because 0.9
+is well above the 0.6 threshold, the escalation router structurally cannot
+catch this — it is a case of the underlying free model giving a different,
+worse answer to a reworded prompt, not a router bug. **This regression was
+verified against the frozen baseline (`npm run eval`, byte-identical
+`reportHash` across two runs) and the baseline was deliberately *not*
+re-frozen over it** — every number elsewhere in this README, and the
+`reportHash` cited in `deck/OUTLINE.md`, is still the last known-good,
+reproducible baseline that predates this router's re-recording. Fixing this
+specific prompt-induced regression is unresolved follow-up work, not patched
+around under time pressure. (One other bucket, `d7_retention.trend` /
+scenario C4, moved the other direction — from a documented miss to correct —
+in the same re-recorded run; reported here for completeness, not as an offset
+against the regression above.)
 
 ### Why embeddings are a tiebreak, not the mechanism
 
@@ -277,9 +333,13 @@ claim true rather than aspirational:
   different semantic inputs and therefore different cache keys: the eval
   harness's grader B is fed **gold** claims (deliberately, so a bad
   extraction run can't mask an adjudication error), while the hosted
-  Contradictions/Ledger tabs adjudicate the **extractor's own** predicted
-  claims. Both are committed (105 recordings total), so both paths work
-  offline.
+  Signals/Ledger tabs adjudicate the **extractor's own** predicted
+  claims. Both are committed (120 recordings total: 70 extraction + 50
+  adjudication, across both judge scopes and both claim sources — a handful
+  of individual calls that came back unparseable prose even after retry are
+  not recorded, consistent with "replay never falls back silently"; the
+  buckets that matter for `npm run eval`'s default binary/free run are all
+  covered), so both paths work offline.
 - **The replay boundary is narrow and explicit.** Only the provider's raw
   HTTP response is cached. The noise gate, schema validation, span
   validation, referent resolution, deterministic pre-rules, temporal
@@ -408,6 +468,13 @@ span — the anti-hallucination check never had to reject one for this run.
 pre-rule ladder, with zero involvement from the model. This is the single
 result this project cares most about getting right, and it holds.
 
+This table is the frozen, committed baseline above — it predates the
+confidence-gated escalation router's recordings and is deliberately left
+as-is (see §3's "Confidence-gated escalation router" subsection for why: the
+router's own re-recording surfaced a real, honestly-reported regression on
+`reward_config.tiers`/N10 that has not yet been fixed, so the regressed
+numbers are not presented here as the new baseline).
+
 **Extraction, per scenario** (claims and spans only; modality/polarity
 scored **separately** from recall, per the design):
 
@@ -479,10 +546,25 @@ untuned prompt, not to explain away a bad number after the fact.
 
 `mcp-server/` exposes the same fixture corpus over stdio as four tools:
 `slack.search_messages`, `slack.get_thread`, `gmail.search`,
-`gmail.get_thread`. The web app **imports the corpus adapter in-process**
-(`src/adapters/workspace.ts`) rather than calling its own MCP server over
-HTTP — the MCP server exists to demonstrate the corpus sits behind a real
-tool boundary, not because the web app needs network calls to itself.
+`gmail.get_thread` — all thin re-exports (`mcp-server/src/adapter.ts`) of one
+shared in-process adapter module, `src/adapters/workspace.ts`. There is
+exactly one implementation of "search Slack/Gmail" in this repo.
+
+**Corrected from an earlier draft of this README:** the web app does *not*
+currently import that same adapter module directly. It reads the identical
+underlying corpus files (`fixtures/corpus/*.json`) through its own
+in-process `FsMessageSource` (`src/server/deps.ts`), which implements the
+same `MessageSource` interface but is a separate call-site rather than a
+shared import. Same data, same query shape, one interface, two
+implementations — consolidating the web app onto the adapter module too is a
+natural next step, not yet done. Said plainly here rather than left
+overstated, since the brief explicitly says it will look at this boundary.
+
+This boundary is also surfaced on screen, not just in this section — see the
+**Architecture** tab (`/architecture`) → "Tool boundary" panel
+(`src/components/ToolBoundaryPanel.tsx`), which renders the same four tools
+and the same two-callers-one-adapter shape as a clickable panel rather than
+prose a reviewer has to scroll to.
 
 This is a bonus, evidenced with a screenshot rather than something a
 reviewer is expected to run — attaching an MCP client needs a terminal,

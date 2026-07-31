@@ -1,0 +1,25 @@
+{
+  "key": "8c6d14c1cc7e505bea830224c6140d1c",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate indep_event.success_criteria@2026-07-18T23:59:59+05:30",
+  "promptSha": "ae2d10eb657e4ecb332b7de06239ab42fe8cc737c0916631380599c022ccf5b1",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"meera.iyer and rohan.desai provide mutually exclusive definitions of success for indep_event: ARPDAU lift vs. session depth/returning players. Neither claim has been withdrawn or superseded.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+    "usage": {
+      "inputTokens": 465,
+      "outputTokens": 204
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2283,
+  "recordedAt": "2026-07-31T19:02:52.676+00:00"
+}
