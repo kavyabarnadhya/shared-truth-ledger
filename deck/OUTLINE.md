@@ -1,4 +1,4 @@
-# Shared-Truth Ledger — Deck Outline
+# Quorum — Deck Outline
 
 Three slides. Every number on Slide 3 comes from an actual `npm run eval` run;
 nothing else appears. This file is the source content for the slides — build

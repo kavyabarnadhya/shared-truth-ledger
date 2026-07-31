@@ -1,4 +1,7 @@
-# Shared-Truth Ledger
+# Quorum
+
+*(Internal repo/URL slug: `shared-truth-ledger` — kept as-is; renaming risked
+breaking the already-verified hosted deployment, out of scope for this pass.)*
 
 A ledger over a team's Slack and Gmail that extracts claims — who asserted
 what, about which referent, when — into persistent state, then detects when
