@@ -796,3 +796,35 @@ a { color: inherit; }
   background: color-mix(in srgb, var(--rule) 55%, transparent);
   border-bottom: 1px solid var(--rule);
 }
+
+/* ---------------------------------------------------------------------
+ * Hosted deck (/deck) — three keyboard-navigable slides, same tokens as
+ * the rest of the site so it reads as part of Quorum, not a separate
+ * artifact pasted in.
+ * ------------------------------------------------------------------- */
+
+.deck-page__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.deck-slide {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: var(--space-3);
+  min-height: 60vh;
+}
+
+.deck-slide section > *:first-child {
+  margin-top: 0;
+}
+
+.deck-page__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}

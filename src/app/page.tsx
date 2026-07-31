@@ -109,6 +109,7 @@ export default function OverviewPage() {
         <Link href="/contradictions">View signals →</Link>
         <Link href="/evals">Run the evals →</Link>
         <Link href="/architecture">See the pipeline →</Link>
+        <Link href="/deck">View deck →</Link>
       </div>
     </main>
   );
