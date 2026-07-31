@@ -1,0 +1,25 @@
+{
+  "key": "1aaae00e55e08765868bb0819512e94f",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-532",
+  "promptSha": "95536dccef904917b8c7d60f2fe120aa70761768df6f5eab6ef594b1f9195931",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Rohan Desai]: I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\n\nMessage from Meera Iyer (Product Manager):\nhear you, let's talk it through properly rather than over slack",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": []}",
+    "usage": {
+      "inputTokens": 493,
+      "outputTokens": 467
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2400,
+  "recordedAt": "2026-07-31T14:25:17.458+00:00"
+}

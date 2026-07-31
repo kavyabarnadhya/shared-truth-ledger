@@ -1,0 +1,25 @@
+{
+  "key": "2fc4c6f268852ddd0141082dcf5f6283",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-080",
+  "promptSha": "f9da7fd0225e5b41cc2b8b328d84f2aa57a40d064b0b3bc5fd7a7f0af1411270",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Deepak Menon]: FAQ update for the event is drafted.\n[Meera Iyer]: thanks, will take a look this afternoon\n[Deepak Menon]: quiet week on the ticket front, nothing else to flag\n\nMessage from Deepak Menon (Community & Support):\nSteady trickle of reports that players are still seeing the old Holi reward table in the shop.",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"Holi reward table in the shop\", \"value\": \"players are still seeing the old Holi reward table\", \"source_span\": \"Steady trickle of reports that players are still seeing the old Holi reward table in the shop.\", \"modality\": \"assertion",
+    "usage": {
+      "inputTokens": 503,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 4055,
+  "recordedAt": "2026-07-31T15:21:21.001+00:00"
+}

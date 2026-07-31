@@ -1,0 +1,25 @@
+{
+  "key": "7b9fccb1ad8c854602545a523d58d726",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate art_capacity.allocation@2026-07-24T23:59:59+05:30",
+  "promptSha": "fd1d348a39763736ce8f30f6c6d74676eba2b1e6b006e26d25269c5a92b6a64e",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: art_capacity.allocation\n\nLive claims:\n- CL-070 | sana.kulkarni | 20 Jul 2026, 2:25 PM IST | value: \"2 artists to Onam\" | span: \"Heads up, I'm moving two artists onto the Onam board set from tomorrow so we hit that milestone.\"\n- CL-071 | priya.raghunathan | 21 Jul 2026, 10:40 AM IST | value: \"fully on Independence assets\" | span: \"Art is fully committed to the Independence assets through the 5th, so we're covered on the visual side.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"AMBIGUOUS_REFERENT\", \"rationale\": \"Both claims reference art_capacity.allocation but describe allocations to different projects/assets (Onam board set vs Independence assets). They may refer to different time periods, different artist pools, or different sub-allocations, making it unclear whether they are genuinely contradictory or simply about distinct aspects of the same broad referent.\", \"conflicting_claim_ids\": [\"CL-070\", \"CL-071\"]}",
+    "usage": {
+      "inputTokens": 447,
+      "outputTokens": 694
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2678,
+  "recordedAt": "2026-07-31T14:55:54.862+00:00"
+}

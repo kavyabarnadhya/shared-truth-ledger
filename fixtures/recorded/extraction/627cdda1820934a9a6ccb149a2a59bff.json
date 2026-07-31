@@ -1,0 +1,25 @@
+{
+  "key": "627cdda1820934a9a6ccb149a2a59bff",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-502",
+  "promptSha": "5f0ca0c3aef781e281be733ef7e8177d7b7595f812cd33bf376d40a4e0a3786d",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Meera Iyer]: Theme is tricolour board skins and a token set, plus a limited-time Tiranga tournament mode shipping with the event.\n[Rohan Desai]: love the theme direction, will start sketching concepts\n[Meera Iyer]: Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\n\nMessage from Farah Qureshi (QA Lead):\nnoted, will keep an eye on the regression pass for this one",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "```json\n{\"claims\": [{\"referent\": \"noting\", \"value\": \"acknowledged\", \"source_span\": \"noted\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"regression pass for this one\", \"value\": \"will keep an eye on\", \"source_span\": \"will keep an eye on the regression pass for this one\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}\n```",
+    "usage": {
+      "inputTokens": 524,
+      "outputTokens": 783
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2670,
+  "recordedAt": "2026-07-31T13:18:23.004+00:00"
+}

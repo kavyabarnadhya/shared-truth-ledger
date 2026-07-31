@@ -1,0 +1,25 @@
+{
+  "key": "daf2f5316f3b59ac7de374d3d178d9a0",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-506",
+  "promptSha": "f8bf2e361371b43c54b845f8ae22f7e8fc21ba37d608b2d8f2060101dbc6dee1",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Priya Raghunathan]: Event runs seven days from go-live, and Meera owns the config freeze.\n[Rohan Desai]: Reward table has 12 tiers in the design doc.\n[Meera Iyer]: Config only has 8 tiers built.\n\nMessage from Rohan Desai (Game Designer):\noh — let me check with art on that",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"checking with art on the tier discrepancy\", \"value\": \"intent to verify\", \"source_span\": \"oh — let me check with art on that\", \"modality\": \"hedge\", \"polarity\": \"positive\", \"attributed_to\": null}]}",
+    "usage": {
+      "inputTokens": 501,
+      "outputTokens": 395
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2765,
+  "recordedAt": "2026-07-31T13:45:20.792+00:00"
+}

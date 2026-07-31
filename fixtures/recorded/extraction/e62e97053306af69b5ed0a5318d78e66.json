@@ -1,0 +1,25 @@
+{
+  "key": "e62e97053306af69b5ed0a5318d78e66",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-214",
+  "promptSha": "cb5fa8b80d8bbe7301ca55e0311c2c32266b19bc1d030c3edaaf233f938710c9",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Sana Kulkarni]: Revising that — Level 40 pack will be 29 July. Token rework took longer than I scoped.\n[Sana Kulkarni]: Priya said it's the 15th now, so I've replanned the asset drops around that.\n[Rohan Desai]: makes sense, thanks for flagging\n\nMessage from Sana Kulkarni (Art Lead):\nTricolour token set is at final polish.",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"Tricolour token set\", \"value\": \"at final polish\", \"source_span\": \"Tricolour token set is at final polish.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}",
+    "usage": {
+      "inputTokens": 522,
+      "outputTokens": 218
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2358,
+  "recordedAt": "2026-07-31T14:10:16.426+00:00"
+}

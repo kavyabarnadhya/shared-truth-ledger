@@ -1,0 +1,28 @@
+{
+  "verdicts": [
+    { "bucket_key": "indep_event.launch_date", "claimIds": ["CL-001", "CL-002"], "asOf": "2026-07-15T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C1", "scoredInHeadline": true },
+    { "bucket_key": "indep_event.launch_date", "claimIds": ["CL-001", "CL-002", "CL-110"], "asOf": "2026-07-18T23:59:59+05:30", "verdict": "RESOLVED_BY_SUPERSESSION", "scenario": "N2", "scoredInHeadline": true },
+    { "bucket_key": "indep_event.success_criteria", "claimIds": ["CL-010", "CL-011"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C2", "scoredInHeadline": true },
+    { "bucket_key": "liveops_calendar.signoff_owner", "claimIds": ["CL-020", "CL-021"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C3", "scoredInHeadline": true },
+    { "bucket_key": "d7_retention.trend", "claimIds": ["CL-030", "CL-031"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C4", "scoredInHeadline": true },
+    { "bucket_key": "tournament.scope", "claimIds": ["CL-040", "CL-041"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C5", "scoredInHeadline": true },
+    { "bucket_key": "leaderboard.readiness", "claimIds": ["CL-050", "CL-051"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C6", "scoredInHeadline": true },
+    { "bucket_key": "build_194.release_readiness", "claimIds": ["CL-060", "CL-061"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C7", "scoredInHeadline": true },
+    { "bucket_key": "art_capacity.allocation", "claimIds": ["CL-070", "CL-071"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTRADICTION", "scenario": "C8", "scoredInHeadline": true },
+    { "bucket_key": "reward_config.live_state", "claimIds": ["CL-080", "CL-081"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "CONTESTED", "scenario": "C9", "scoredInHeadline": false },
+    { "bucket_key": "level40_art.eta", "claimIds": ["CL-100", "CL-101"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "UPDATE", "scenario": "N1", "scoredInHeadline": true },
+    { "bucket_key": "indep_event.launch_date|soft_launch.date", "claimIds": ["CL-120", "CL-121"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "AMBIGUOUS_REFERENT", "scenario": "N3", "scoredInHeadline": true },
+    { "bucket_key": "onam_event.launch_date", "claimIds": ["CL-130"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N4", "scoredInHeadline": true },
+    { "bucket_key": "indep_event.duration", "claimIds": ["CL-180a"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N9", "scoredInHeadline": true },
+    { "bucket_key": "config_freeze.owner", "claimIds": ["CL-180b"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N9", "scoredInHeadline": true },
+    { "bucket_key": "reward_config.tiers", "claimIds": ["CL-190", "CL-191"], "asOf": "2026-07-10T11:20:00+05:30", "verdict": "CONTRADICTION", "scenario": "N10", "scoredInHeadline": true },
+    { "bucket_key": "reward_config.tiers", "claimIds": ["CL-190", "CL-191", "CL-192"], "asOf": "2026-07-10T15:41:00+05:30", "verdict": "RESOLVED_BY_CORRECTION", "scenario": "N10", "scoredInHeadline": true },
+    { "bucket_key": "push_notification.upgrade_eta", "claimIds": ["CL-210"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N12", "scoredInHeadline": true },
+    { "bucket_key": "event_dashboard.readiness", "claimIds": ["CL-211"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N13", "scoredInHeadline": true },
+    { "bucket_key": "ua_creative_refresh.booking", "claimIds": ["CL-212"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N14", "scoredInHeadline": true },
+    { "bucket_key": "qa_regression_suite.coverage", "claimIds": ["CL-213"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N15", "scoredInHeadline": true },
+    { "bucket_key": "tricolour_token_set.status", "claimIds": ["CL-214"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N16", "scoredInHeadline": true },
+    { "bucket_key": "event_faq.status", "claimIds": ["CL-215"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N17", "scoredInHeadline": true },
+    { "bucket_key": "difficulty_curve.status", "claimIds": ["CL-216"], "asOf": "2026-07-24T23:59:59+05:30", "verdict": "COMPATIBLE", "scenario": "N18", "scoredInHeadline": true }
+  ]
+}

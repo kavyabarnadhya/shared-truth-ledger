@@ -1,0 +1,25 @@
+{
+  "key": "4ca2acd46305735cab989c00154d2877",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-071",
+  "promptSha": "f87c3791c6f571d407e316a06529c2337803c56c8ab9c5b4856a3cb4f2c960ba",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Priya Raghunathan]: As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\n[Farah Qureshi]: Thanks for the summary, Priya. Will circulate to the QA team and flag anything that needs earlier visibility.\n[Karthik Nair]: Let's go with the 15th. Aligning to the holiday itself is worth more than the extra three days of runway. Final.\n\nMessage from Priya Raghunathan (Producer):\nArt is fully committed to the Independence assets through the 5th, so we're covered on the visual side.",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"Art team commitment\", \"value\": \"fully committed to the Independence assets through the 5th\", \"source_span\": \"Art is fully committed to the Independence assets through the 5th\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"visual side coverage\", \"value\": \"covered\", \"source_span\": \"so we're covered on the visual side\", \"modality\": \"assertion\", \"polar",
+    "usage": {
+      "inputTokens": 554,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 2920,
+  "recordedAt": "2026-07-31T15:07:07.904+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "key": "8cca5b64b440a8a4916c2e5c2f9134e3",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-021",
+  "promptSha": "6bf8fdbc9c587a3318070f3a3daa0a968e7a8ff1e828252e07c04d7fff03a58a",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Meera Iyer]: on it 🙋\n[Meera Iyer]: To be clear, we are not going with the 15th. Nothing has changed on my side.\n[Rohan Desai]: got it, thanks for the clarity\n\nMessage from Meera Iyer (Product Manager):\nCalendar sign-off sits with me. That was the whole point of the change we made after Holi.",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"Calendar sign-off\", \"value\": \"sits with me\", \"source_span\": \"Calendar sign-off sits with me.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"the change we made after Holi\", \"value\": \"calendar sign-off sits with me\", \"source_span\": \"That was the whole point of the change we made after Holi.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}",
+    "usage": {
+      "inputTokens": 507,
+      "outputTokens": 494
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 3813,
+  "recordedAt": "2026-07-31T15:06:50.300+00:00"
+}

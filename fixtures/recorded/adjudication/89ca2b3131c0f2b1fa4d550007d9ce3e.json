@@ -1,0 +1,25 @@
+{
+  "key": "89ca2b3131c0f2b1fa4d550007d9ce3e",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+  "promptSha": "d47c29b2d7d7e5b03565df7997730a2599eec67d96e81da1407cc44bea0e53cc",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: build_194.release_readiness\n\nLive claims:\n- CL-060 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"not ready, open P1\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect. This is not release-ready.\"\n- CL-061 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"shipping Friday\" | span: \"We're shipping 1.9.4 on Friday. It's already in the store review queue.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Farah Qureshi (CL-060) claims build 1.9.4 is not release-ready due to an open P1 bug (token animation desync on reconnect), while Priya Raghunathan (CL-061) claims the same build is shipping on Friday and already in store review. These are contradictory assessments of release readiness from two different people, and neither claim has been withdrawn or superseded.\", \"conflicting_claim_ids\": [\"CL-060\", \"CL-061\"]}",
+    "usage": {
+      "inputTokens": 451,
+      "outputTokens": 328
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2372,
+  "recordedAt": "2026-07-31T14:56:03.253+00:00"
+}

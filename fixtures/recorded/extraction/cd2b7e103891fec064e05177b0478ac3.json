@@ -1,0 +1,25 @@
+{
+  "key": "cd2b7e103891fec064e05177b0478ac3",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-002",
+  "promptSha": "653613eab41ec40c5bf03630a8a42adc51247d4ebf5f935fbeec88bbb006668c",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Message from Priya Raghunathan (Producer):\nSharing the release plan for the Independence Day event. Go-live is 15 August, aligned to the holiday itself. Sign-off gate is the 12th.",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "```json\n{\"claims\": [{\"referent\": \"release plan\", \"value\": \"Independence Day event\", \"source_span\": \"Sharing the release plan for the Independence Day event.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"go-live date\", \"value\": \"15 August\", \"source_span\": \"Go-live is 15 August\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"alignment to holiday\", \"value\": \"aligned to the holiday itself\", \"source_span\": \"aligned to the holiday itself.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"sign-off gate\", \"value\": \"the 12th\", \"source_span\": \"Sign-off gate is the 12th.\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}\n```",
+    "usage": {
+      "inputTokens": 453,
+      "outputTokens": 434
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 4881,
+  "recordedAt": "2026-07-31T13:59:57.127+00:00"
+}

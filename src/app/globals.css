@@ -1,0 +1,423 @@
+/*
+ * Design brief: instrument panel, not a marketing page. Six colour values,
+ * two type faces (mono for identifiers/numbers, sans for prose), four sizes,
+ * one spacing scale. Never colour alone — verdicts always carry a glyph/label.
+ */
+
+:root {
+  --surface: #f7f8fa;      /* near-white, slightly cool. not cream */
+  --ink: #16181d;          /* near-black */
+  --muted: #6b7280;        /* secondary text, timestamps, roles */
+  --rule: #e2e5ea;         /* hairlines, borders */
+  --conflict: #b3491f;     /* CONTRADICTION, CONTESTED — the only warm colour */
+  --conflict-bg: #fbe9e2;
+  --settled: #2f5d78;      /* RESOLVED_BY_*, UPDATE, COMPATIBLE, AMBIGUOUS_REFERENT */
+  --settled-bg: #e7eef2;
+  --highlight: #ffe17a;    /* span highlight — the only saturated colour */
+  --highlight-ink: #3a2e00;
+
+  --space-1: 0.375rem;
+  --space-2: 0.75rem;
+  --space-3: 1.5rem;
+  --space-4: 3rem;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --size-title: 1.375rem;
+  --size-heading: 1.0625rem;
+  --size-body: 0.9375rem;
+  --size-caption: 0.8125rem;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #16181d;
+    --ink: #eceef1;
+    --muted: #9aa1ab;
+    --rule: #2b2f37;
+    --conflict: #e2794f;
+    --conflict-bg: #3a2416;
+    --settled: #7fb2cf;
+    --settled-bg: #1c2c34;
+    --highlight: #7a5c00;
+    --highlight-ink: #fff3c9;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: 1.5;
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--settled);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Layout shell: one column, max readable width, left-aligned. No sidebars,
+ * no dashboard grid.
+ * ------------------------------------------------------------------- */
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-3);
+}
+
+.page-title {
+  font-size: var(--size-title);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.page-subtitle {
+  color: var(--muted);
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--size-body);
+}
+
+.section-heading {
+  font-size: var(--size-heading);
+  font-weight: 600;
+  margin: var(--space-3) 0 var(--space-2) 0;
+}
+
+/* ---------------------------------------------------------------------
+ * Tab nav
+ * ------------------------------------------------------------------- */
+
+.tab-nav {
+  display: flex;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 var(--space-3);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.tab-nav__link {
+  display: inline-block;
+  padding: var(--space-2) 0;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  font-size: var(--size-body);
+}
+
+.tab-nav__link:hover {
+  color: var(--ink);
+}
+
+.tab-nav__link[data-active="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--settled);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------
+ * Verdict chip — fixed colour + glyph + label, never colour alone.
+ * ------------------------------------------------------------------- */
+
+.verdict-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  font-size: var(--size-caption);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.verdict-chip--conflict {
+  background: var(--conflict-bg);
+  color: var(--conflict);
+}
+
+.verdict-chip--settled {
+  background: var(--settled-bg);
+  color: var(--settled);
+}
+
+.verdict-chip__glyph {
+  font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict-chip {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Bucket row — a contradiction/bucket is a horizontal band, not a card.
+ * ------------------------------------------------------------------- */
+
+.bucket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.bucket-row:hover {
+  background: color-mix(in srgb, var(--rule) 40%, transparent);
+}
+
+.bucket-row__key {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+.bucket-row__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: var(--size-caption);
+}
+
+.bucket-row__details {
+  padding: var(--space-2) var(--space-1) var(--space-3) var(--space-1);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---------------------------------------------------------------------
+ * Claim comparison — a two-column table, not stacked blocks.
+ * ------------------------------------------------------------------- */
+
+.claim-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-body);
+  margin: var(--space-2) 0;
+}
+
+.claim-table th {
+  text-align: left;
+  font-size: var(--size-caption);
+  color: var(--muted);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--rule);
+}
+
+.claim-table td {
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.claim-table .mono-cell {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+.claim-state-label {
+  font-size: var(--size-caption);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------
+ * Span highlight — the ONLY saturated colour in the interface. This is
+ * the signature element: visible proof the anti-hallucination check ran.
+ * ------------------------------------------------------------------- */
+
+.message-text {
+  font-size: var(--size-body);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.span-highlight {
+  background: var(--highlight);
+  color: var(--highlight-ink);
+  border-radius: 3px;
+  padding: 0.05em 0.15em;
+  font-weight: 600;
+}
+
+.span-not-found {
+  color: var(--muted);
+  font-style: italic;
+  font-size: var(--size-caption);
+}
+
+/* ---------------------------------------------------------------------
+ * Drill-down / prompt viewer
+ * ------------------------------------------------------------------- */
+
+.drilldown {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: var(--space-2);
+  margin-top: var(--space-2);
+  background: color-mix(in srgb, var(--rule) 15%, transparent);
+}
+
+.drilldown summary {
+  cursor: pointer;
+  font-size: var(--size-caption);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.drilldown pre {
+  font-family: var(--font-mono);
+  font-size: var(--size-caption);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: var(--space-2);
+  overflow-x: auto;
+}
+
+.prerule-list {
+  margin: var(--space-1) 0;
+  padding-left: 1.4em;
+  font-size: var(--size-caption);
+}
+
+.prerule-list li {
+  margin-bottom: 0.3em;
+}
+
+/* ---------------------------------------------------------------------
+ * Eval table — a plain data table, not a dashboard.
+ * ------------------------------------------------------------------- */
+
+.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-body);
+}
+
+.eval-table th, .eval-table td {
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+}
+
+.eval-table th {
+  font-size: var(--size-caption);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.eval-table .num {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  text-align: right;
+}
+
+.headline-fraction {
+  font-family: var(--font-mono);
+  font-size: var(--size-heading);
+}
+
+.headline-row {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.headline-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.headline-item__label {
+  font-size: var(--size-caption);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------
+ * As-of control — a segmented control, all values visible at once.
+ * ------------------------------------------------------------------- */
+
+.segmented-control {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmented-control__option {
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface);
+  color: var(--muted);
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--size-caption);
+}
+
+.segmented-control__option:last-child {
+  border-right: none;
+}
+
+.segmented-control__option[data-active="true"] {
+  background: var(--settled-bg);
+  color: var(--settled);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------
+ * Banners
+ * ------------------------------------------------------------------- */
+
+.banner {
+  padding: var(--space-2);
+  border-radius: 6px;
+  font-size: var(--size-caption);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.banner--warn {
+  border-color: var(--conflict);
+  color: var(--conflict);
+  background: var(--conflict-bg);
+}

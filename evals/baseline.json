@@ -1,0 +1,1812 @@
+{
+  "schemaVersion": 1,
+  "configId": "free",
+  "judgeScope": "binary",
+  "mode": "replay",
+  "evalAsOf": "2026-07-24T23:59:59+05:30",
+  "corpusHash": "abece3c279db45fde66ae1616c52f60566a153982b02a419bac99e9c98277f53",
+  "recordingsHash": "ffc8caca6bae373072f74a71d08971c81635e1a70e9ca3c8dcaf7b9fbb3a0f3b",
+  "extraction": [
+    {
+      "scenario": "C1",
+      "goldClaimIds": [
+        "CL-001",
+        "CL-002"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 2,
+      "claimsSpurious": 6,
+      "claimRecall": 1,
+      "claimPrecision": 0.25,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-001",
+          "predClaimId": "M-001#1",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": "CL-002",
+          "predClaimId": "M-002#1",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-001#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-001#2",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-001#3",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-002#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-002#2",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-002#3",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C2",
+      "goldClaimIds": [
+        "CL-010",
+        "CL-011"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 1,
+      "claimsSpurious": 1,
+      "claimRecall": 0.5,
+      "claimPrecision": 0.5,
+      "referentAccuracy": 0,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-010",
+          "predClaimId": "M-010#0",
+          "matched": true,
+          "referentOk": false,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": "CL-011",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-010#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C3",
+      "goldClaimIds": [
+        "CL-020",
+        "CL-021"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 3,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-020",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-021",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-020#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-021#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-021#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C4",
+      "goldClaimIds": [
+        "CL-030",
+        "CL-031"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 1,
+      "claimsSpurious": 2,
+      "claimRecall": 0.5,
+      "claimPrecision": 0.3333,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 0,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-031",
+          "predClaimId": "M-031#1",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": false,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": "CL-030",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-030#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-031#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C5",
+      "goldClaimIds": [
+        "CL-040",
+        "CL-041"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 4,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-040",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-041",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-040#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-040#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-041#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-041#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C6",
+      "goldClaimIds": [
+        "CL-050",
+        "CL-051"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 5,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-050",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-051",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-051#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-051#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-050#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-050#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-050#2",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C7",
+      "goldClaimIds": [
+        "CL-060",
+        "CL-061"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 4,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-060",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-061",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-060#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-060#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-061#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-061#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "C8",
+      "goldClaimIds": [
+        "CL-070",
+        "CL-071"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 0,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-070",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-071",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        }
+      ]
+    },
+    {
+      "scenario": "C9",
+      "goldClaimIds": [
+        "CL-080",
+        "CL-081"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 2,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-080",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-081",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-081#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-081#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N1",
+      "goldClaimIds": [
+        "CL-100",
+        "CL-101"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 2,
+      "claimsSpurious": 1,
+      "claimRecall": 1,
+      "claimPrecision": 0.6667,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-101",
+          "predClaimId": "M-101#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": "CL-100",
+          "predClaimId": "M-100#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-101#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N10",
+      "goldClaimIds": [
+        "CL-190",
+        "CL-191",
+        "CL-192"
+      ],
+      "claimsExpected": 3,
+      "claimsFound": 0,
+      "claimsSpurious": 2,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-190",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-191",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-192",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-190#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-191#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N11",
+      "goldClaimIds": [],
+      "claimsExpected": 0,
+      "claimsFound": 0,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": true,
+      "perClaim": []
+    },
+    {
+      "scenario": "N12",
+      "goldClaimIds": [
+        "CL-210"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-210",
+          "predClaimId": "M-210#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N13",
+      "goldClaimIds": [
+        "CL-211"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 0,
+      "claimsSpurious": 1,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-211",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-211#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N14",
+      "goldClaimIds": [
+        "CL-212"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-212",
+          "predClaimId": "M-212#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N15",
+      "goldClaimIds": [
+        "CL-213"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-213",
+          "predClaimId": "M-213#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N16",
+      "goldClaimIds": [
+        "CL-214"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-214",
+          "predClaimId": "M-214#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N17",
+      "goldClaimIds": [
+        "CL-215"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-215",
+          "predClaimId": "M-215#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N18",
+      "goldClaimIds": [
+        "CL-216"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-216",
+          "predClaimId": "M-216#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        }
+      ]
+    },
+    {
+      "scenario": "N2",
+      "goldClaimIds": [
+        "CL-110"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 0,
+      "claimsSpurious": 0,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-110",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        }
+      ]
+    },
+    {
+      "scenario": "N3",
+      "goldClaimIds": [
+        "CL-120",
+        "CL-121"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 0,
+      "claimsSpurious": 3,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-120",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": "CL-121",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-120#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-120#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-121#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N4",
+      "goldClaimIds": [
+        "CL-130"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 1,
+      "claimsSpurious": 1,
+      "claimRecall": 1,
+      "claimPrecision": 0.5,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-130",
+          "predClaimId": "M-130#0",
+          "matched": true,
+          "referentOk": true,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-130#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N5",
+      "goldClaimIds": [],
+      "claimsExpected": 0,
+      "claimsFound": 0,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": []
+    },
+    {
+      "scenario": "N6",
+      "goldClaimIds": [],
+      "claimsExpected": 0,
+      "claimsFound": 0,
+      "claimsSpurious": 0,
+      "claimRecall": 1,
+      "claimPrecision": 1,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": []
+    },
+    {
+      "scenario": "N7",
+      "goldClaimIds": [
+        "CL-160"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 0,
+      "claimsSpurious": 1,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-160",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-160#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N8",
+      "goldClaimIds": [
+        "CL-170"
+      ],
+      "claimsExpected": 1,
+      "claimsFound": 0,
+      "claimsSpurious": 2,
+      "claimRecall": 0,
+      "claimPrecision": 0,
+      "referentAccuracy": 1,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-170",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-170#0",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-170#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    },
+    {
+      "scenario": "N9",
+      "goldClaimIds": [
+        "CL-180a",
+        "CL-180b"
+      ],
+      "claimsExpected": 2,
+      "claimsFound": 1,
+      "claimsSpurious": 1,
+      "claimRecall": 0.5,
+      "claimPrecision": 0.5,
+      "referentAccuracy": 0,
+      "modalityAccuracy": 1,
+      "polarityAccuracy": 1,
+      "spanValidity": 1,
+      "spanViolations": [],
+      "gatedCorrectly": null,
+      "perClaim": [
+        {
+          "goldClaimId": "CL-180a",
+          "predClaimId": "M-180#0",
+          "matched": true,
+          "referentOk": false,
+          "modalityOk": true,
+          "polarityOk": true,
+          "spanOk": true,
+          "note": "matched"
+        },
+        {
+          "goldClaimId": "CL-180b",
+          "predClaimId": null,
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": null,
+          "note": "gold claim not found in predictions"
+        },
+        {
+          "goldClaimId": null,
+          "predClaimId": "M-180#1",
+          "matched": false,
+          "referentOk": null,
+          "modalityOk": null,
+          "polarityOk": null,
+          "spanOk": true,
+          "note": "spurious: no matching gold claim"
+        }
+      ]
+    }
+  ],
+  "adjudication": [
+    {
+      "scenario": "C1",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.launch_date",
+          "asOf": "2026-07-15T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "CL-001 and CL-002 assign different launch dates (2026-08-12 vs 2026-08-15) to the same referent indep_event.launch_date, making them mutually exclusive."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C2",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.success_criteria",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts ARPDAU lift over a 7-day window as the measure of success, while CL-011 explicitly rejects ARPDAU and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same event."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C3",
+      "buckets": [
+        {
+          "bucket_key": "liveops_calendar.signoff_owner",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "Both claims assert ownership of the final sign-off on the live ops calendar, but they name different individuals (priya.raghunathan vs. meera.iyer). These cannot both be true at the same time."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C4",
+      "buckets": [
+        {
+          "bucket_key": "d7_retention.trend",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "COMPATIBLE",
+          "correct": false,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "CL-030 reports D7 retention up 1.8pp week-over-week, while CL-031 reports D7 retention down 3pp since the 1.9.3 patch. These are different time comparisons (WoW vs. since a patch) and can both be true simultaneously — D7 retention could be rising week-over-week while still being lower than it was at the time of the 1.9.3 patch."
+        }
+      ],
+      "verdictAccuracy": 0,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C5",
+      "buckets": [
+        {
+          "bucket_key": "tournament.scope",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "CL-040 states the tournament scope is 'leaderboard only, brackets cut,' explicitly excluding brackets. CL-041 states work is underway on 'bracket seeding rules,' implying brackets are included in the scope. These cannot both be true simultaneously for the same tournament scope."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C6",
+      "buckets": [
+        {
+          "bucket_key": "leaderboard.readiness",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "COMPATIBLE",
+          "correct": false,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 0,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C7",
+      "buckets": [
+        {
+          "bucket_key": "build_194.release_readiness",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "CL-060 states Build 1.9.4 is not release-ready due to an open P1 (token animation desync on reconnect), while CL-061 states the same build is shipping Friday and already in the store review queue. A build that is not release-ready cannot simultaneously be shipping and in the store review queue."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "C8",
+      "buckets": [
+        {
+          "bucket_key": "art_capacity.allocation",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "COMPATIBLE",
+          "correct": false,
+          "falsePositive": false,
+          "decidedBy": "fallback",
+          "rationale": "model output failed schema/parse validation: no repair step produced valid JSON"
+        }
+      ],
+      "verdictAccuracy": 0,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N1",
+      "buckets": [
+        {
+          "bucket_key": "level40_art.eta",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "UPDATE",
+          "actual": "UPDATE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N10",
+      "buckets": [
+        {
+          "bucket_key": "reward_config.tiers",
+          "asOf": "2026-07-10T11:20:00+05:30",
+          "expected": "CONTRADICTION",
+          "actual": "CONTRADICTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "Both claims refer to the number of tiers in reward_config.tiers. CL-190 states 12 tiers (design doc), while CL-191 states 8 tiers (built config). These are mutually exclusive counts for the same entity."
+        },
+        {
+          "bucket_key": "reward_config.tiers",
+          "asOf": "2026-07-10T15:41:00+05:30",
+          "expected": "RESOLVED_BY_CORRECTION",
+          "actual": "RESOLVED_BY_CORRECTION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "CL-190 withdrawn; CL-192 adopts CL-191's value \"8\""
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N11",
+      "buckets": [],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N12",
+      "buckets": [
+        {
+          "bucket_key": "push_notification.upgrade_eta",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N13",
+      "buckets": [
+        {
+          "bucket_key": "event_dashboard.readiness",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N14",
+      "buckets": [
+        {
+          "bucket_key": "ua_creative_refresh.booking",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N15",
+      "buckets": [
+        {
+          "bucket_key": "qa_regression_suite.coverage",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N16",
+      "buckets": [
+        {
+          "bucket_key": "tricolour_token_set.status",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N17",
+      "buckets": [
+        {
+          "bucket_key": "event_faq.status",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N18",
+      "buckets": [
+        {
+          "bucket_key": "difficulty_curve.status",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N2",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.launch_date",
+          "asOf": "2026-07-18T23:59:59+05:30",
+          "expected": "RESOLVED_BY_SUPERSESSION",
+          "actual": "RESOLVED_BY_SUPERSESSION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "CL-001, CL-002 superseded by CL-110 (authority_rank 3)"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N3",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.launch_date|soft_launch.date",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "AMBIGUOUS_REFERENT",
+          "actual": "COMPATIBLE",
+          "correct": false,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "(no bucket produced by pipeline at this as-of; treated as no contradiction)"
+        }
+      ],
+      "verdictAccuracy": 0,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N4",
+      "buckets": [
+        {
+          "bucket_key": "onam_event.launch_date",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N5",
+      "buckets": [],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N6",
+      "buckets": [],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N7",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.launch_date",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "RESOLVED_BY_SUPERSESSION",
+          "actual": "RESOLVED_BY_SUPERSESSION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "CL-001, CL-002 superseded by CL-110 (authority_rank 3)"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N8",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.launch_date",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "RESOLVED_BY_SUPERSESSION",
+          "actual": "RESOLVED_BY_SUPERSESSION",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "CL-001, CL-002 superseded by CL-110 (authority_rank 3)"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    },
+    {
+      "scenario": "N9",
+      "buckets": [
+        {
+          "bucket_key": "indep_event.duration",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "(no bucket produced by pipeline at this as-of; treated as no contradiction)"
+        },
+        {
+          "bucket_key": "config_freeze.owner",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "COMPATIBLE",
+          "actual": "COMPATIBLE",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "pre_rule",
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": true,
+      "excludedFromHeadline": false
+    }
+  ],
+  "headline": {
+    "falsePositiveRate": {
+      "flagged": 0,
+      "mustNotFlagTotal": 18,
+      "rate": 0,
+      "flaggedScenarios": []
+    },
+    "contradictionRecall": {
+      "found": 5,
+      "total": 8,
+      "scenarios": {
+        "C1": true,
+        "C2": true,
+        "C3": true,
+        "C4": false,
+        "C5": true,
+        "C6": false,
+        "C7": true,
+        "C8": false
+      }
+    },
+    "spanValidity": {
+      "valid": 65,
+      "total": 65,
+      "rate": 1
+    }
+  },
+  "contested": [
+    {
+      "scenario": "C9",
+      "buckets": [
+        {
+          "bucket_key": "reward_config.live_state",
+          "asOf": "2026-07-24T23:59:59+05:30",
+          "expected": "CONTESTED",
+          "actual": "CONTESTED",
+          "correct": true,
+          "falsePositive": false,
+          "decidedBy": "model",
+          "rationale": "CL-081 states the new reward config is live since the 18th, which means the old Holi reward table should no longer be visible. CL-080 states players are still seeing the old Holi reward table. These cannot both be true simultaneously."
+        }
+      ],
+      "verdictAccuracy": 1,
+      "isMustNotFlag": false,
+      "excludedFromHeadline": true
+    }
+  ],
+  "counts": {
+    "messages": 77,
+    "gated": 7,
+    "claims": 65,
+    "rejected": 21,
+    "buckets": 62
+  },
+  "generatedAt": "2026-07-24T23:59:59+05:30",
+  "reportHash": "9c13014855149dfd3c4b7f6de1eb49fdabd8a379905fcd2217a2bb8456b84905"
+}

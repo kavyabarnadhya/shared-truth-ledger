@@ -1,0 +1,22 @@
+{
+  "name": "shared-truth-ledger-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server exposing the shared-truth-ledger fixture corpus (Slack + Gmail) over stdio, for attaching an MCP client like Claude Desktop. Demonstrates the corpus sits behind a real tool boundary; the web app imports the same adapter in-process and never calls this server over HTTP.",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "start": "node --experimental-strip-types src/index.ts",
+    "dev": "node --experimental-strip-types src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.2"
+  }
+}

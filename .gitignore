@@ -1,0 +1,26 @@
+# env
+.env
+.env.local
+.env.*.local
+
+# node
+node_modules/
+
+# next
+.next/
+out/
+build/
+dist/
+
+# ledger local state (file-backed store)
+ledger-data/
+
+# eval scratch
+evals/runs/
+
+# misc
+*.log
+.DS_Store
+Thumbs.db
+.vercel
+*.tsbuildinfo

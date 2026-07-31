@@ -1,0 +1,25 @@
+{
+  "key": "3d4e393c3ba080704ee96ee0ef4245ff",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-538",
+  "promptSha": "bb7a75178518496c57fe07cb920ef29f7a1267a01d5e387ab68b2b45615a65fe",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Rohan Desai]: What if we pushed the tournament to September and shipped just the skins in August?\n[Priya Raghunathan]: Onam event target go-live is 26 August. Putting it on the calendar now.\n[Meera Iyer]: great, thanks for getting that on the calendar\n\nMessage from Sana Kulkarni (Art Lead):\nwill start scoping the board set on our end",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"board set scoping\", \"value\": \"will start scoping the board set on our end\", \"source_span\": \"will start scoping the board set on our end\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}",
+    "usage": {
+      "inputTokens": 512,
+      "outputTokens": 225
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2475,
+  "recordedAt": "2026-07-31T14:30:53.567+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "key": "6786cff5c27ffba61a34b4bdc0470ef8",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate liveops_calendar.signoff_owner@2026-07-18T23:59:59+05:30",
+  "promptSha": "7f2d0ea573115889b81101a7025cfbb7da9c6c199a8dba4c0780520aa6bc290c",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- CL-020 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"priya.raghunathan\" | span: \"As producer I'll hold final sign-off on the live ops calendar, same as we did for Holi.\"\n- CL-021 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"meera.iyer\" | span: \"Calendar sign-off sits with me. That was the whole point of the change we made after Holi.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"RESOLVED_BY_SUPERSESSION\", \"rationale\": \"CL-021 (meera.iyer, 17 Jul) explicitly references a change made after Holi that established her as the sign-off owner, directly superseding CL-020 (priya.raghunathan, 16 Jul) which claimed the same role based on the Holi precedent. The later claim resolves the earlier one by asserting the updated ownership.\", \"conflicting_claim_ids\": [\"CL-020\", \"CL-021\"]}",
+    "usage": {
+      "inputTokens": 448,
+      "outputTokens": 779
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 3876,
+  "recordedAt": "2026-07-31T15:01:16.827+00:00"
+}

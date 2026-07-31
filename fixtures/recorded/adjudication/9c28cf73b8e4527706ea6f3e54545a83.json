@@ -1,0 +1,25 @@
+{
+  "key": "9c28cf73b8e4527706ea6f3e54545a83",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+  "promptSha": "3bf0bf3cff53556c0f6e99a6831085eb258c537e2d3ce454fd8bcbfb6efd5fda",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: build_194.release_readiness\n\nLive claims:\n- M-060#0 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"has an open P1 — token animation desyncs on reconnect\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\n- M-061#1 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"already in the store review queue\" | span: \"It's already in the store review queue.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-060#0 states Build 1.9.4 has an open P1 bug (token animation desyncs on reconnect). M-061#1 states something is already in the store review queue. Both can be true simultaneously — a build can have an open P1 bug and still be in the store review queue (e.g., the P1 is known but the build is under review for other reasons, or the fix is tracked separately). There is no logical contradiction.\", \"conflicting_claim_ids\": []}",
+    "usage": {
+      "inputTokens": 354,
+      "outputTokens": 578
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 6618,
+  "recordedAt": "2026-07-31T17:21:19.770+00:00"
+}

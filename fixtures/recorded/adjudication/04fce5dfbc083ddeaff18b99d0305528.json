@@ -1,0 +1,25 @@
+{
+  "key": "04fce5dfbc083ddeaff18b99d0305528",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate indep_event.success_criteria@2026-07-15T23:59:59+05:30",
+  "promptSha": "5601ba3597ed386d040743b29ff07e9d0476349f93cd1844f4acbfc5f1447d53",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: indep_event.success_criteria\n\nLive claims:\n- CL-010 | meera.iyer | 7 Jul 2026, 9:48 AM IST | value: \"ARPDAU lift over 7-day window\" | span: \"Success on this one is ARPDAU lift across the seven-day window. Everything else is secondary.\"\n- CL-011 | rohan.desai | 14 Jul 2026, 4:20 PM IST | value: \"session depth and returning players\" | span: \"I want to push back on how we're framing success here. We got hammered on Holi for pushing offers. Success for this event should be session depth and returning players, not ARPDAU.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 states success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU and states success should be session depth and returning players. These are mutually exclusive definitions of success for the same referent.\", \"conflicting_claim_ids\": [\"CL-010\", \"CL-011\"]}",
+    "usage": {
+      "inputTokens": 371,
+      "outputTokens": 205
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 1770,
+  "recordedAt": "2026-07-31T14:40:52.887+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "key": "56f1676a85d5ee281b4345442023bc7e",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate tournament.scope@2026-07-18T23:59:59+05:30",
+  "promptSha": "697367a1ff2ceda97f2ad0d0896300ed70127f3a80cc0a17019a4efd9abe7d2c",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Meera Iyer states the tournament scope is a flat leaderboard with brackets cut, while Rohan Desai states the tournament includes bracket seeding. These are conflicting claims about the same referent (tournament.scope) from different people, and neither has been resolved or superseded.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
+    "usage": {
+      "inputTokens": 442,
+      "outputTokens": 227
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2047,
+  "recordedAt": "2026-07-31T15:01:24.881+00:00"
+}

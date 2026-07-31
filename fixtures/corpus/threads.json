@@ -1,0 +1,88 @@
+{
+  "threads": [
+    {
+      "thread_id": "T1",
+      "source": "slack",
+      "channel": "#liveops-ludojunction",
+      "participants": ["meera.iyer", "priya.raghunathan", "rohan.desai", "arjun.rao", "farah.qureshi", "neha.bhatt", "deepak.menon", "vikram.shetty"],
+      "message_ids": ["M-001", "M-500", "M-051", "M-511", "M-010", "M-502", "M-180", "M-190", "M-191", "M-506", "M-192", "M-507", "M-120", "M-121", "M-508", "M-203", "M-514", "M-170", "M-510", "M-021", "M-509", "M-041", "M-512", "M-031"]
+    },
+    {
+      "thread_id": "T2",
+      "source": "gmail",
+      "subject": "Ludo Junction — Independence Day event release sign-off",
+      "participants": ["priya.raghunathan", "meera.iyer", "karthik.nair", "farah.qureshi", "vikram.shetty"],
+      "message_ids": ["M-002", "M-020", "M-515", "M-110", "M-071", "M-516"]
+    },
+    {
+      "thread_id": "T3",
+      "source": "slack",
+      "channel": "#art-pipeline",
+      "participants": ["sana.kulkarni", "priya.raghunathan", "rohan.desai"],
+      "message_ids": ["M-100", "M-518", "M-101", "M-160", "M-520", "M-214", "M-522", "M-070", "M-521"]
+    },
+    {
+      "thread_id": "T4",
+      "source": "slack",
+      "channel": "#eng-backend",
+      "participants": ["vikram.shetty", "meera.iyer", "rohan.desai", "farah.qureshi"],
+      "message_ids": ["M-210", "M-050", "M-524", "M-213", "M-526"]
+    },
+    {
+      "thread_id": "T5",
+      "source": "slack",
+      "channel": "#qa-releases",
+      "participants": ["farah.qureshi", "priya.raghunathan", "vikram.shetty"],
+      "message_ids": ["M-060", "M-527", "M-061", "M-529"]
+    },
+    {
+      "thread_id": "T6",
+      "source": "gmail",
+      "subject": "Weekly product metrics — w/c 13 July",
+      "participants": ["neha.bhatt", "meera.iyer", "arjun.rao"],
+      "message_ids": ["M-211", "M-531", "M-030", "M-530"]
+    },
+    {
+      "thread_id": "T7",
+      "source": "slack",
+      "channel": "DM meera.iyer↔rohan.desai",
+      "participants": ["meera.iyer", "rohan.desai"],
+      "message_ids": ["M-011", "M-532", "M-040", "M-533", "M-534", "M-216", "M-535"]
+    },
+    {
+      "thread_id": "T8",
+      "source": "slack",
+      "channel": "#liveops-ludojunction",
+      "participants": ["priya.raghunathan", "meera.iyer", "rohan.desai", "sana.kulkarni"],
+      "message_ids": ["M-140", "M-130", "M-537", "M-538"]
+    },
+    {
+      "thread_id": "T9",
+      "source": "slack",
+      "channel": "#support-signals",
+      "participants": ["deepak.menon", "meera.iyer"],
+      "message_ids": ["M-215", "M-541", "M-542", "M-080", "M-081"]
+    },
+    {
+      "thread_id": "T10",
+      "source": "slack",
+      "channel": "#build-ci",
+      "participants": ["ci-bot", "vikram.shetty"],
+      "message_ids": ["M-200", "M-543", "M-544"]
+    },
+    {
+      "thread_id": "T11",
+      "source": "slack",
+      "channel": "#liveops-ludojunction",
+      "participants": ["arjun.rao", "meera.iyer", "rohan.desai", "priya.raghunathan"],
+      "message_ids": ["M-547", "M-212", "M-150", "M-545"]
+    },
+    {
+      "thread_id": "T12",
+      "source": "gmail",
+      "subject": "Play Console + newsletter noise",
+      "participants": ["noreply@play.google.com", "newsletter@gamedevweekly.com", "meera.iyer"],
+      "message_ids": ["M-201", "M-202"]
+    }
+  ]
+}

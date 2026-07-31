@@ -1,0 +1,17 @@
+{
+  "cast": [
+    { "handle": "meera.iyer", "name": "Meera Iyer", "role": "Product Manager", "is_bot": false, "authority_rank": 1 },
+    { "handle": "priya.raghunathan", "name": "Priya Raghunathan", "role": "Producer", "is_bot": false, "authority_rank": 1 },
+    { "handle": "rohan.desai", "name": "Rohan Desai", "role": "Game Designer", "is_bot": false, "authority_rank": 1 },
+    { "handle": "sana.kulkarni", "name": "Sana Kulkarni", "role": "Art Lead", "is_bot": false, "authority_rank": 1 },
+    { "handle": "vikram.shetty", "name": "Vikram Shetty", "role": "Engineering Lead", "is_bot": false, "authority_rank": 1 },
+    { "handle": "neha.bhatt", "name": "Neha Bhatt", "role": "Data Analyst", "is_bot": false, "authority_rank": 1 },
+    { "handle": "arjun.rao", "name": "Arjun Rao", "role": "UA Lead", "is_bot": false, "authority_rank": 1 },
+    { "handle": "farah.qureshi", "name": "Farah Qureshi", "role": "QA Lead", "is_bot": false, "authority_rank": 1 },
+    { "handle": "deepak.menon", "name": "Deepak Menon", "role": "Community & Support", "is_bot": false, "authority_rank": 1 },
+    { "handle": "karthik.nair", "name": "Karthik Nair", "role": "Studio Head", "is_bot": false, "authority_rank": 3 },
+    { "handle": "ci-bot", "name": "CI Bot", "role": "Automation", "is_bot": true, "authority_rank": 0 },
+    { "handle": "noreply@play.google.com", "name": "Play Console", "role": "Automation", "is_bot": true, "authority_rank": 0 },
+    { "handle": "newsletter@gamedevweekly.com", "name": "GameDev Weekly", "role": "Newsletter", "is_bot": true, "authority_rank": 0 }
+  ]
+}

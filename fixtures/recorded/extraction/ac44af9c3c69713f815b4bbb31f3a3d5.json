@@ -1,0 +1,25 @@
+{
+  "key": "ac44af9c3c69713f815b4bbb31f3a3d5",
+  "tier": "extraction",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": null,
+  "step": "extract M-500",
+  "promptSha": "24d18fed69b1f3f47055ed87dd01139f9566ab6b88cdffc0c67b85882b60b84c",
+  "request": {
+    "system": "You extract factual claims made by the message author about project state.\n\nEmit one object per distinct claim the author makes. Emit an empty array if the message makes no claim.\n\nFor each claim:\n- \"referent\": a short noun phrase naming what the claim is about.\n- \"value\": the value or position the author asserts.\n- \"source_span\": copied character-for-character from the message text. Do not paraphrase, do not fix typos, do not add ellipses. This must be an exact substring of the message.\n- \"modality\": one of \"assertion\", \"hedge\", \"proposal\", \"question\", \"reported\".\n  - \"assertion\": the author states it as fact.\n  - \"hedge\": the author softens or qualifies it.\n  - \"proposal\": the author is suggesting a change, not stating current fact.\n  - \"question\": the author is asking, not asserting.\n  - \"reported\": the author is relaying what someone else said or decided, not asserting it themselves.\n- \"polarity\": \"positive\" if the author affirms the value, \"negative\" if the author denies or rejects it.\n- \"attributed_to\": when modality is \"reported\", the name or handle of the person credited with the statement. Otherwise null.\n\nDo not infer claims from any context messages provided; they are shown only to help you resolve pronouns and are not themselves a source of claims.\n\nOutput JSON only, matching this schema exactly:\n{\"claims\": [{\"referent\": string, \"value\": string, \"source_span\": string, \"modality\": \"assertion\"|\"hedge\"|\"proposal\"|\"question\"|\"reported\", \"polarity\": \"positive\"|\"negative\", \"attributed_to\": string|null}]}",
+    "user": "Context (for pronoun resolution only, do not extract claims from these):\n[Meera Iyer]: Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.\n\nMessage from Priya Raghunathan (Producer):\nsounds good, will start blocking calendar time for it",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"claims\": [{\"referent\": \"the plan\", \"value\": \"sounds good\", \"source_span\": \"sounds good\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}, {\"referent\": \"blocking calendar time for the event\", \"value\": \"will start blocking calendar time for it\", \"source_span\": \"will start blocking calendar time for it\", \"modality\": \"assertion\", \"polarity\": \"positive\", \"attributed_to\": null}]}",
+    "usage": {
+      "inputTokens": 487,
+      "outputTokens": 443
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2226,
+  "recordedAt": "2026-07-31T13:18:17.504+00:00"
+}
