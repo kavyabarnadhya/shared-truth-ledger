@@ -2660,6 +2660,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 1622,
     "recordedAt": "2026-07-31T18:39:20.988+00:00"
   },
+  "a65a099e7cb5fd3ef17f637d31364cdb": {
+    "key": "a65a099e7cb5fd3ef17f637d31364cdb",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-15T23:59:59+05:30",
+    "promptSha": "46c16a27eae06c599264677d851a9c4f3801d2b5e84bc5a19ad88ecf3c0505ff",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- M-001#1 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"12 August\" | span: \"Working assumption is we go live 12 August\"\n- M-002#1 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"15 August\" | span: \"Go-live is 15 August\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same referent 'indep_event.launch_date' but assign different dates (12 August vs 15 August), which cannot both be true.\", \"conflicting_claim_ids\": [\"M-001#1\", \"M-002#1\"], \"confidence\": 1.0}",
+      "usage": {
+        "inputTokens": 355,
+        "outputTokens": 144
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1941,
+    "recordedAt": "2026-07-31T21:25:25.091+00:00"
+  },
   "b1753fa4be1982560e810328ba66c250": {
     "key": "b1753fa4be1982560e810328ba66c250",
     "tier": "adjudication",
@@ -2734,6 +2759,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     },
     "latencyMs": 1801,
     "recordedAt": "2026-07-31T19:17:20.575+00:00"
+  },
+  "c60365fdf52469627a8730ca56076109": {
+    "key": "c60365fdf52469627a8730ca56076109",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate reward_config.tiers@2026-07-15T23:59:59+05:30",
+    "promptSha": "ee640317bc48e311077108cfe2e8233e7518f08ec627087a0ebcc3029c400699",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-190#0 refers to the design doc specifying 12 tiers, while M-191#0 refers to only 8 tiers being built in the config. These can both be true simultaneously — the design may call for 12 tiers while only 8 have been implemented.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 354,
+        "outputTokens": 202
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 11767,
+    "recordedAt": "2026-07-31T21:25:42.865+00:00"
   },
   "c6fa58e49afbcba600fed66143cf2c2b": {
     "key": "c6fa58e49afbcba600fed66143cf2c2b",
@@ -2910,6 +2960,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 1653,
     "recordedAt": "2026-07-31T18:57:28.656+00:00"
   },
+  "e192dc2b41dcab3738893cbfac9b64cf": {
+    "key": "e192dc2b41dcab3738893cbfac9b64cf",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate liveops_calendar.signoff_owner@2026-07-18T23:59:59+05:30",
+    "promptSha": "26d4a5cc751d64b18965e6be75fd7a405119b443c74e6ea743a6236d9fed9830",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- M-020#0 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"held by Priya Raghunathan as producer\" | span: \"I'll hold final sign-off on the live ops calendar\"\n- M-021#0 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"sits with me\" | span: \"Calendar sign-off sits with me.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"M-020#0 asserts that Priya Raghunathan holds final sign-off on the live ops calendar, while M-021#0 asserts that calendar sign-off sits with Meera Iyer. These statements assign the signoff_owner role to different people, making them mutually incompatible.\", \"conflicting_claim_ids\": [\"M-020#0\", \"M-021#0\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 366,
+        "outputTokens": 483
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 2461,
+    "recordedAt": "2026-07-31T21:25:58.943+00:00"
+  },
   "e29a69b64a3be1fa9aed523228e134e9": {
     "key": "e29a69b64a3be1fa9aed523228e134e9",
     "tier": "adjudication",
@@ -2935,6 +3010,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     "latencyMs": 2077,
     "recordedAt": "2026-07-31T18:57:20.975+00:00"
   },
+  "e6c2e608269a898cdcc1a54459484373": {
+    "key": "e6c2e608269a898cdcc1a54459484373",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate reward_config.tiers@2026-07-18T23:59:59+05:30",
+    "promptSha": "ee640317bc48e311077108cfe2e8233e7518f08ec627087a0ebcc3029c400699",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-190#0 refers to 12 tiers in the design doc (planned), while M-191#0 refers to 8 tiers built in the config (implemented). These can both be true simultaneously — the design may specify 12 tiers while only 8 have been built so far.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 354,
+        "outputTokens": 205
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1465,
+    "recordedAt": "2026-07-31T21:26:06.424+00:00"
+  },
   "ebd89fa99f97ed48798c76eec2ab9a46": {
     "key": "ebd89fa99f97ed48798c76eec2ab9a46",
     "tier": "adjudication",
@@ -2959,6 +3059,31 @@ export const RECORDINGS: Record<string, RecordedCall> = {
     },
     "latencyMs": 1864,
     "recordedAt": "2026-07-31T15:00:59.113+00:00"
+  },
+  "f01ce232aceb00d0f361bcb20ed524be": {
+    "key": "f01ce232aceb00d0f361bcb20ed524be",
+    "tier": "adjudication",
+    "model": "inclusionai/ling-3.0-flash-free",
+    "configId": "free",
+    "judgeScope": "binary",
+    "step": "adjudicate indep_event.launch_date@2026-07-18T23:59:59+05:30",
+    "promptSha": "46c16a27eae06c599264677d851a9c4f3801d2b5e84bc5a19ad88ecf3c0505ff",
+    "request": {
+      "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+      "user": "Referent: indep_event.launch_date\n\nLive claims:\n- M-001#1 | meera.iyer | 6 Jul 2026, 10:12 AM IST | value: \"12 August\" | span: \"Working assumption is we go live 12 August\"\n- M-002#1 | priya.raghunathan | 15 Jul 2026, 6:22 PM IST | value: \"15 August\" | span: \"Go-live is 15 August\"",
+      "temperature": 0,
+      "maxOutputTokens": 800
+    },
+    "response": {
+      "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same entity (indep_event.launch_date) but assign different dates (12 August vs 15 August). A single launch date cannot be both values simultaneously.\", \"conflicting_claim_ids\": [\"M-001#1\", \"M-002#1\"], \"confidence\": 0.95}",
+      "usage": {
+        "inputTokens": 355,
+        "outputTokens": 145
+      },
+      "finishReason": "stop"
+    },
+    "latencyMs": 1521,
+    "recordedAt": "2026-07-31T21:25:50.477+00:00"
   },
   "f8307d6dcca225a6695423aa55f4753c": {
     "key": "f8307d6dcca225a6695423aa55f4753c",
@@ -3012,4 +3137,4 @@ export const RECORDINGS: Record<string, RecordedCall> = {
   }
 } as unknown as Record<string, RecordedCall>;
 
-export const RECORDINGS_HASH = "add167cf17072903d16576ef86d9f76f7dfbc02f548ab6553ec796e061e9a750";
+export const RECORDINGS_HASH = "14871f5bc9ab51ebb1fc2bc3eb8136788f17b2da33c07115e835c298ac6cbb34";

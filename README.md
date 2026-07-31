@@ -607,6 +607,23 @@ during the build:
    this can only ever hurt contradiction recall, never inflate the
    headline false-positive rate. It is a conservative failure mode chosen
    on purpose, not an accident.
+10. **The flagship `indep_event.launch_date` supersession transition only
+    reproduces on the gold-claims eval path, not on the live-app
+    extractor-claims path.** On the Signals tab, toggling `AsOfControl` to
+    18 Jul shows `CONTRADICTION` rather than the expected
+    `RESOLVED_BY_SUPERSESSION`, because the free model's extraction call
+    for M-110 (Karthik Nair's authoritative "Let's go with the 15th.
+    Final." message — the one R5's supersession rule needs) returned
+    truncated chain-of-thought prose instead of JSON, hit the
+    `maxOutputTokens` cap mid-sentence, and was correctly rejected by the
+    repair ladder, producing zero claims from that message. This is the
+    same conservative failure mode as #9 above (M-070/C8), just landing on
+    a message this specific demo path depends on. The gold-claims eval
+    path is unaffected — it uses hand-labeled claims, not live extraction —
+    so `npm run eval`, the frozen baseline, and every number in this
+    README and the deck are correct and unaffected. Not patched around by
+    re-prompting or raising the token cap after seeing this result; that
+    would be exactly the kind of post-hoc tuning §9 below rules out.
 
 ---
 

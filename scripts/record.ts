@@ -35,7 +35,7 @@ import { computeCacheKey, promptSha } from "../src/core/model/cache-key.ts";
 import { getConfig } from "../src/core/model/config.ts";
 import { EXTRACTION_PROMPT } from "../src/core/prompts/extraction.ts";
 import { PROMPT_VERSION as ADJUDICATION_PROMPT_VERSION } from "../src/core/prompts/adjudication.ts";
-import { EVAL_AS_OF_DEFAULT } from "../src/core/time.ts";
+import { EVAL_AS_OF_DEFAULT, parseInstant } from "../src/core/time.ts";
 import type { CastEntry, GoldClaim, Message, ModelClient, ModelRequest, ModelResponse, RecordedCall, TraceEntry, JudgeScope, Instant } from "../src/core/types.ts";
 
 const ROOT = join(import.meta.dirname, "..");
@@ -293,32 +293,47 @@ async function main(): Promise<void> {
   // Contradictions/Ledger tabs run adjudication on the EXTRACTOR's own
   // predicted claims, which naturally form different buckets (and hence
   // different cache keys) than the gold-claims run. Record that path too,
-  // at the frozen default as-of and binary scope only — that's what
-  // /api/ledger actually calls — so the hosted app's default view works in
-  // replay mode without needing a live key.
+  // in binary scope, at every as-of the AsOfControl segmented control
+  // exposes (src/components/AsOfControl.tsx's AS_OF_PRESETS) — not just the
+  // frozen default. Only recording the default here left the flagship
+  // 15Jul/18Jul transition demo (the one place the UI's as-of toggle is
+  // meant to be exercised) with no live-app-path recording at all, which
+  // surfaced as a live "No recording for this input" error on
+  // indep_event.launch_date the first time a reviewer actually moved the
+  // control off its default. These three literals are kept in sync with
+  // AsOfControl.tsx's AS_OF_PRESETS by hand (that file is a "use client"
+  // component and can't be imported into a plain Node script cleanly) —
+  // if AsOfControl.tsx's presets ever change, update this list too.
+  const LIVE_APP_AS_OFS = [
+    parseInstant("2026-07-15T23:59:59+05:30"), // AsOfControl: "15 Jul"
+    parseInstant("2026-07-18T23:59:59+05:30"), // AsOfControl: "18 Jul"
+    EVAL_AS_OF_DEFAULT, // AsOfControl: "24 Jul (frozen)"
+  ];
   console.log("");
-  console.log("=== Adjudication on EXTRACTOR's own claims (binary, EVAL_AS_OF_DEFAULT — what the live app uses) ===");
+  console.log(`=== Adjudication on EXTRACTOR's own claims (binary, all ${LIVE_APP_AS_OFS.length} AsOfControl presets — what the live app uses) ===`);
   const liveAppAdjLive = new LiveModelClient(config, apiKey);
   const liveAppAdjRecorder = new RecordingModelClient(liveAppAdjLive, sink, ADJUDICATION_PROMPT_VERSION);
-  const liveAppResult = await runAdjudicationPipeline(
-    extractionResult.claims, messagesById, cast, CONTESTED_REFERENTS, EVAL_AS_OF_DEFAULT, "binary", liveAppAdjRecorder,
-  );
   let liveAppFailures = 0;
-  for (const v of liveAppResult.verdicts) {
-    if (v.decidedBy === "fallback") {
-      liveAppFailures++;
-      console.log(`  FAILED: adjudicate ${v.bucket_key}@${EVAL_AS_OF_DEFAULT}: ${v.rationale}`);
+  for (const liveAppAsOf of LIVE_APP_AS_OFS) {
+    const liveAppResult = await runAdjudicationPipeline(
+      extractionResult.claims, messagesById, cast, CONTESTED_REFERENTS, liveAppAsOf, "binary", liveAppAdjRecorder,
+    );
+    for (const v of liveAppResult.verdicts) {
+      if (v.decidedBy === "fallback") {
+        liveAppFailures++;
+        console.log(`  FAILED: adjudicate ${v.bucket_key}@${liveAppAsOf}: ${v.rationale}`);
+      }
+    }
+    for (const esc of tallyEscalations(liveAppResult)) {
+      const finalVerdict = liveAppResult.verdicts.find((v) => v.bucket_key === esc.bucketKey);
+      allEscalations.push({
+        bucketKey: esc.bucketKey, asOf: esc.asOf,
+        verdictAfter: finalVerdict?.verdict ?? "unknown", source: "live-app pass",
+      });
+      console.log(`  ESCALATED: ${esc.bucketKey}@${esc.asOf} -> final verdict after escalation: ${finalVerdict?.verdict ?? "unknown"}`);
     }
   }
-  for (const esc of tallyEscalations(liveAppResult)) {
-    const finalVerdict = liveAppResult.verdicts.find((v) => v.bucket_key === esc.bucketKey);
-    allEscalations.push({
-      bucketKey: esc.bucketKey, asOf: esc.asOf,
-      verdictAfter: finalVerdict?.verdict ?? "unknown", source: "live-app pass",
-    });
-    console.log(`  ESCALATED: ${esc.bucketKey}@${esc.asOf} -> final verdict after escalation: ${finalVerdict?.verdict ?? "unknown"}`);
-  }
-  console.log(`Adjudication (live-app path): ${liveAppAdjRecorder.recorded} recorded, ${liveAppAdjRecorder.skipped} skipped (already on disk), ${liveAppFailures} failed`);
+  console.log(`Adjudication (live-app path, all as-ofs): ${liveAppAdjRecorder.recorded} recorded, ${liveAppAdjRecorder.skipped} skipped (already on disk), ${liveAppFailures} failed`);
 
   console.log("");
   console.log("=== Escalation router summary ===");
