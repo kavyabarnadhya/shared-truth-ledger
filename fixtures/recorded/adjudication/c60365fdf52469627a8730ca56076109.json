@@ -1,0 +1,25 @@
+{
+  "key": "c60365fdf52469627a8730ca56076109",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate reward_config.tiers@2026-07-15T23:59:59+05:30",
+  "promptSha": "ee640317bc48e311077108cfe2e8233e7518f08ec627087a0ebcc3029c400699",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not. Also self-report your confidence in this verdict as a number from 0 (guessing) to 1 (certain).\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[], \"confidence\": number}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-190#0 refers to the design doc specifying 12 tiers, while M-191#0 refers to only 8 tiers being built in the config. These can both be true simultaneously — the design may call for 12 tiers while only 8 have been implemented.\", \"conflicting_claim_ids\": [], \"confidence\": 0.95}",
+    "usage": {
+      "inputTokens": 354,
+      "outputTokens": 202
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 11767,
+  "recordedAt": "2026-07-31T21:25:42.865+00:00"
+}
