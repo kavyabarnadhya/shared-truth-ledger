@@ -198,6 +198,14 @@ adjudication only, extraction still free) is fully plumbed in
 The two-tier architecture is real; the cascade is evidenced only on the free
 tier for this submission.
 
+**What was used to build this, per the assignment's ground rules:** the app
+code, prompts, eval harness, and this README were built with **Claude
+Code** (Claude Sonnet 5 as the coding assistant) — every commit in this
+repo's history carries a `Co-Authored-By: Claude Sonnet 5` trailer. The
+*running system* itself calls `inclusionai/ling-3.0-flash-free`, named
+above, for extraction and adjudication; no other model or paid API is
+called by the deployed app.
+
 **Judge-scope comparison, not model comparison.** Since no strong-model run
 was made, the phase-3 measurement in this build compares two prompt
 *scopes* instead of two models, both on the free tier:
