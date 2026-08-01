@@ -14,28 +14,41 @@ import { SCENARIOS_BY_ID } from "@/core/eval/scenarios";
  * and offers a "View the messages" action wired to SourcePanel via
  * onViewMessages(messageIds) so a reviewer can see the actual source text a
  * scenario is scored against.
+ *
+ * Restructure (density pass): the id + title used to sit above the notes
+ * paragraph and the "View the messages" link, all stacked inline inside the
+ * row's first cell — a real <table> in markup, but every row several lines
+ * tall, so ~27 of them read as a stacked-paragraph wall, not a scannable
+ * list. The id/title now render on a single line; the notes text and the
+ * "View the messages" action (same content, not shortened) move into a
+ * <details> the reader opens per scenario — the same disclosure pattern
+ * already used for the gold-claims sample and prompt viewers elsewhere on
+ * this page, not a new interaction.
  */
 function ScenarioLabel({ scenario, onViewMessages }: { scenario: string; onViewMessages?: (messageIds: string[]) => void }) {
   const def = SCENARIOS_BY_ID.get(scenario as never);
   return (
     <div>
-      <div>
+      <div className="scenario-label__line">
         <span className="mono-cell">{scenario}</span>
-        {def && <strong style={{ marginLeft: "0.5em" }}>{def.title}</strong>}
+        {def && <strong>{def.title}</strong>}
       </div>
-      {def && (
-        <div className="claim-state-label" style={{ marginTop: "0.2em", maxWidth: "32em" }}>
-          {def.notes}
-        </div>
-      )}
-      {def && def.messageIds.length > 0 && onViewMessages && (
-        <button
-          className="claim-side__source-link"
-          style={{ marginTop: "0.3em" }}
-          onClick={() => onViewMessages(def.messageIds)}
-        >
-          View the messages →
-        </button>
+      {def && (def.notes || (def.messageIds.length > 0 && onViewMessages)) && (
+        <details className="drilldown drilldown--compact">
+          <summary>detail</summary>
+          <div style={{ marginTop: "var(--space-1)" }}>
+            {def.notes && <p className="claim-state-label" style={{ margin: 0 }}>{def.notes}</p>}
+            {def.messageIds.length > 0 && onViewMessages && (
+              <button
+                className="claim-side__source-link"
+                style={{ marginTop: "0.3em" }}
+                onClick={() => onViewMessages(def.messageIds)}
+              >
+                View the messages →
+              </button>
+            )}
+          </div>
+        </details>
       )}
     </div>
   );

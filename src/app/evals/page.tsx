@@ -219,40 +219,11 @@ export default function EvalsPage() {
     <main className="page">
       <h1 className="page-title">Evals</h1>
       <p className="page-subtitle">
-        How we know Quorum can be trusted: what could go wrong, how each risk is measured, and a live run against the
-        same recordings this page is scored from — no API key, no network call.
+        How we know Quorum can be trusted: three things that could go wrong (false alarms, missed conflicts,
+        invented quotes), each measured separately below against a human-labeled gold set — run it yourself, no API
+        key, no network call.
       </p>
 
-      <h2 className="section-heading" style={{ marginTop: 0 }}>1. What could go wrong</h2>
-      <ul>
-        <li><strong>False alarms.</strong> Quorum tells you two people disagree when they don&apos;t — the fastest way to lose trust.</li>
-        <li><strong>Missed conflicts.</strong> Two people genuinely disagree and Quorum stays silent.</li>
-        <li><strong>Invented quotes.</strong> Quorum shows you words nobody actually wrote.</li>
-      </ul>
-
-      <h2 className="section-heading">2. How each is measured</h2>
-      <ul>
-        <li><strong>False alarm rate</strong> — how often a scenario that should never be flagged gets flagged anyway. Target: zero.</li>
-        <li><strong>Conflicts caught</strong> — of the genuine disagreements in the test set, how many Quorum actually surfaces.</li>
-        <li><strong>Quote accuracy</strong> — every highlighted phrase is checked character-for-character against the real message; a highlight that doesn&apos;t match the source is a failure, not a rounding error.</li>
-      </ul>
-
-      <h2 className="section-heading">3. Two separate graders</h2>
-      <p>
-        Extraction (did we correctly read what someone said) and judgment (did we correctly decide whether two
-        readings conflict) are scored independently, on their own scenarios. A system that extracts perfectly but
-        judges badly, or vice versa, cannot hide behind a single blended score — see the per-scenario tables below,
-        never averaged into one number.
-      </p>
-
-      <h2 className="section-heading">4. What the frozen baseline shows</h2>
-      <p>
-        Run it yourself below and this section fills in with a live diff against the committed baseline — including
-        the one regression currently on record, kept visible rather than reset, because that is what catching a
-        regression is supposed to look like.
-      </p>
-
-      <h2 className="section-heading">5. Run it yourself</h2>
       <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center", flexWrap: "wrap" }}>
         <button onClick={runSuite} disabled={running}>
           {running ? "Running..." : "Run evals"}
@@ -269,13 +240,49 @@ export default function EvalsPage() {
           use the Open judge for &ldquo;Run evals&rdquo;
         </label>
       </div>
-      <p className="claim-state-label" style={{ marginTop: "var(--space-1)" }}>
-        <strong>Guardrailed</strong> (binary): the model answers exactly one question per topic — &ldquo;do these
-        live positions genuinely disagree?&rdquo; — everything else (updates, corrections, who overrides whom) is decided by code before
-        the model is ever called. <strong>Open</strong> (full7): the model chooses freely from the entire verdict
-        vocabulary itself. Both run on the same free-tier model — this measures how much the guardrails change the
-        outcome, not a cheap-vs-expensive model difference.
-      </p>
+
+      <details className="drilldown" style={{ marginTop: "var(--space-2)" }}>
+        <summary>Read the full eval methodology ↓</summary>
+        <div style={{ marginTop: "var(--space-2)" }}>
+          <h2 className="section-heading" style={{ marginTop: 0 }}>What could go wrong</h2>
+          <ul>
+            <li><strong>False alarms.</strong> Quorum tells you two people disagree when they don&apos;t — the fastest way to lose trust.</li>
+            <li><strong>Missed conflicts.</strong> Two people genuinely disagree and Quorum stays silent.</li>
+            <li><strong>Invented quotes.</strong> Quorum shows you words nobody actually wrote.</li>
+          </ul>
+
+          <h2 className="section-heading">How each is measured</h2>
+          <ul>
+            <li><strong>False alarm rate</strong> — how often a scenario that should never be flagged gets flagged anyway. Target: zero.</li>
+            <li><strong>Conflicts caught</strong> — of the genuine disagreements in the test set, how many Quorum actually surfaces.</li>
+            <li><strong>Quote accuracy</strong> — every highlighted phrase is checked character-for-character against the real message; a highlight that doesn&apos;t match the source is a failure, not a rounding error.</li>
+          </ul>
+
+          <h2 className="section-heading">Two separate graders</h2>
+          <p>
+            Extraction (did we correctly read what someone said) and judgment (did we correctly decide whether two
+            readings conflict) are scored independently, on their own scenarios. A system that extracts perfectly but
+            judges badly, or vice versa, cannot hide behind a single blended score — see the per-scenario tables below,
+            never averaged into one number.
+          </p>
+
+          <h2 className="section-heading">What the frozen baseline shows</h2>
+          <p>
+            Run it yourself above and the section below fills in with a live diff against the committed baseline —
+            including the one regression currently on record, kept visible rather than reset, because that is what
+            catching a regression is supposed to look like.
+          </p>
+
+          <h2 className="section-heading">Guardrailed vs Open</h2>
+          <p className="claim-state-label">
+            <strong>Guardrailed</strong> (binary): the model answers exactly one question per topic — &ldquo;do these
+            live positions genuinely disagree?&rdquo; — everything else (updates, corrections, who overrides whom) is decided by code before
+            the model is ever called. <strong>Open</strong> (full7): the model chooses freely from the entire verdict
+            vocabulary itself. Both run on the same free-tier model — this measures how much the guardrails change the
+            outcome, not a cheap-vs-expensive model difference.
+          </p>
+        </div>
+      </details>
 
       {error && <div className="banner banner--warn" style={{ marginTop: "var(--space-2)" }}>{error}</div>}
 
@@ -302,8 +309,6 @@ export default function EvalsPage() {
 
       {report && (
         <>
-          <ReproducibilityPanel report={report} />
-
           <div className="headline-row">
             <div className="headline-item">
               <span className="headline-item__label">False alarm rate</span>
@@ -324,6 +329,40 @@ export default function EvalsPage() {
               </span>
             </div>
           </div>
+
+          <h2 className="section-heading">The ground truth</h2>
+          <p className="claim-state-label">
+            Every score above is measured against a human-labeled gold set — <code>evals/gold-claims.json</code> (
+            {" "}{GOLD_CLAIMS_COUNT} claims) and <code>evals/gold-verdicts.json</code> ({GOLD_VERDICTS_COUNT} verdicts) —
+            not against anything the model itself produced. One annotator (this project&apos;s author) labeled both
+            files; there is no measured inter-annotator agreement. See README §8 (&ldquo;Known limitations&rdquo;) for
+            the full statement of that limitation — not restated differently here.
+          </p>
+          <details className="drilldown">
+            <summary>view a sample of the gold claims ({GOLD_CLAIMS_SAMPLE.length} of {GOLD_CLAIMS_COUNT})</summary>
+            <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+              <thead>
+                <tr>
+                  <th>Claim id</th>
+                  <th>Message</th>
+                  <th>Referent</th>
+                  <th>Value</th>
+                  <th>Asserter</th>
+                </tr>
+              </thead>
+              <tbody>
+                {GOLD_CLAIMS_SAMPLE.map((c) => (
+                  <tr key={c.claim_id}>
+                    <td className="mono-cell">{c.claim_id}</td>
+                    <td className="mono-cell">{c.message_id}</td>
+                    <td className="mono-cell">{c.referent}</td>
+                    <td>{c.value}</td>
+                    <td className="mono-cell">{c.asserter}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
 
           {report.escalation && (
             <>
@@ -352,16 +391,19 @@ export default function EvalsPage() {
             recall — a run that finds every claim but misreads one scenario&apos;s polarity fails visibly here, not
             averaged away.
           </p>
-          <table className="claim-table" style={{ marginBottom: "var(--space-2)" }}>
-            <tbody>
-              {METRIC_GLOSSARY.map((g) => (
-                <tr key={g.term}>
-                  <td className="mono-cell" style={{ width: "9em" }}>{g.term}</td>
-                  <td className="claim-state-label">{g.definition}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <details className="drilldown">
+            <summary>metric glossary (recall, precision, referent, modality, polarity, span validity)</summary>
+            <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+              <tbody>
+                {METRIC_GLOSSARY.map((g) => (
+                  <tr key={g.term}>
+                    <td className="mono-cell" style={{ width: "9em" }}>{g.term}</td>
+                    <td className="claim-state-label">{g.definition}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
           <ExtractionTable scores={report.extraction} onViewMessages={viewMessages} />
 
           <h2 className="section-heading">Counts</h2>
@@ -374,42 +416,10 @@ export default function EvalsPage() {
               <tr><td>Topics</td><td className="mono-cell">{report.counts.buckets}</td></tr>
             </tbody>
           </table>
+
+          <ReproducibilityPanel report={report} />
         </>
       )}
-
-      <h2 className="section-heading">The ground truth</h2>
-      <p className="claim-state-label">
-        Every score above is measured against a human-labeled gold set — <code>evals/gold-claims.json</code> (
-        {" "}{GOLD_CLAIMS_COUNT} claims) and <code>evals/gold-verdicts.json</code> ({GOLD_VERDICTS_COUNT} verdicts) —
-        not against anything the model itself produced. One annotator (this project&apos;s author) labeled both
-        files; there is no measured inter-annotator agreement. See README §8 (&ldquo;Known limitations&rdquo;) for
-        the full statement of that limitation — not restated differently here.
-      </p>
-      <details className="drilldown">
-        <summary>view a sample of the gold claims ({GOLD_CLAIMS_SAMPLE.length} of {GOLD_CLAIMS_COUNT})</summary>
-        <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
-          <thead>
-            <tr>
-              <th>Claim id</th>
-              <th>Message</th>
-              <th>Referent</th>
-              <th>Value</th>
-              <th>Asserter</th>
-            </tr>
-          </thead>
-          <tbody>
-            {GOLD_CLAIMS_SAMPLE.map((c) => (
-              <tr key={c.claim_id}>
-                <td className="mono-cell">{c.claim_id}</td>
-                <td className="mono-cell">{c.message_id}</td>
-                <td className="mono-cell">{c.referent}</td>
-                <td>{c.value}</td>
-                <td className="mono-cell">{c.asserter}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </details>
 
       <h2 className="section-heading">Deterministic rules (R1–R8)</h2>
       <p className="claim-state-label">
@@ -427,23 +437,27 @@ export default function EvalsPage() {
         </tbody>
       </table>
 
-      <h2 className="section-heading">The actual prompts</h2>
-      <p className="claim-state-label">
-        Exactly what&apos;s sent to the model — no scenario-specific hints, no few-shot examples encoding the right
-        answer. &ldquo;System&rdquo; is the fixed instructions sent on every call. &ldquo;User&rdquo; below is not a
-        description of what would be sent — it is <strong>a worked example</strong>: the literal, real output of{" "}
-        <code>renderUser()</code> for M-001, the flagship bucket&apos;s opening message (&ldquo;Kicking off planning
-        for the Independence Day event...&rdquo;), exactly as the model receives it.
-      </p>
-      <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>Extraction (reads a message, emits claims) — system prompt:</p>
-      <PromptViewer system={EXTRACTION_PROMPT.SYSTEM} user={WORKED_EXTRACTION_USER} />
-      <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
-        Judgment, Guardrailed (binary) scope — system prompt, and a worked example built from M-001&apos;s claim plus
-        its real gold contradiction partner (M-002, the C1 scenario):
-      </p>
-      <PromptViewer system={adjudicationSystemFor("binary")} user={WORKED_ADJUDICATION_USER_BINARY} />
-      <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>Judgment, Open (full7) scope — same worked example, different system prompt:</p>
-      <PromptViewer system={adjudicationSystemFor("full7")} user={WORKED_ADJUDICATION_USER_FULL7} />
+      <details className="drilldown">
+        <summary>The actual prompts sent to the model</summary>
+        <div style={{ marginTop: "var(--space-2)" }}>
+          <p className="claim-state-label">
+            Exactly what&apos;s sent to the model — no scenario-specific hints, no few-shot examples encoding the
+            right answer. &ldquo;System&rdquo; is the fixed instructions sent on every call. &ldquo;User&rdquo;
+            below is not a description of what would be sent — it is <strong>a worked example</strong>: the literal,
+            real output of <code>renderUser()</code> for M-001, the flagship bucket&apos;s opening message
+            (&ldquo;Kicking off planning for the Independence Day event...&rdquo;), exactly as the model receives it.
+          </p>
+          <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>Extraction (reads a message, emits claims) — system prompt:</p>
+          <PromptViewer system={EXTRACTION_PROMPT.SYSTEM} user={WORKED_EXTRACTION_USER} />
+          <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+            Judgment, Guardrailed (binary) scope — system prompt, and a worked example built from M-001&apos;s claim plus
+            its real gold contradiction partner (M-002, the C1 scenario):
+          </p>
+          <PromptViewer system={adjudicationSystemFor("binary")} user={WORKED_ADJUDICATION_USER_BINARY} />
+          <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>Judgment, Open (full7) scope — same worked example, different system prompt:</p>
+          <PromptViewer system={adjudicationSystemFor("full7")} user={WORKED_ADJUDICATION_USER_FULL7} />
+        </div>
+      </details>
 
       <SourcePanel target={sourceTarget} onClose={() => setSourceTarget(null)} />
 

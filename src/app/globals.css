@@ -574,6 +574,32 @@ a { color: inherit; }
 }
 
 /* ---------------------------------------------------------------------
+ * In-page contents nav (Architecture page)
+ * ------------------------------------------------------------------- */
+
+.page-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--rule) 15%, transparent);
+  font-size: var(--size-caption);
+}
+
+.page-toc a {
+  color: var(--settled);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.page-toc a:hover {
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------
  * Drill-down / prompt viewer
  * ------------------------------------------------------------------- */
 
@@ -602,6 +628,26 @@ a { color: inherit; }
   border-radius: 4px;
   padding: var(--space-2);
   overflow-x: auto;
+}
+
+/* Compact per-scenario disclosure inside an eval-table row: same pattern as
+ * .drilldown, sized to sit inline in a table cell instead of block-level
+ * page content. */
+.drilldown--compact {
+  margin-top: 0.3em;
+  padding: 0.3em var(--space-1);
+  display: inline-block;
+}
+
+.drilldown--compact summary {
+  font-size: var(--size-caption);
+}
+
+.scenario-label__line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  white-space: nowrap;
 }
 
 .prerule-list {
