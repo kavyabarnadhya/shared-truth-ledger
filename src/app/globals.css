@@ -798,6 +798,112 @@ a { color: inherit; }
 }
 
 /* ---------------------------------------------------------------------
+ * Source panel — right-hand slide-over showing the real Slack/Gmail thread
+ * a claim came from. Fixed-position overlay so it never shifts page layout.
+ * ------------------------------------------------------------------- */
+
+.source-panel__scrim {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+  z-index: 40;
+}
+
+.source-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
+  background: var(--surface);
+  border-left: 1px solid var(--rule);
+  box-shadow: -8px 0 24px color-mix(in srgb, var(--ink) 15%, transparent);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.source-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.source-panel__title {
+  font-size: var(--size-heading);
+  font-weight: 600;
+}
+
+.source-panel__close {
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  color: var(--muted);
+  font: inherit;
+  flex: 0 0 auto;
+}
+
+.source-panel__close:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--rule) 40%, transparent);
+}
+
+.source-panel__provenance {
+  font-size: var(--size-caption);
+  color: var(--muted);
+  padding: var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  margin-bottom: var(--space-3);
+  background: color-mix(in srgb, var(--rule) 15%, transparent);
+}
+
+.source-panel__thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.source-message {
+  padding: var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.source-message--marked {
+  border-color: var(--settled);
+  background: color-mix(in srgb, var(--settled-bg) 60%, transparent);
+}
+
+.source-message__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  margin-bottom: 0.3em;
+}
+
+.source-message__flag {
+  font-size: var(--size-caption);
+  color: var(--settled);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .source-panel {
+    width: 100vw;
+  }
+}
+
+/* ---------------------------------------------------------------------
  * Hosted deck (/deck) — three keyboard-navigable slides, same tokens as
  * the rest of the site so it reads as part of Quorum, not a separate
  * artifact pasted in.
