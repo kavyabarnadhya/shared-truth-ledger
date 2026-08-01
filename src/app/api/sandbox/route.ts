@@ -1,4 +1,9 @@
 /**
+ * GET /api/sandbox — reports whether live mode is available on this
+ * deployment (LIVE_MODE_ENABLED=true and a gateway key present), so the
+ * client can disable the "enable live mode" checkbox with an honest reason
+ * instead of showing a checkbox that silently does nothing when checked.
+ *
  * POST /api/sandbox — the interactive "try your own input" path. A reviewer
  * types or edits up to two messages and this runs extraction + adjudication
  * live (if LIVE_MODE_ENABLED) or replay (if the exact input happens to
@@ -62,6 +67,25 @@ function loadRecordingsFromDisk(): InMemoryRecordingStore {
     }
   }
   return store;
+}
+
+export async function GET() {
+  const liveModeEnabled = process.env.LIVE_MODE_ENABLED === "true";
+  let hasGatewayKey = false;
+  try {
+    hasGatewayKey = getGatewayApiKey().length > 0;
+  } catch {
+    hasGatewayKey = false;
+  }
+  const available = liveModeEnabled && hasGatewayKey;
+  return NextResponse.json({
+    available,
+    reason: available
+      ? null
+      : !liveModeEnabled
+        ? "Live mode is off on this deployment (LIVE_MODE_ENABLED is not set)."
+        : "No model gateway key is configured on this deployment.",
+  });
 }
 
 export async function POST(request: Request) {

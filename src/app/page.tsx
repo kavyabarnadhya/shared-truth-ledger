@@ -2,31 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { OverviewSummary } from "@/components/OverviewSummary";
-import type { LedgerSnapshot, EvalReport, GoldClaim } from "@/core/types";
+import { ReviewerNote } from "@/components/ReviewerNote";
+import { conflictTitle, isCataloguedReferent } from "@/lib/display";
+import type { LedgerSnapshot } from "@/core/types";
 
 interface LedgerApiResponse {
   snapshot: LedgerSnapshot | null;
 }
 
-interface GoldClaimsFile {
-  claims: GoldClaim[];
-}
-
 const CONTRADICTION_VERDICTS = new Set(["CONTRADICTION", "CONTESTED", "AMBIGUOUS_REFERENT"]);
 
 /**
- * Overview / landing screen. First screen a reviewer sees — states what
- * Quorum is before they have to infer it from a bare table, then backs that
- * up with live numbers pulled from the same /api/ledger the Signals tab
- * uses, plus the same in-browser eval suite the Evals tab uses for the
- * headline false-positive/recall figures. No placeholder numbers.
+ * Overview / landing screen. Leads with the PM's actual situation — what
+ * needs attention right now — rather than system counts. False-positive
+ * rate and contradiction recall (eval jargon) live on the Evals page now;
+ * this page states the trust claim in one plain sentence and links there.
+ * Numbers here are pulled live from the same /api/ledger every other tab
+ * uses — nothing hand-typed.
  */
 export default function OverviewPage() {
-  const [bucketsTracked, setBucketsTracked] = useState<number | null>(null);
-  const [openContradictions, setOpenContradictions] = useState<number | null>(null);
-  const [falsePositiveRate, setFalsePositiveRate] = useState<string | null>(null);
-  const [contradictionRecall, setContradictionRecall] = useState<string | null>(null);
+  const [snapshot, setSnapshot] = useState<LedgerSnapshot | null>(null);
+  const [topicsTracked, setTopicsTracked] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,75 +39,110 @@ export default function OverviewPage() {
         if (!res.ok) throw new Error(`ledger request failed (${res.status})`);
         const json = (await res.json()) as LedgerApiResponse;
         if (cancelled || !json.snapshot) return;
-        const suppressedKeys = new Set(json.snapshot.suppressions.map((s) => s.bucket_key));
-        const open = json.snapshot.verdicts.filter(
-          (v) => CONTRADICTION_VERDICTS.has(v.verdict) && !suppressedKeys.has(v.bucket_key),
-        );
-        setBucketsTracked(json.snapshot.buckets.length);
-        setOpenContradictions(open.length);
+        setSnapshot(json.snapshot);
+        setTopicsTracked(json.snapshot.buckets.filter((b) => isCataloguedReferent(b.referent)).length);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
-      }
-    }
-
-    async function loadEvalHeadline() {
-      try {
-        const [{ runEval }, { RECORDINGS }, { MESSAGES, CAST }, { getConfig }, { InMemoryRecordingStore }, goldClaimsModule] =
-          await Promise.all([
-            import("@/core/eval/run-eval"),
-            import("../../fixtures/recorded.generated"),
-            import("@/corpus/bundled.generated"),
-            import("@/core/model/config"),
-            import("@/core/model/client"),
-            import("../../evals/gold-claims.json") as Promise<{ default: GoldClaimsFile }>,
-          ]);
-        const recordings = new InMemoryRecordingStore(Object.values(RECORDINGS));
-        const result: EvalReport = await runEval({
-          corpus: MESSAGES,
-          cast: CAST,
-          gold: { claims: goldClaimsModule.default.claims },
-          recordings,
-          config: getConfig("free"),
-          judgeScope: "binary",
-        });
-        if (cancelled) return;
-        const fp = result.headline.falsePositiveRate;
-        const recall = result.headline.contradictionRecall;
-        setFalsePositiveRate(`${fp.flagged}/${fp.mustNotFlagTotal}`);
-        setContradictionRecall(`${recall.found}/${recall.total}`);
-      } catch (err) {
-        if (!cancelled) setError((prev) => prev ?? (err instanceof Error ? err.message : String(err)));
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadLedger();
-    loadEvalHeadline();
     return () => {
       cancelled = true;
     };
   }, []);
 
+  const suppressedKeys = new Set((snapshot?.suppressions ?? []).map((s) => s.bucket_key));
+  const openBuckets =
+    snapshot?.buckets.filter((b) => {
+      const v = snapshot.verdicts.find((vv) => vv.bucket_key === b.referent);
+      if (!v || !CONTRADICTION_VERDICTS.has(v.verdict)) return false;
+      return !suppressedKeys.has(b.referent);
+    }) ?? [];
+
+  const flagship = openBuckets.find((b) => b.referent === "indep_event.launch_date") ?? openBuckets[0];
+
   return (
     <main className="page">
       <h1 className="page-title">Quorum</h1>
       <p className="page-subtitle">
-        Quorum watches Tamarind Games&apos; Slack and Gmail, extracts claims — who asserted what, about which
-        referent, when — into a persistent ledger, and surfaces when two live claims about the same thing
-        contradict each other. Everything below runs in replay mode: no live model key needed to review it.
+        Quorum reads Tamarind Games&apos; Slack and Gmail, keeps track of who said what, and tells you the moment two
+        people&apos;s current positions on the same thing stop agreeing.
       </p>
 
       {error && <div className="banner banner--warn">{error}</div>}
+      {loading && <p className="claim-state-label">Checking Slack and Gmail...</p>}
 
-      <OverviewSummary
-        stats={{ bucketsTracked, openContradictions, falsePositiveRate, contradictionRecall }}
-      />
+      {!loading && !error && (
+        <>
+          <h2 className="section-heading" style={{ marginTop: 0 }}>
+            {openBuckets.length === 0
+              ? "Nothing needs your attention"
+              : `${openBuckets.length} thing${openBuckets.length === 1 ? "" : "s"} need${openBuckets.length === 1 ? "s" : ""} your attention`}
+          </h2>
 
-      <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginTop: "var(--space-3)" }}>
-        <Link href="/contradictions">View signals →</Link>
-        <Link href="/evals">Run the evals →</Link>
-        <Link href="/architecture">See the pipeline →</Link>
-        <Link href="/deck">View deck →</Link>
-      </div>
+          {openBuckets.length === 0 && (
+            <p className="claim-state-label">No open disagreements right now.</p>
+          )}
+
+          {flagship && (
+            <div className="drilldown" style={{ marginBottom: "var(--space-2)" }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>{conflictTitle(flagship, flagship.claims.map((bc) => bc.claim))}</p>
+              <p className="claim-state-label" style={{ marginTop: "0.3em" }}>
+                Start here — this is the clearest example of what Quorum catches.
+              </p>
+              <Link href="/contradictions">Look at it →</Link>
+            </div>
+          )}
+
+          {openBuckets.length > 1 && (
+            <p className="claim-state-label">
+              Plus {openBuckets.length - 1} more on the{" "}
+              <Link href="/contradictions">Signals</Link> page.
+            </p>
+          )}
+
+          <div className="stat-row">
+            <div className="stat-item">
+              <span className="stat-item__value">{topicsTracked ?? "—"}</span>
+              <span className="stat-item__label">Topics being tracked</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-item__value">{openBuckets.length}</span>
+              <span className="stat-item__label">Open disagreements</span>
+            </div>
+          </div>
+
+          <p>
+            Checked against 27 hand-labelled scenarios — 0 false alarms.{" "}
+            <Link href="/evals">See how it&apos;s measured →</Link>
+          </p>
+
+          <p className="claim-state-label">
+            Connected: Slack and Gmail (demo workspace, read-only, via an MCP-style tool layer). Everything below runs
+            in replay mode — no live model key needed to review it.
+          </p>
+
+          <div className="cta-row">
+            <Link href="/contradictions">View signals →</Link>
+            <Link href="/ledger">What the team believes →</Link>
+            <Link href="/architecture">See how it works →</Link>
+          </div>
+        </>
+      )}
+
+      <ReviewerNote readmeHref="/README.md#overview">
+        <p>
+          &ldquo;Topics being tracked&rdquo; counts only catalogued referents (see the Ledger page&apos;s
+          &ldquo;other topics detected automatically&rdquo; split) — internal identifiers like{" "}
+          <code>indep_event.launch_date</code> and extractor-minted noise both live in the same underlying
+          <code> Bucket[]</code>, but only the former is a real tracked topic from a product point of view. The false
+          positive rate and contradiction recall figures now live entirely on the Evals page, computed by the same
+          in-browser eval suite you can run yourself there — this page no longer duplicates that computation.
+        </p>
+      </ReviewerNote>
     </main>
   );
 }

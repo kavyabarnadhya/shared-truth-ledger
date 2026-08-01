@@ -931,6 +931,17 @@ a { color: inherit; }
 }
 
 /* ---------------------------------------------------------------------
+ * Sandbox / "Try it" — prefilled example chips.
+ * ------------------------------------------------------------------- */
+
+.sandbox-examples {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--rule) 15%, transparent);
+}
+
+/* ---------------------------------------------------------------------
  * Reviewer layer — persistent dismissible banner + per-page collapsible
  * note. Deliberately visually distinct from the product content around it
  * (muted accent border, caption-sized type) so it reads as a separate

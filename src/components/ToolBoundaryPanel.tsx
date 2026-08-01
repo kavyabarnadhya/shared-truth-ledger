@@ -29,6 +29,10 @@ const TOOLS = [
 export function ToolBoundaryPanel() {
   return (
     <div>
+      <p>
+        Quorum treats Slack and Gmail as tool-shaped data sources, not a database it reads directly: every read goes
+        through one of four named tools, each scoped to exactly one kind of query.
+      </p>
       <table className="claim-table">
         <thead>
           <tr>
