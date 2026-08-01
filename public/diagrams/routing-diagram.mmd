@@ -1,0 +1,32 @@
+flowchart TD
+    A["Message arrives\n(Slack / Gmail)"] --> B{"Noise gate\ndeterministic, no model call"}
+    B -- "gated (bot / CI / newsletter)" --> Z1(["dropped — never reaches extraction"])
+    B -- "passes" --> C["Extraction call\nmodel, per message"]
+    C --> D["Referent resolution\ndeterministic — aliases + lexical sim,\nembeddings only as a tiebreak"]
+    D --> E{"Pre-rules ladder R0-R9\ndeterministic"}
+
+    E -- "settles it: self-update,\nself-correction, authority override,\nor nothing left to disagree about" --> F(["Verdict decided by code:\nUPDATE / RESOLVED_BY_SUPERSESSION /\nRESOLVED_BY_CORRECTION / AMBIGUOUS_REFERENT /\nCOMPATIBLE — no model call"])
+
+    E -- "undecided: 2+ live claims,\nfrom different people, no rule fires" --> G{"Judge scope"}
+
+    G -- "Guardrailed (binary)" --> H["Adjudication call\nmodel — exactly one question:\nCONTRADICTION or COMPATIBLE?\nself-reports confidence 0-1"]
+    G -- "Open (full7)" --> I["Adjudication call\nmodel — chooses freely from the\nfull 7-way verdict vocabulary"]
+
+    H --> J{"confidence < 0.6?\nconfidence-gated escalation router"}
+    J -- "no" --> K(["Primary verdict stands"])
+    J -- "yes" --> L["Escalated call\nsecond model call — same schema,\nasked to reason step by step first"]
+    L --> M(["Escalated verdict wins if it parses,\nelse primary verdict stands"])
+
+    I --> N(["Verdict as decided by the model\n(all 7 outcomes possible)"])
+
+    F --> O[("Ledger\npersisted claims, verdicts,\nsuppressions, watermark")]
+    K --> O
+    M --> O
+    N --> O
+
+    classDef deterministic fill:#e8f0e6,stroke:#4a7a3f,color:#1f2d1c;
+    classDef model fill:#eee6f5,stroke:#7c4fa8,color:#2a1f36;
+    classDef terminal fill:#f5f2e6,stroke:#a88a3f,color:#332b1a;
+    class B,D,E,J deterministic;
+    class C,H,I,L model;
+    class Z1,F,K,M,N,O terminal;
