@@ -138,7 +138,7 @@ export default function LedgerPage() {
             </details>
           )}
 
-          <ReviewerNote readmeHref="/README.md#ledger">
+          <ReviewerNote readmeHref="/architecture#ledger">
             <p>
               Each row is a temporal projection over that referent&apos;s claims as of the ledger&apos;s frozen as-of
               (see <code>src/core/ledger.ts</code>): superseded/withdrawn claims stay visible, not hidden, so a

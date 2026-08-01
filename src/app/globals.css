@@ -108,6 +108,13 @@ a { color: inherit; }
   margin: var(--space-3) 0 var(--space-2) 0;
 }
 
+/* Anchor targets inside the Architecture page's reviewer appendix (Part A):
+ * jumped-to headings land with breathing room above them instead of flush
+ * against the viewport edge. */
+.reviewer-appendix__section {
+  scroll-margin-top: var(--space-3);
+}
+
 /* ---------------------------------------------------------------------
  * Wordmark — glyph + name. The glyph and the sidebar's active nav state
  * are the only two places --accent appears; everything else stays on the

@@ -187,7 +187,7 @@ export default function ContradictionsPage() {
 
       <SourcePanel target={sourceTarget} onClose={() => setSourceTarget(null)} />
 
-      <ReviewerNote readmeHref="/README.md#pre-rules">
+      <ReviewerNote readmeHref="/architecture#pre-rules">
         <p>
           Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
           updates, self-corrections, and authority-based supersession are all decided by code, not by the model.

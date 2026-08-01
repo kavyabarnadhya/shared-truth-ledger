@@ -133,7 +133,7 @@ export default function OverviewPage() {
         </>
       )}
 
-      <ReviewerNote readmeHref="/README.md#overview">
+      <ReviewerNote readmeHref="/architecture#overview">
         <p>
           &ldquo;Topics being tracked&rdquo; counts only catalogued referents (see the Ledger page&apos;s
           &ldquo;other topics detected automatically&rdquo; split) — internal identifiers like{" "}
