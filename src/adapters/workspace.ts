@@ -15,7 +15,17 @@ import { join } from "node:path";
 import type { Message, Thread, MessageQuery, SourceKind } from "../core/types.ts";
 import { tryParseInstant } from "../core/time.ts";
 
-const ROOT = join(import.meta.dirname, "..", "..");
+// process.cwd() rather than import.meta.dirname: this module is now also
+// imported from a Next.js API route (src/app/api/workspace/route.ts), and
+// Next's webpack build for route handlers does not preserve
+// import.meta.dirname reliably (it resolves to undefined at runtime in the
+// production bundle) — see src/server/deps.ts's identical ROOT comment for
+// the same issue on the same class of problem. process.cwd() is the
+// documented, portable way to locate the project root both from a plain
+// `node mcp-server/src/index.ts` invocation (npm run mcp, cwd = repo root)
+// and from a Next.js server context (next dev/start, and Vercel, whose
+// deployed function cwd is also the project root).
+const ROOT = process.cwd();
 
 let cachedMessages: Message[] | null = null;
 let cachedThreads: Thread[] | null = null;

@@ -1,14 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AsOfControl, AS_OF_PRESETS } from "@/components/AsOfControl";
 import { BucketRow } from "@/components/BucketRow";
-import type { LedgerSnapshot, CastEntry } from "@/core/types";
+import { SourcePanel, type SourcePanelTarget } from "@/components/SourcePanel";
+import { ReviewerNote } from "@/components/ReviewerNote";
+import { VerdictChip } from "@/components/VerdictChip";
+import { conflictTitle } from "@/lib/display";
+import type { LedgerSnapshot, CastEntry, Message, VerdictKind, Verdict } from "@/core/types";
 
 interface LedgerApiResponse {
   snapshot: LedgerSnapshot | null;
   storeInfo: { kind: "file" | "memory"; durable: boolean; location: string };
+  messages: Record<string, Message>;
 }
+
+const FLAGSHIP_REFERENT = "indep_event.launch_date";
 
 export default function ContradictionsPage() {
   const [asOf, setAsOf] = useState(AS_OF_PRESETS[2]!.value);
@@ -16,6 +23,9 @@ export default function ContradictionsPage() {
   const [cast, setCast] = useState<CastEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sourceTarget, setSourceTarget] = useState<SourcePanelTarget | null>(null);
+  const previousVerdictForFlagship = useRef<Verdict | null | undefined>(undefined);
+  const [beforeAfter, setBeforeAfter] = useState<{ from: VerdictKind; to: Verdict } | null>(null);
 
   const build = useCallback(async (nextAsOf: string) => {
     setLoading(true);
@@ -31,6 +41,16 @@ export default function ContradictionsPage() {
         throw new Error(body.error ?? `request failed (${res.status})`);
       }
       const json = (await res.json()) as LedgerApiResponse;
+
+      const flagshipVerdict = json.snapshot?.verdicts.find((v) => v.bucket_key === FLAGSHIP_REFERENT) ?? null;
+      const previous = previousVerdictForFlagship.current;
+      if (previous !== undefined && previous && flagshipVerdict && previous.verdict !== flagshipVerdict.verdict) {
+        setBeforeAfter({ from: previous.verdict, to: flagshipVerdict });
+      } else {
+        setBeforeAfter(null);
+      }
+      previousVerdictForFlagship.current = flagshipVerdict;
+
       setData(json);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -72,6 +92,7 @@ export default function ContradictionsPage() {
   }
 
   const snapshot = data?.snapshot;
+  const messages = data?.messages ?? {};
   const suppressedKeys = new Set((snapshot?.suppressions ?? []).map((s) => s.bucket_key));
 
   const contradictionVerdicts = new Set(["CONTRADICTION", "CONTESTED", "AMBIGUOUS_REFERENT"]);
@@ -84,27 +105,39 @@ export default function ContradictionsPage() {
   const dismissedBuckets =
     snapshot?.buckets.filter((b) => suppressedKeys.has(b.referent)) ?? [];
 
+  const flagshipBucket = snapshot?.buckets.find((b) => b.referent === FLAGSHIP_REFERENT);
+  const flagshipTitle = flagshipBucket ? conflictTitle(flagshipBucket, flagshipBucket.claims.map((bc) => bc.claim)) : null;
+
   return (
     <main className="page">
       <h1 className="page-title">Signals</h1>
       <p className="page-subtitle">
-        Open conflicts between live claims — what the team currently disagrees with itself about.
+        Where your team currently disagrees with itself — surfaced from what people actually said in Slack and
+        Gmail, not from a status meeting.
       </p>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-3)" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "var(--space-3)", flexWrap: "wrap", gap: "var(--space-2)" }}>
         <AsOfControl value={asOf} onChange={handleAsOfChange} />
         {data?.storeInfo && (
           <span className="claim-state-label">
-            ledger store: {data.storeInfo.kind} ({data.storeInfo.durable ? "survives restart" : "does not survive restart"})
+            {data.storeInfo.durable ? "Saved · survives a restart" : "Not saved · resets on restart (demo deployment)"}
           </span>
         )}
       </div>
+
+      {beforeAfter && flagshipTitle && (
+        <div className="banner" style={{ borderColor: "var(--settled)" }}>
+          <strong>{flagshipTitle}:</strong> the verdict changed between these two points in time — from{" "}
+          <VerdictChip verdict={beforeAfter.from} /> to <VerdictChip verdict={beforeAfter.to.verdict} />, decided by{" "}
+          {beforeAfter.to.decidedBy === "pre_rule" ? "a deterministic rule (no model call needed)" : "a model call"}.
+        </div>
+      )}
 
       {error && <div className="banner banner--warn">Could not load the ledger: {error}</div>}
       {loading && (
         <div aria-live="polite" aria-busy="true">
           <span className="claim-state-label" style={{ display: "block", marginBottom: "var(--space-2)" }}>
-            Building ledger...
+            Checking for disagreements...
           </span>
           {[0, 1, 2].map((i) => (
             <div key={i} className="bucket-row-skeleton" aria-hidden="true" />
@@ -114,15 +147,21 @@ export default function ContradictionsPage() {
 
       {!loading && !error && (
         <>
-          <h2 className="section-heading">Open ({openBuckets.length})</h2>
-          {openBuckets.length === 0 && <p className="claim-state-label">No open contradictions at this as-of.</p>}
+          <h2 className="section-heading">
+            {openBuckets.length === 0 ? "Nothing needs your attention" : `Open disagreements (${openBuckets.length})`}
+          </h2>
+          {openBuckets.length === 0 && (
+            <p className="claim-state-label">No open disagreements at this point in time.</p>
+          )}
           {openBuckets.map((bucket) => (
             <BucketRow
               key={bucket.referent}
               bucket={bucket}
               verdict={snapshot?.verdicts.find((v) => v.bucket_key === bucket.referent)}
               cast={cast}
+              messages={messages}
               onDismiss={dismiss}
+              onOpenSource={setSourceTarget}
             />
           ))}
 
@@ -135,14 +174,31 @@ export default function ContradictionsPage() {
                   bucket={bucket}
                   verdict={snapshot?.verdicts.find((v) => v.bucket_key === bucket.referent)}
                   cast={cast}
+                  messages={messages}
                   onRestore={restore}
                   isDismissed
+                  onOpenSource={setSourceTarget}
                 />
               ))}
             </>
           )}
         </>
       )}
+
+      <SourcePanel target={sourceTarget} onClose={() => setSourceTarget(null)} />
+
+      <ReviewerNote readmeHref="/README.md#pre-rules">
+        <p>
+          Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
+          updates, self-corrections, and authority-based supersession are all decided by code, not by the model.
+          Only a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets
+          a single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo; If that call
+          self-reports low confidence, a confidence-gated escalation router issues a second, richer call — see the
+          Architecture page for the live counts. &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
+          pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
+          logic against a smaller set of visible messages.
+        </p>
+      </ReviewerNote>
     </main>
   );
 }
