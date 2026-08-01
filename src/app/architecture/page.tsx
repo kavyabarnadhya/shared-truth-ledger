@@ -50,7 +50,15 @@ export default function ArchitecturePage() {
         ledger snapshot&apos;s trace — not hand-drawn.
       </p>
 
-      <h2 className="section-heading" style={{ marginTop: 0 }}>Where the data comes from</h2>
+      <nav className="page-toc" aria-label="On this page">
+        <a href="#data-source">Where the data comes from</a>
+        <a href="#six-stages">The six stages</a>
+        <a href="#architecture">Tool boundary</a>
+        <a href="#routing-diagram">The routing decision, diagrammed</a>
+        <a href="#reviewer-appendix">Reviewer appendix</a>
+      </nav>
+
+      <h2 className="section-heading" id="data-source">Where the data comes from</h2>
       <p>
         Quorum reads Slack and Gmail through an MCP-style tool layer — the same four tools (search Slack, get a
         Slack thread, search Gmail, get a Gmail thread) are exposed both to an MCP client over stdio and to this web
@@ -69,7 +77,7 @@ export default function ArchitecturePage() {
         </div>
       )}
 
-      <h2 className="section-heading">The six stages</h2>
+      <h2 className="section-heading" id="six-stages">The six stages</h2>
       <ol style={{ paddingLeft: "1.2em" }}>
         {STAGE_SENTENCES.map((s) => (
           <li key={s.id} style={{ marginBottom: "0.4em" }}>{s.sentence}</li>
@@ -135,6 +143,20 @@ export default function ArchitecturePage() {
           routing diagram above for the live counts. &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
           pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
           logic against a smaller set of visible messages.
+        </p>
+        <p>
+          Two user-facing actions live on this page (<code>src/components/BucketRow.tsx</code>): Dismiss persists a{" "}
+          <code>Suppression</code> and Mark-as-resolved persists a <code>Resolution</code> — same shape, same
+          store, same &ldquo;survives a restart&rdquo; guarantee (<code>src/core/ledger.ts</code>&apos;s{" "}
+          <code>dismissBucket</code>/<code>resolveBucket</code>, written via{" "}
+          <code>/api/ledger/suppress</code>/<code>/api/ledger/resolve</code>). Both re-raise automatically the
+          moment the bucket&apos;s live claim set changes (<code>isSuppressed</code>/<code>isResolved</code>) — a
+          dismissal or a resolution is never a silent, permanent hide. Neither touches{" "}
+          <code>projectAsOf</code> or verdict computation: a resolution is a human annotation recorded alongside the
+          system&apos;s own verdict, not a replacement for it. <strong>Explicitly out of scope for this pass:</strong>{" "}
+          real notifications (Slack-reply/email-send) when a conflict is dismissed or resolved, assigning a conflict
+          to a specific person, and a comment thread on a bucket — real product needs, not silently missing, just a
+          materially larger build (external-write integration, not just UI) than this pass covers.
         </p>
       </div>
 
