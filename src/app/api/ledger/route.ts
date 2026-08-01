@@ -15,9 +15,31 @@ import { parseInstant, EVAL_AS_OF_DEFAULT } from "@/core/time";
 import { CONTESTED_REFERENTS } from "@/core/eval/scenarios";
 import { advanceWatermark, emptyWatermark } from "@/core/ledger";
 import { ReplayMissError, PromptDriftError } from "@/core/model/client";
-import type { LedgerSnapshot } from "@/core/types";
+import type { LedgerSnapshot, Message } from "@/core/types";
 import { sha256Hex } from "@/core/util/sha256";
 import { stableStringify } from "@/core/util/stable-sort";
+
+/**
+ * The messages referenced by a snapshot's claims, keyed by message id. This
+ * is what lets the UI show the real Slack/Gmail text a claim came from
+ * without a second round trip — the SourcePanel still calls /api/workspace
+ * for the FULL thread (surrounding context), but list/detail views that
+ * only need "the one message this claim is about" can use this map
+ * directly. Built from the same FsMessageSource /api/ledger already loads
+ * deps from, so this is not a second read path.
+ */
+async function claimMessagesById(snapshot: LedgerSnapshot | null): Promise<Record<string, Message>> {
+  if (!snapshot) return {};
+  const deps = buildDeps({ mode: "replay", asOf: snapshot.asOf, judgeScope: snapshot.judgeScope });
+  const neededIds = new Set(snapshot.claims.map((c) => c.message_id));
+  if (neededIds.size === 0) return {};
+  const all = await deps.source.listMessages();
+  const out: Record<string, Message> = {};
+  for (const m of all) {
+    if (neededIds.has(m.id)) out[m.id] = m;
+  }
+  return out;
+}
 
 /**
  * Replay-miss/prompt-drift are meant to be loud (see pipeline.ts's
@@ -42,7 +64,8 @@ function errorResponse(err: unknown): Response {
 export async function GET() {
   const store = getLedgerStore();
   const snapshot = await store.read();
-  return NextResponse.json({ snapshot, storeInfo: store.describe() });
+  const messages = await claimMessagesById(snapshot);
+  return NextResponse.json({ snapshot, storeInfo: store.describe(), messages });
 }
 
 export async function POST(request: Request) {
@@ -101,7 +124,14 @@ export async function POST(request: Request) {
     };
 
     await store.write(snapshot);
-    return NextResponse.json({ snapshot, storeInfo: store.describe() });
+
+    const neededIds = new Set(snapshot.claims.map((c) => c.message_id));
+    const responseMessages: Record<string, Message> = {};
+    for (const m of messages) {
+      if (neededIds.has(m.id)) responseMessages[m.id] = m;
+    }
+
+    return NextResponse.json({ snapshot, storeInfo: store.describe(), messages: responseMessages });
   } catch (err) {
     return errorResponse(err);
   }
