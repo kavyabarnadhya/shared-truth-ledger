@@ -70,6 +70,9 @@ export function SourcePanel({
     return () => {
       cancelled = true;
     };
+    // Re-fetch only when the thread or the highlighted claim actually
+    // changes, not on every re-render of the target object.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target?.thread_id, target?.claim?.claim_id]);
 
   const handleClose = useCallback(() => {
