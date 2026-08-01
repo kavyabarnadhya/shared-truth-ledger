@@ -144,9 +144,9 @@ export function SandboxEditor({
               const entry = cast.find((c) => c.handle === e.target.value);
               update(i, { author: e.target.value, author_role: entry?.role ?? "" });
             }}>
-              {cast.map((c) => (
+              {cast.filter((c) => !c.is_bot).map((c) => (
                 <option key={c.handle} value={c.handle}>
-                  {c.name}
+                  {c.name} — {c.role}
                 </option>
               ))}
             </select>
