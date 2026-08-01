@@ -91,9 +91,28 @@ export default function ContradictionsPage() {
     build(asOf);
   }
 
+  async function resolve(bucketKey: string, winningAsserter: string | null, note: string | null) {
+    await fetch("/api/ledger/resolve", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ bucket_key: bucketKey, resolvedBy: "meera.iyer", winningAsserter, note }),
+    });
+    build(asOf);
+  }
+
+  async function clearResolution(bucketKey: string) {
+    await fetch("/api/ledger/resolve", {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ bucket_key: bucketKey }),
+    });
+    build(asOf);
+  }
+
   const snapshot = data?.snapshot;
   const messages = data?.messages ?? {};
   const suppressedKeys = new Set((snapshot?.suppressions ?? []).map((s) => s.bucket_key));
+  const resolutionByBucketKey = new Map((snapshot?.resolutions ?? []).map((r) => [r.bucket_key, r]));
 
   const contradictionVerdicts = new Set(["CONTRADICTION", "CONTESTED", "AMBIGUOUS_REFERENT"]);
   const openBuckets =
@@ -161,6 +180,9 @@ export default function ContradictionsPage() {
               cast={cast}
               messages={messages}
               onDismiss={dismiss}
+              onResolve={resolve}
+              onClearResolution={clearResolution}
+              resolution={resolutionByBucketKey.get(bucket.referent) ?? null}
               onOpenSource={setSourceTarget}
             />
           ))}
@@ -177,6 +199,7 @@ export default function ContradictionsPage() {
                   messages={messages}
                   onRestore={restore}
                   isDismissed
+                  resolution={resolutionByBucketKey.get(bucket.referent) ?? null}
                   onOpenSource={setSourceTarget}
                 />
               ))}

@@ -632,6 +632,15 @@ during the build:
     README and the deck are correct and unaffected. Not patched around by
     re-prompting or raising the token cap after seeing this result; that
     would be exactly the kind of post-hoc tuning §9 below rules out.
+11. **No real notifications, assignment, or discussion.** Signals now has
+    two real user actions on a conflict — Dismiss (reversible, re-raises on
+    change) and Mark as resolved (records who won and by whom, same
+    persistence guarantee) — but there is still no way to notify or flag
+    the other person, assign a conflict to someone, or leave a comment
+    thread on it. Those are real needs for an actual PM tool but are a
+    materially larger build (real external-write integration, not just UI)
+    than this pass covers — named here as the honest next gap, not silently
+    missing and not built under time pressure.
 
 ---
 

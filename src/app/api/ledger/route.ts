@@ -119,6 +119,7 @@ export async function POST(request: Request) {
       gatedMessageIds: extraction.gatedMessageIds,
       trace: [...extraction.trace, ...adjudication.trace],
       suppressions: previous?.suppressions ?? [],
+      resolutions: previous?.resolutions ?? [],
       watermark,
       createdAt: asOf,
     };
