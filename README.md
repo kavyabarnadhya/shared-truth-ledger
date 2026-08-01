@@ -701,3 +701,28 @@ No database, no KV store, no external service to provision — the hosted
 ledger uses the in-memory `LedgerStore` and does not survive a restart (see
 §3), which is the deliberate tradeoff that keeps this to zero external
 dependencies for a reviewer.
+
+### Enabling live mode on a Vercel deployment
+
+**Replay mode (the default) needs none of this and is what every number in
+this README is based on.** Live mode is opt-in bonus interactivity on the
+&ldquo;Try it&rdquo; page — it lets a reviewer type freeform text and run it
+against the real model instead of a committed recording. Nothing elsewhere in
+the app (Signals, Ledger, Evals, Architecture) ever needs it.
+
+To turn it on for a given Vercel deployment:
+
+1. Open the project in the Vercel dashboard.
+2. **Project Settings → Environment Variables.**
+3. Add `AI_GATEWAY_API_KEY` with your Vercel AI Gateway key, scoped to
+   whichever environments you want live mode on (Production/Preview/
+   Development).
+4. Add `LIVE_MODE_ENABLED` set to `true`, same scope.
+5. Redeploy (Vercel doesn't pick up new environment variables on an existing
+   deployment — trigger a new one, e.g. **Deployments → ⋯ → Redeploy**, or
+   push a commit).
+
+Once both are set, the &ldquo;enable live mode&rdquo; checkbox on `/sandbox`
+stops being disabled. If either is missing, the checkbox stays off with an
+honest reason shown inline (`GET /api/sandbox` reports which one) rather than
+silently doing nothing when checked.
