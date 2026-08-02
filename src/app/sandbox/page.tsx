@@ -124,6 +124,12 @@ export default function SandboxPage() {
         Runs the exact same pipeline shown on <Link href="/architecture">Architecture</Link> — noise gate,
         extraction, referent resolution, pre-rules, adjudication — not a simplified stand-in for it.
       </p>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-2)" }}>
+        A single message almost never produces a contradiction here — this page only judges claims within the
+        messages you type in this run, with no memory of the ledger&apos;s established facts, and only wording the
+        resolver can match will bucket together (see the two prefilled examples below). Type two messages, from
+        different people, about the same thing, in similar wording, for a real disagreement to show up.
+      </p>
 
       {cast.length > 0 && (
         <SandboxEditor cast={cast} onRun={run} running={running} liveAvailable={liveAvailable} liveUnavailableReason={liveUnavailableReason} />
@@ -196,6 +202,15 @@ export default function SandboxPage() {
           <code>src/core/model/client.ts</code>). Live mode calls the Vercel AI Gateway server-side only — the API
           key never reaches the browser — and is rate-limited to 10 calls per session per 10 minutes, with an
           automatic fallback to replay on a 429.
+        </p>
+        <p>
+          This page has no memory of the ledger — each run only compares claims found within that run&apos;s typed
+          messages, never against previously established facts. Referent matching for free-typed text is also
+          heuristic, not alias-aware: real corpus events like <code>indep_event.launch_date</code> resolve via a
+          hardcoded alias list (<code>src/core/aliases.ts</code>), so unrelated free-typed wording (even about the
+          same real-world topic) can extract into separate referents and never get compared at all — one message
+          producing a single-claim bucket that resolves <code>COMPATIBLE</code> by the &ldquo;fewer than 2 live
+          claims&rdquo; guard, not because nothing changed.
         </p>
       </ReviewerNote>
 
