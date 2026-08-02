@@ -11,11 +11,14 @@ and reminders eventually gets muted: it has no way to know its own output
 has gone stale. This is what makes those features trustworthy, which is why
 it comes first.
 
-**Nothing to install to try it.** The hosted deployment is the whole
-product — every tab, every drill-down, the evals suite itself, is reachable
-by clicking. To reproduce the numbers offline instead, `npm ci && npm run
-eval` runs with no API key and prints the same per-scenario results as this
-README.
+**Nothing to install to try it.** [shared-truth-ledger.vercel.app](https://shared-truth-ledger.vercel.app)
+is the whole product — every tab, every drill-down, the evals suite itself,
+is reachable by clicking, with demo data and no login. See
+[/process](https://shared-truth-ledger.vercel.app/process) for the real
+decisions and tradeoffs behind the build, mapped to how this kind of
+assignment tends to get evaluated. To reproduce the numbers offline
+instead, `npm ci && npm run eval` runs with no API key and prints the same
+per-scenario results as this README.
 
 ---
 
@@ -403,7 +406,7 @@ never by asking the model to be clever about who outranks whom.
 ### Per-scenario results
 
 From the committed baseline (`evals/baseline.json`, `reportHash`
-`9c13014855149dfd3c4b7f6de1eb49fdabd8a379905fcd2217a2bb8456b84905`), run
+`3cfde8dac169629bf6987469754ecb19e70ef27794d6c2e3488bbe46539bfbff`), run
 against `inclusionai/ling-3.0-flash-free` on both tiers,
 `EVAL_AS_OF=2026-07-24T23:59:59+05:30`, judge scope `binary`. Reproduce with
 `npm run eval` — it will print this same `reportHash`.
@@ -413,7 +416,7 @@ against `inclusionai/ling-3.0-flash-free` on both tiers,
 | Metric | Result |
 |---|---|
 | False positive rate | **0 / 18 = 0** |
-| Contradiction recall | **5 / 8** |
+| Contradiction recall | **6 / 8** |
 | Span validity | **65 / 65 = 1** |
 
 Zero false positives across every must-not-flag scenario is the number that
