@@ -72,6 +72,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/deck" className="app-sidebar__footer-link">
             View deck →
           </Link>
+          <Link href="/process" className="app-sidebar__footer-link">
+            How this was built →
+          </Link>
         </div>
       </aside>
       <div className="app-shell__content">{children}</div>
