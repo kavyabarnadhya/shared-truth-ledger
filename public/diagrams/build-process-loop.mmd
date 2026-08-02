@@ -1,0 +1,16 @@
+%%{init: {'theme': 'neutral'}}%%
+flowchart TB
+    A["Hands-on product testing<br/>(live app, real input)"] --> B["A result looks wrong<br/>or unclear"]
+    B --> C["Traced to root cause<br/>in source — not guessed"]
+    C --> D["Fixed"]
+    D --> E["Verified against the committed<br/>eval baseline (npm run eval)"]
+    E -->|"0 regressions"| F["Shipped"]
+    E -->|"regression found"| C
+    F --> A
+
+    style A fill:#eef2ff,stroke:#4338ca
+    style B fill:#fef2f2,stroke:#b91c1c
+    style C fill:#fffbeb,stroke:#b45309
+    style D fill:#f0fdf4,stroke:#15803d
+    style E fill:#eff6ff,stroke:#1d4ed8
+    style F fill:#f0fdf4,stroke:#15803d

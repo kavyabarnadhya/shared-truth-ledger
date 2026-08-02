@@ -101,6 +101,13 @@ function SlideProblem() {
         </li>
       </ul>
 
+      <h2 className="section-heading">Explicit assumption</h2>
+      <p>
+        No games-studio PM was interviewed to validate this. What would be validated first, given the chance:
+        whether contradiction (what this system detects) or omission (what it deliberately does not) is the
+        failure mode PMs actually notice first in practice.
+      </p>
+
       <h2 className="section-heading">Success criteria</h2>
       <table className="claim-table">
         <thead>
@@ -139,16 +146,25 @@ function SlideApproach() {
 
       <h2 className="section-heading">The deterministic/model split</h2>
       <p>
-        Four of the seven possible verdicts (UPDATE, RESOLVED_BY_SUPERSESSION, RESOLVED_BY_CORRECTION,
-        AMBIGUOUS_REFERENT) are decided by code, before the model is ever called. The model answers exactly one
-        question on the remainder: are these live claims mutually incompatible? This is the deliberate hedge against
-        a weak free-tier judge, stated as a limitation, not hidden as a strength.
+        Six of the seven possible verdicts (UPDATE, RESOLVED_BY_SUPERSESSION, RESOLVED_BY_CORRECTION,
+        AMBIGUOUS_REFERENT, COMPATIBLE, CONTESTED) are reachable by code, before the model is ever called — only
+        CONTRADICTION is model-only. The model answers exactly one question on what code can&apos;t already settle:
+        are these live claims mutually incompatible? This is the deliberate hedge against a weak free-tier judge,
+        stated as a limitation, not hidden as a strength.
       </p>
 
       <h2 className="section-heading">Model selection</h2>
       <p>
         Both tiers on <code>inclusionai/ling-3.0-flash-free</code>. A <code>strong</code> config
         (Claude Sonnet 5 for adjudication) is fully plumbed but unrecorded — no strong-model numbers are claimed.
+      </p>
+
+      <h2 className="section-heading">How this was built</h2>
+      <p>
+        Built with Claude Code (Claude Sonnet 5 as the coding assistant) across iterative sessions — every commit
+        in this repo&apos;s history carries a <code>Co-Authored-By</code> trailer. Changes to the scored pipeline
+        are gated by <code>npm run eval</code>&apos;s committed baseline; a discovered failure gets root-caused and
+        documented, never patched by reactively tuning a prompt or raising a token cap after seeing the result.
       </p>
 
       <h2 className="section-heading">Autonomy</h2>
