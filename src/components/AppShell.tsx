@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { Wordmark } from "./Wordmark";
-import { ReviewerBanner } from "./ReviewerNote";
 
 const NAV_ITEMS = [
   { href: "/", label: "Overview", glyph: "○" },
@@ -20,14 +18,12 @@ const NAV_ITEMS = [
  * Product shell: left sidebar on wide viewports, collapsing to a top bar
  * under ~720px (see .app-shell media query in globals.css). Carries the
  * signed-in demo user and connected-sources line — honestly labelled as
- * demo, never implying real auth or a live connection — plus the
- * persistent, dismissible reviewer banner that frames the rest of the app
- * as a product with an engineering layer available on request, not the
- * other way round.
+ * demo, never implying real auth or a live connection. The engineering
+ * layer lives in each page's own ReviewerNote plus the Architecture page,
+ * both reachable from the nav — no separate site-wide banner needed.
  */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   return (
     <div className="app-shell">
@@ -78,10 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
       </aside>
-      <div className="app-shell__content">
-        {!bannerDismissed && <ReviewerBanner onDismiss={() => setBannerDismissed(true)} />}
-        {children}
-      </div>
+      <div className="app-shell__content">{children}</div>
     </div>
   );
 }

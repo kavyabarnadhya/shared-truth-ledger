@@ -182,14 +182,14 @@ function SlideProof() {
         </div>
       </div>
 
-      <h2 className="section-heading">Honest findings</h2>
+      <h2 className="section-heading">What actually happened, not just the summary numbers</h2>
       <ul className="prerule-list">
         <li>Predicted N7/N8 (reported speech, negative polarity) would be the free model&apos;s weak points — wrong; both worked correctly.</li>
         <li>What actually went wrong: the free model over-segments messages and paraphrases values enough that exact-match scoring correctly refuses several matches — a precision problem, not a modality/polarity problem.</li>
         <li>C6 had a real referent-resolution bug (fixed — see README); what remains is the free model&apos;s rationale for that bucket consistently exceeding the 400-char schema cap, falling back to COMPATIBLE — the deliberately conservative failure mode, working as designed.</li>
-        <li>N3 is an open miss with no clean explanation yet — reported as a genuine gap, not rationalised.</li>
+        <li>N3 is an open miss with no clean explanation yet.</li>
       </ul>
-      <p className="claim-state-label">No hand-written rule was added in response to any of these numbers.</p>
+      <p className="claim-state-label">The rules stay fixed regardless of which numbers they produce — a metric a customer can trust has to hold up before results are known, not be tuned to them after.</p>
 
       <h2 className="section-heading">Roadmap</h2>
       <ul className="prerule-list">

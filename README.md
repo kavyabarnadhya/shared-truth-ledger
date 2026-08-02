@@ -1,8 +1,5 @@
 # Quorum
 
-*(Internal repo/URL slug: `shared-truth-ledger` — kept as-is; renaming risked
-breaking the already-verified hosted deployment, out of scope for this pass.)*
-
 A ledger over a team's Slack and Gmail that extracts claims — who asserted
 what, about which referent, when — into persistent state, then detects when
 two people hold incompatible **live** claims about the same thing.
@@ -14,11 +11,11 @@ and reminders eventually gets muted: it has no way to know its own output
 has gone stale. This is what makes those features trustworthy, which is why
 it comes first.
 
-**You do not need to run anything to evaluate this.** The hosted deployment
-is the primary deliverable — every tab, every drill-down, the evals suite
-itself, is reachable by clicking. If you want to verify reproducibility,
-`npm ci && npm run eval` runs offline with no API key and prints the same
-per-scenario numbers as this README.
+**Nothing to install to try it.** The hosted deployment is the whole
+product — every tab, every drill-down, the evals suite itself, is reachable
+by clicking. To reproduce the numbers offline instead, `npm ci && npm run
+eval` runs with no API key and prints the same per-scenario results as this
+README.
 
 ---
 
@@ -54,8 +51,8 @@ Neither is invented here, and no number below claims otherwise.
 
 ### Where this problem statement comes from
 
-No games-studio PM was interviewed for this project. The user and trigger
-above are reasoned from two sources:
+No games-studio PM was interviewed to validate this problem statement. The
+user and trigger above are reasoned from two sources instead:
 
 - **Olivier Courtemanche** (former EA product manager, recorded industry
   talk) names three recurring failure modes that are shared-truth problems

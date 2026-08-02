@@ -31,9 +31,9 @@ reasoning, before it reaches execution.
   their reported percentages are lab-study numbers on a two-person task and
   are not cited as if they transferred to this domain.
 
-**Say plainly:** no games-studio PM was interviewed for this. What would be
-validated first: whether contradiction (what this system detects) or
-omission (what it deliberately does not) is the failure mode PMs notice
+**Say plainly:** no games-studio PM was interviewed to validate this. What
+would be validated first: whether contradiction (what this system detects)
+or omission (what it deliberately does not) is the failure mode PMs notice
 first in practice.
 
 **Success criteria**, split by what's measurable now vs. what needs real
@@ -125,7 +125,7 @@ eval` (see `evals/baseline.json`'s `reportHash` for the current value):
 | N3 ambiguous referent | AMBIGUOUS_REFERENT | COMPATIBLE | miss — open question, see README |
 | C9 (contested, excluded) | CONTESTED | CONTESTED | OK |
 
-**Honest findings — what was predicted vs. what actually happened:**
+**What actually happened, not just the summary numbers:**
 - Predicted N7/N8 (reported speech, negative polarity) would be the free
   model's weak points. **Wrong** — both worked correctly; modality and
   polarity accuracy are 1.0 wherever a claim matched at all.
@@ -147,11 +147,12 @@ eval` (see `evals/baseline.json`'s `reportHash` for the current value):
 - C4 came back `COMPATIBLE` exactly as predicted — different cohorts,
   different baselines, a defensible label limitation, not patched around.
 - N3 is an open miss with no clean explanation yet — the referent resolver
-  passes its own unit tests on this exact case, so this needs a follow-up
-  debugging session the timeline didn't allow. Reported as a genuine gap,
-  not rationalised.
+  passes its own unit tests on this exact case, so this is a genuine open
+  gap needing follow-up debugging, not a rationalised one.
 
-No hand-written rule was added in response to any of these numbers.
+The rules stay fixed regardless of which numbers they produce — a metric a
+customer can trust has to hold up before results are known, not be tuned to
+them after.
 
 **Roadmap, each item earned by the ledger:**
 1. Minutes generated from the ledger — what circulates is what the team
