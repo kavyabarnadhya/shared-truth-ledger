@@ -7,11 +7,21 @@ import { ToolBoundaryPanel } from "@/components/ToolBoundaryPanel";
 import { RoutingDiagram } from "@/components/RoutingDiagram";
 import { ReviewerNote } from "@/components/ReviewerNote";
 import { VerdictChip } from "@/components/VerdictChip";
-import type { LedgerSnapshot, VerdictKind } from "@/core/types";
+import goldClaimsData from "../../../evals/gold-claims.json";
+import type { GoldClaim, LedgerSnapshot, VerdictKind } from "@/core/types";
 
 interface LedgerApiResponse {
   snapshot: LedgerSnapshot | null;
 }
+
+interface GoldClaimsFile {
+  claims: GoldClaim[];
+}
+
+const GOLD_CLAIMS: GoldClaim[] = (goldClaimsData as GoldClaimsFile).claims;
+const GOLD_CLAIMS_COUNT = GOLD_CLAIMS.length;
+/** First five gold claims, in file order — same sample size as the Evals page's own disclosure. */
+const GOLD_CLAIMS_SAMPLE = GOLD_CLAIMS.slice(0, 5);
 
 const VERDICTS: Array<{ kind: VerdictKind; meaning: string; decidedBy: string }> = [
   {
@@ -251,6 +261,40 @@ export default function ArchitecturePage() {
           implementation, and <code>src/core/eval/scenarios.ts</code> for the full scenario registry (C1-C9, N1-N18)
           that page&apos;s tables are driven from.
         </p>
+        <p>
+          The adjudication grader scores every run against these gold claims, not against anything the model itself
+          produced. One person (this project&apos;s author) hand-labeled them, with no measured agreement from a
+          second annotator — stated here rather than smoothed over. See README §8 (&ldquo;Known limitations&rdquo;)
+          for the full statement of that limitation.
+        </p>
+        <details className="drilldown">
+          <summary>view a sample of the gold claims ({GOLD_CLAIMS_SAMPLE.length} of {GOLD_CLAIMS_COUNT})</summary>
+          <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+            <thead>
+              <tr>
+                <th>Claim id</th>
+                <th>Message</th>
+                <th>Referent</th>
+                <th>Value</th>
+                <th>Asserter</th>
+              </tr>
+            </thead>
+            <tbody>
+              {GOLD_CLAIMS_SAMPLE.map((c) => (
+                <tr key={c.claim_id}>
+                  <td className="mono-cell">{c.claim_id}</td>
+                  <td className="mono-cell">{c.message_id}</td>
+                  <td className="mono-cell">{c.referent}</td>
+                  <td>{c.value}</td>
+                  <td className="mono-cell">{c.asserter}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+            Full set on <Link href="/evals">Evals</Link>, or in <code>evals/gold-claims.json</code> directly.
+          </p>
+        </details>
       </div>
 
       <div className="reviewer-appendix__section" id="sandbox">

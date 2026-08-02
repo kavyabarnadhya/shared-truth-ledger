@@ -67,7 +67,7 @@ function DimensionProblem() {
     <Dimension
       n={1}
       title="Problem structuring"
-      ask="can an open brief become a problem statement sharp enough to engineer against — specific user, specific trigger, specific outcome, explicit assumptions, observable success criteria?"
+      ask="did I actually pick a user, a trigger, and a way to tell if it worked — or just describe a vague pain point?"
     >
       <p>
         <strong>User:</strong> a PM at a mobile games studio running live ops. <strong>Trigger:</strong> a message
@@ -76,19 +76,16 @@ function DimensionProblem() {
         source messages and the reasoning, before it reaches execution.
       </p>
       <p>
-        Before any of that was fixed, the recruiter had accidentally attached a completed reference deck alongside
-        the real brief — a different, already-solved approach to the same prompt. On seeing both were the same
-        brief, the call was to build a genuinely different problem angle rather than risk reading as derivative,
-        despite time already spent thinking through that other shape. Research came before code: producer
-        pain-point threads, a former EA PM&apos;s recorded talk on misaligned definitions of success and a
-        &ldquo;data truth trap,&rdquo; and the Tufts mental-model-discrepancy literature — used as a frame, not
-        cited as if lab-study numbers on a two-person task transferred to this domain.
+        I pushed for real research before writing any code — producer pain-point threads, a former EA PM&apos;s
+        recorded talk on misaligned definitions of success and a &ldquo;data truth trap,&rdquo; and the Tufts
+        mental-model-discrepancy literature. I used that as a frame, not as evidence — I didn&apos;t cite their
+        lab-study numbers on a two-person task as if they transferred to this domain.
       </p>
       <p>
-        Claude&apos;s first framing was a plain misalignment detector — pushed back on hard: was contradiction
-        detection even the right unit, or was there a bigger idea underneath it? That&apos;s where &ldquo;shared-truth
-        ledger&rdquo; came from — contradiction detection as the first thing built on top of a persistent belief
-        model, not the whole idea.
+        Claude&apos;s first framing was a plain misalignment detector. I pushed back on it: was contradiction
+        detection even the right unit, or was there a bigger idea underneath it? That&apos;s where I landed on
+        &ldquo;shared-truth ledger&rdquo; instead — contradiction detection as the first thing built on top of a
+        persistent belief model, not the whole idea.
       </p>
       <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>
         Explicit assumption
@@ -151,7 +148,7 @@ function DimensionScoping() {
     <Dimension
       n={2}
       title="Scoping in stages"
-      ask="can a fuzzy goal decompose into shippable stages where each stage earns the right to the next — and what got cut, and why?"
+      ask="what got built first, what got pushed to later, and what got dropped outright — and do those calls hold up?"
     >
       <div style={{ display: "flex", gap: "var(--space-3)", flexWrap: "wrap", marginBottom: "var(--space-3)" }}>
         {STAGES.map((s) => (
@@ -198,7 +195,7 @@ function DimensionMethodology() {
     <Dimension
       n={3}
       title="Applied AI methodology"
-      ask="depth of fluency with agents and orchestration, tool calls, context loading, hand-offs, model selection, hooks, and MCP — considered choices, not vocabulary."
+      ask="model choice, context, tool calls, MCP — were these real decisions with a reason, or just terms used correctly?"
     >
       <div className="drilldown" style={{ padding: "var(--space-2)", marginBottom: "var(--space-3)" }}>
         <img
@@ -273,6 +270,30 @@ function DimensionMethodology() {
       </ul>
 
       <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>
+        The free tier has a real rate limit, and it&apos;s enforced, not just documented
+      </h3>
+      <p>
+        Live mode is capped at 10 calls per session per 10 minutes — an in-memory counter keyed to a session cookie,
+        not a suggestion. Go over it and the API returns a 429 with &ldquo;Rate limit reached for this session (10
+        live calls per 10 minutes). Try replay mode, or wait.&rdquo; Sandbox&apos;s retry-live button hits the exact
+        same counter as a normal run — it asks for more output room per call, it doesn&apos;t get more calls.
+      </p>
+      <p>
+        This limit exists for fairness, not because recording the eval fixtures ran into it — the free-tier model
+        itself already rate-limits per request regardless of anything in this app, so the counter here just stops
+        one person&apos;s live exploration from eating the whole shared quota. Replay being the default mode is a
+        separate decision, made for reproducibility: byte-identical results, offline, no API key needed. The two
+        facts sit next to each other but one didn&apos;t cause the other.
+      </p>
+      <p>
+        Gold claims — the labels the adjudication grader is scored against — are hand-labeled by one person (me),
+        with no measured agreement from anyone else checking my work; that limitation is stated plainly rather than
+        smoothed over. They live in <code>evals/gold-claims.json</code>, and the Architecture page links to a
+        sample of them so a reviewer can see exactly what &ldquo;gold&rdquo; means here, not just take the word for
+        it.
+      </p>
+
+      <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>
         Scope discipline near the end
       </h3>
       <p>
@@ -283,6 +304,19 @@ function DimensionMethodology() {
         the reproducibility guarantee the Evals tab depends on rather than trading it for a more impressive-looking
         page.
       </p>
+
+      <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>
+        Shipping it
+      </h3>
+      <p>
+        This is a plain Next.js App Router project, so deploying it is zero-config — no <code>vercel.json</code>,
+        no custom build step. I connected the GitHub repo in the Vercel dashboard once, and every push to{" "}
+        <code>main</code> auto-deploys from there. Live mode and the AI Gateway key aren&apos;t committed anywhere —
+        <code>AI_GATEWAY_API_KEY</code> and <code>LIVE_MODE_ENABLED</code> are set as Vercel project environment
+        variables, same as any secret. One thing that caught me: Vercel doesn&apos;t pick up a new environment
+        variable on an already-running deployment — adding one means triggering a fresh deploy, not just saving the
+        setting.
+      </p>
     </Dimension>
   );
 }
@@ -292,7 +326,7 @@ function DimensionEvals() {
     <Dimension
       n={4}
       title="Eval design"
-      ask="how do you know the agent is actually correct — and would you catch a regression when a prompt changes?"
+      ask="if I changed a prompt tomorrow, would I actually notice something broke?"
     >
       <p>
         Two graders, never merged. The extraction grader scores the pipeline&apos;s real predicted claims. The
@@ -344,7 +378,7 @@ function DimensionSystemDesign() {
     <Dimension
       n={5}
       title="System design accuracy"
-      ask="does the system hang together end to end — data flow, state, persistence, cold start vs. steady state, failure modes, what survives a restart, what depends on what?"
+      ask="what happens on a restart, what happens when a call fails, and does the demo path actually match the real code path?"
     >
       <p>
         <code>npm ci && npm run eval</code> reproduces the same per-scenario numbers on any machine, offline, with
@@ -356,12 +390,11 @@ function DimensionSystemDesign() {
         so evaluation time is a frozen, injected parameter everywhere.
       </p>
       <p>
-        <strong>If you stub a connector, stub it cleanly behind the same interface you&apos;d use for the real
-        one — this is checkable, not just claimed.</strong> Every model-call implementation (live, replay, stub,
-        fallback) satisfies one <code>ModelClient</code> interface, and the pipeline only ever calls{" "}
-        <code>model.call(...)</code> through it — grepping for an <code>instanceof</code> check on any concrete
-        client, anywhere a model gets called, turns up zero. Swapping the free model for the already-plumbed strong
-        config is a config change, not a rewrite, because that boundary is real.
+        <strong>Every model-call implementation shares one interface — live, replay, stub, and fallback all
+        implement the same <code>ModelClient</code>, and nothing branches on which one it&apos;s holding.</strong>{" "}
+        The pipeline only ever calls <code>model.call(...)</code> — grepping for an <code>instanceof</code> check on
+        any concrete client, anywhere a model gets called, turns up zero. That&apos;s why swapping the free model for
+        the already-plumbed strong config is a config change, not a rewrite.
       </p>
       <p>
         <strong>Persistence:</strong> an env var (<code>LEDGER_STORE</code>) picks between a file-backed store,
