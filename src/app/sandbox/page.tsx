@@ -140,7 +140,7 @@ export default function SandboxPage() {
         </>
       )}
 
-      <ReviewerNote readmeHref="/README.md#sandbox">
+      <ReviewerNote readmeHref="/architecture#sandbox">
         <p>
           Every run goes through the same <code>runExtractionPipeline</code>/<code>runAdjudicationPipeline</code>{" "}
           the ledger and Signals pages use — this is not a simplified demo path. In replay mode, novel input that

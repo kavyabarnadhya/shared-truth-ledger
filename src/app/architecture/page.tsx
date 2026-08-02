@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PipelineView } from "@/components/PipelineView";
 import { ToolBoundaryPanel } from "@/components/ToolBoundaryPanel";
+import { RoutingDiagram } from "@/components/RoutingDiagram";
 import { ReviewerNote } from "@/components/ReviewerNote";
 import type { LedgerSnapshot } from "@/core/types";
 
@@ -49,7 +50,15 @@ export default function ArchitecturePage() {
         ledger snapshot&apos;s trace — not hand-drawn.
       </p>
 
-      <h2 className="section-heading" style={{ marginTop: 0 }}>Where the data comes from</h2>
+      <nav className="page-toc" aria-label="On this page">
+        <a href="#data-source">Where the data comes from</a>
+        <a href="#six-stages">The six stages</a>
+        <a href="#architecture">Tool boundary</a>
+        <a href="#routing-diagram">The routing decision, diagrammed</a>
+        <a href="#reviewer-appendix">Reviewer appendix</a>
+      </nav>
+
+      <h2 className="section-heading" id="data-source">Where the data comes from</h2>
       <p>
         Quorum reads Slack and Gmail through an MCP-style tool layer — the same four tools (search Slack, get a
         Slack thread, search Gmail, get a Gmail thread) are exposed both to an MCP client over stdio and to this web
@@ -68,7 +77,7 @@ export default function ArchitecturePage() {
         </div>
       )}
 
-      <h2 className="section-heading">The six stages</h2>
+      <h2 className="section-heading" id="six-stages">The six stages</h2>
       <ol style={{ paddingLeft: "1.2em" }}>
         {STAGE_SENTENCES.map((s) => (
           <li key={s.id} style={{ marginBottom: "0.4em" }}>{s.sentence}</li>
@@ -77,13 +86,13 @@ export default function ArchitecturePage() {
 
       {snapshot && <PipelineView snapshot={snapshot} />}
 
-      <h2 className="section-heading">Tool boundary</h2>
+      <h2 className="section-heading" id="architecture">Tool boundary</h2>
       <p className="claim-state-label">
         Four tools, one shared adapter, two callers — an MCP server over stdio, and this web app in-process.
       </p>
       <ToolBoundaryPanel />
 
-      <ReviewerNote readmeHref="/README.md#architecture">
+      <ReviewerNote readmeHref="/architecture#architecture">
         <p>
           This page and the SourcePanel are the two places the MCP boundary is actually exercised rather than just
           documented: <code>src/adapters/workspace.ts</code> is the single implementation; <code>mcp-server/src/adapter.ts</code>{" "}
@@ -94,6 +103,100 @@ export default function ArchitecturePage() {
           this note links to.
         </p>
       </ReviewerNote>
+
+      <h2 className="section-heading" id="routing-diagram">The routing decision, diagrammed</h2>
+      <p className="claim-state-label">
+        The same six stages above, drawn as the actual branch points a message goes through — deterministic steps in
+        one style, model calls in another, with the Guardrailed/Open judge-scope split and the confidence-gated
+        escalation router shown as real branches, not prose.
+      </p>
+      <RoutingDiagram />
+
+      <h2 className="section-heading" id="reviewer-appendix" style={{ marginTop: "var(--space-4)" }}>
+        Reviewer appendix
+      </h2>
+      <p className="claim-state-label">
+        The engineering detail each page&apos;s &ldquo;How this page works&rdquo; note links back to — one section
+        per page, kept here instead of a repo-root README route Vercel can&apos;t serve directly.
+      </p>
+
+      <div className="reviewer-appendix__section" id="overview">
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Overview page</h3>
+        <p>
+          &ldquo;Topics being tracked&rdquo; counts only catalogued referents (see the Ledger page&apos;s &ldquo;other
+          topics detected automatically&rdquo; split) — internal identifiers like <code>indep_event.launch_date</code>{" "}
+          and extractor-minted noise both live in the same underlying <code>Bucket[]</code>, but only the former is a
+          real tracked topic from a product point of view. The false positive rate and contradiction recall figures
+          live entirely on the Evals page, computed by the same in-browser eval suite you can run yourself there —
+          the Overview page does not duplicate that computation.
+        </p>
+      </div>
+
+      <div className="reviewer-appendix__section" id="pre-rules">
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Signals page — pre-rules</h3>
+        <p>
+          Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
+          updates, self-corrections, and authority-based supersession are all decided by code, not by the model. Only
+          a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets a
+          single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo; If that call
+          self-reports low confidence, a confidence-gated escalation router issues a second, richer call — see the
+          routing diagram above for the live counts. &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
+          pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
+          logic against a smaller set of visible messages.
+        </p>
+        <p>
+          Two user-facing actions live on this page (<code>src/components/BucketRow.tsx</code>): Dismiss persists a{" "}
+          <code>Suppression</code> and Mark-as-resolved persists a <code>Resolution</code> — same shape, same
+          store, same &ldquo;survives a restart&rdquo; guarantee (<code>src/core/ledger.ts</code>&apos;s{" "}
+          <code>dismissBucket</code>/<code>resolveBucket</code>, written via{" "}
+          <code>/api/ledger/suppress</code>/<code>/api/ledger/resolve</code>). Both re-raise automatically the
+          moment the bucket&apos;s live claim set changes (<code>isSuppressed</code>/<code>isResolved</code>) — a
+          dismissal or a resolution is never a silent, permanent hide. Neither touches{" "}
+          <code>projectAsOf</code> or verdict computation: a resolution is a human annotation recorded alongside the
+          system&apos;s own verdict, not a replacement for it. <strong>Explicitly out of scope for this pass:</strong>{" "}
+          real notifications (Slack-reply/email-send) when a conflict is dismissed or resolved, assigning a conflict
+          to a specific person, and a comment thread on a bucket — real product needs, not silently missing, just a
+          materially larger build (external-write integration, not just UI) than this pass covers.
+        </p>
+      </div>
+
+      <div className="reviewer-appendix__section" id="ledger">
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Ledger page</h3>
+        <p>
+          Each row is a temporal projection over that referent&apos;s claims as of the ledger&apos;s frozen as-of (see{" "}
+          <code>src/core/ledger.ts</code>): superseded/withdrawn claims stay visible, not hidden, so a reviewer can
+          see what was ruled out and why. The watermark (<code>snapshot.watermark</code>) tracks which messages have
+          already been processed, making re-runs idempotent. Suppression (dismiss/restore on the Signals tab)
+          re-raises a bucket only if its live claim set actually changes — a dismissal isn&apos;t silently permanent.
+        </p>
+      </div>
+
+      <div className="reviewer-appendix__section" id="evals">
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Evals page</h3>
+        <p>
+          <code>npm run eval -- --print-hash</code> against the same committed recordings prints the same report hash
+          offline — that is the actual reproducibility guarantee, not just the on-screen claim on that page. The
+          regression protocol treats any single-scenario regression as a failure even if the average improves; the
+          diff panel there implements exactly that rule, not an aggregate pass/fail. See{" "}
+          <code>src/core/eval/diff.ts</code> and <code>src/core/eval/run-eval.ts</code> for the scoring
+          implementation, and <code>src/core/eval/scenarios.ts</code> for the full scenario registry (C1-C9, N1-N18)
+          that page&apos;s tables are driven from.
+        </p>
+      </div>
+
+      <div className="reviewer-appendix__section" id="sandbox">
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Try it page</h3>
+        <p>
+          Every run goes through the same <code>runExtractionPipeline</code>/<code>runAdjudicationPipeline</code> the
+          ledger and Signals pages use — this is not a simplified demo path. In replay mode, novel input that
+          doesn&apos;t match a committed recording&apos;s cache key returns a clear &ldquo;no recording for this
+          input&rdquo; error rather than a fabricated result (see <code>ReplayMissError</code> in{" "}
+          <code>src/core/model/client.ts</code>). Live mode calls the Vercel AI Gateway server-side only — the API
+          key never reaches the browser — and is rate-limited to 10 calls per session per 10 minutes, with an
+          automatic fallback to replay on a 429. See &ldquo;Enabling live mode&rdquo; below for how to turn it on for
+          a deployment.
+        </p>
+      </div>
     </main>
   );
 }

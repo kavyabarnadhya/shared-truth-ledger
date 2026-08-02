@@ -8,7 +8,7 @@ function makeSnapshot(): LedgerSnapshot {
   return {
     asOf: at, configId: "free", judgeScope: "binary", corpusHash: "abc",
     buckets: [], verdicts: [], claims: [], rejectedClaims: [], gatedMessageIds: [], trace: [],
-    suppressions: [], watermark: { lastMessageId: null, lastTimestamp: null, processedMessageIds: [], advancedAt: at },
+    suppressions: [], resolutions: [], watermark: { lastMessageId: null, lastTimestamp: null, processedMessageIds: [], advancedAt: at },
     createdAt: at,
   };
 }

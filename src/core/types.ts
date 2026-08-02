@@ -208,6 +208,27 @@ export interface Suppression {
   claimIdsAtDismissal: string[]; // re-raise only if the live claim set changes
 }
 
+/**
+ * A manually-recorded resolution (Part D): "Mark as resolved" lets a user
+ * record which position won and by whom for a bucket the deterministic
+ * pre-rules (R1-R8) didn't settle on their own — a contested bucket, or any
+ * case someone simply wants to close by hand. Same shape and same
+ * persistence story as Suppression (a lightweight record keyed to the
+ * bucket, stored on LedgerSnapshot, survives a restart under the file
+ * store) — this does not touch verdict computation; a resolution is a
+ * human annotation recorded alongside the system's own verdict, not a
+ * replacement for it.
+ */
+export interface Resolution {
+  bucket_key: string;
+  asOf: Instant;
+  resolvedAt: Instant;
+  resolvedBy: string;
+  winningAsserter: string | null; // handle of whoever's position won, if applicable
+  note: string | null;
+  claimIdsAtResolution: string[]; // same re-raise-on-change semantics as Suppression
+}
+
 export interface Watermark {
   lastMessageId: string | null; // stable-sorted corpus position
   lastTimestamp: Instant | null;
@@ -231,6 +252,7 @@ export interface LedgerSnapshot {
   gatedMessageIds: string[]; // noise gate
   trace: TraceEntry[];
   suppressions: Suppression[];
+  resolutions: Resolution[];
   watermark: Watermark;
   createdAt: Instant; // from Clock, never Date.now
 }

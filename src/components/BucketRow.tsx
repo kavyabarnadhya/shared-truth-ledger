@@ -5,7 +5,7 @@ import { VerdictChip } from "./VerdictChip";
 import { formatIST } from "@/lib/format";
 import { conflictTitle, claimStateLabel, sourceMeta, isCataloguedReferent } from "@/lib/display";
 import type { SourcePanelTarget } from "./SourcePanel";
-import type { Bucket, Verdict, CastEntry, Claim, Message } from "@/core/types";
+import type { Bucket, Verdict, CastEntry, Claim, Message, Resolution } from "@/core/types";
 
 const ME_HANDLE = "meera.iyer";
 
@@ -43,6 +43,9 @@ export function BucketRow({
   onDismiss,
   onRestore,
   isDismissed,
+  onResolve,
+  onClearResolution,
+  resolution,
   onOpenSource,
 }: {
   bucket: Bucket;
@@ -52,9 +55,15 @@ export function BucketRow({
   onDismiss?: (bucketKey: string) => void;
   onRestore?: (bucketKey: string) => void;
   isDismissed?: boolean;
+  onResolve?: (bucketKey: string, winningAsserter: string | null, note: string | null) => void;
+  onClearResolution?: (bucketKey: string) => void;
+  resolution?: Resolution | null;
   onOpenSource: (target: SourcePanelTarget) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [resolving, setResolving] = useState(false);
+  const [winningAsserter, setWinningAsserter] = useState("");
+  const [resolutionNote, setResolutionNote] = useState("");
   const castByHandle = new Map(cast.map((c) => [c.handle, c]));
   const liveClaims = bucket.liveClaims;
   const asserterCount = new Set(liveClaims.map((c) => c.asserter)).size;
@@ -131,12 +140,95 @@ export function BucketRow({
             ))}
           </ol>
 
-          {(onDismiss || onRestore) && (
+          {resolution && (
+            <div className="banner" style={{ borderColor: "var(--settled)", marginTop: "var(--space-2)" }}>
+              <strong>Marked resolved</strong> by {resolution.resolvedBy === ME_HANDLE ? "you" : resolution.resolvedBy}
+              {resolution.winningAsserter && (
+                <> — {personLabel(resolution.winningAsserter, castByHandle).name}&apos;s position stands</>
+              )}
+              {resolution.note && <>: &ldquo;{resolution.note}&rdquo;</>}
+              {onClearResolution && (
+                <>
+                  {" "}
+                  <button className="claim-side__source-link" onClick={() => onClearResolution(bucket.referent)}>
+                    Clear
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {(onDismiss || onRestore || onResolve) && (
             <div style={{ marginTop: "var(--space-2)" }}>
               {isDismissed ? (
-                <button onClick={() => onRestore?.(bucket.referent)}>Restore</button>
+                <>
+                  <p className="claim-state-label" style={{ marginBottom: "0.3em" }}>
+                    Dismissed — hidden from the open list. It reappears automatically if either side&apos;s live
+                    position changes; otherwise it stays here until you restore it.
+                  </p>
+                  <button onClick={() => onRestore?.(bucket.referent)}>Restore</button>
+                </>
               ) : (
-                <button onClick={() => onDismiss?.(bucket.referent)}>Dismiss</button>
+                <>
+                  <p className="claim-state-label" style={{ marginBottom: "0.3em" }}>
+                    <strong>Dismiss</strong> hides this from the open list without deciding it — it&apos;s reversible
+                    (see &ldquo;Dismissed&rdquo; below) and re-raises automatically the moment either side&apos;s
+                    live position actually changes, so dismissing never silences a real update.
+                  </p>
+                  <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+                    {onDismiss && <button onClick={() => onDismiss(bucket.referent)}>Dismiss</button>}
+                    {onResolve && !resolution && (
+                      <button onClick={() => setResolving((v) => !v)}>
+                        {resolving ? "Cancel" : "Mark as resolved"}
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {resolving && onResolve && (
+                <div className="drilldown" style={{ marginTop: "var(--space-2)" }}>
+                  <p className="claim-state-label" style={{ marginTop: 0 }}>
+                    Record which position won and by whom — for cases the automatic rules couldn&apos;t settle on
+                    their own. This is a manual note alongside the system&apos;s verdict, not a replacement for it;
+                    it&apos;s saved the same way a dismissal is (survives a restart) and reverses the same way, too.
+                  </p>
+                  {liveClaims.length > 0 && (
+                    <label style={{ display: "block", marginBottom: "var(--space-1)" }}>
+                      <span className="claim-state-label">Whose position won (optional)</span>
+                      <select
+                        value={winningAsserter}
+                        onChange={(e) => setWinningAsserter(e.target.value)}
+                        style={{ display: "block", marginTop: "0.2em" }}
+                      >
+                        <option value="">Not applicable / decided some other way</option>
+                        {liveClaims.map((c) => (
+                          <option key={c.asserter} value={c.asserter}>
+                            {personLabel(c.asserter, castByHandle).name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                  <label style={{ display: "block", marginBottom: "var(--space-1)" }}>
+                    <span className="claim-state-label">Note (optional)</span>
+                    <input
+                      type="text"
+                      value={resolutionNote}
+                      onChange={(e) => setResolutionNote(e.target.value)}
+                      placeholder="e.g. confirmed 15 August in standup"
+                      style={{ display: "block", marginTop: "0.2em", width: "100%", maxWidth: "28em" }}
+                    />
+                  </label>
+                  <button
+                    onClick={() => {
+                      onResolve(bucket.referent, winningAsserter || null, resolutionNote.trim() || null);
+                      setResolving(false);
+                    }}
+                  >
+                    Save resolution
+                  </button>
+                </div>
               )}
             </div>
           )}

@@ -144,9 +144,9 @@ export function SandboxEditor({
               const entry = cast.find((c) => c.handle === e.target.value);
               update(i, { author: e.target.value, author_role: entry?.role ?? "" });
             }}>
-              {cast.map((c) => (
+              {cast.filter((c) => !c.is_bot).map((c) => (
                 <option key={c.handle} value={c.handle}>
-                  {c.name}
+                  {c.name} — {c.role}
                 </option>
               ))}
             </select>
@@ -187,6 +187,14 @@ export function SandboxEditor({
           {running ? "Running..." : "Run extraction + adjudication"}
         </button>
       </div>
+      {!liveAvailable && (
+        <p className="claim-state-label" style={{ marginTop: "var(--space-1)" }}>
+          Replay mode below needs no setup and is what every number in this app is based on. To turn live mode on for
+          this deployment: Vercel dashboard → Project Settings → Environment Variables → set{" "}
+          <code>AI_GATEWAY_API_KEY</code> and <code>LIVE_MODE_ENABLED=true</code> → redeploy. Full steps in the
+          README&apos;s &ldquo;Enabling live mode on a Vercel deployment&rdquo; section.
+        </p>
+      )}
     </div>
   );
 }

@@ -19,6 +19,7 @@ function makeSnapshot(overrides: Partial<LedgerSnapshot> = {}): LedgerSnapshot {
     gatedMessageIds: [],
     trace: [],
     suppressions: [],
+    resolutions: [],
     watermark: { lastMessageId: null, lastTimestamp: null, processedMessageIds: [], advancedAt: "2026-07-24T23:59:59+05:30" as import("../core/time.ts").Instant },
     createdAt: "2026-07-24T23:59:59+05:30" as import("../core/time.ts").Instant,
     ...overrides,

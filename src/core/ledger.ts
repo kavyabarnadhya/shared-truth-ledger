@@ -14,6 +14,7 @@ import type {
   CastEntry,
   Message,
   PreRuleFiring,
+  Resolution,
   Suppression,
   VerdictKind,
   Watermark,
@@ -178,7 +179,7 @@ export function buildAmbiguityBuckets(
   return out;
 }
 
-export type { PreRuleFiring, Suppression };
+export type { PreRuleFiring, Suppression, Resolution };
 
 // ---------------------------------------------------------------------------
 // Watermark (C4) — cold start vs steady state
@@ -261,4 +262,44 @@ export function dismissBucket(
     reason,
     claimIdsAtDismissal: [...bucket.liveClaims.map((c) => c.claim_id)].sort(),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Resolution (Part D) — manual "who won" record, same shape/lifecycle as
+// Suppression. This is a human annotation stored alongside the system's own
+// verdict, not a replacement for it: it does not feed back into
+// projectAsOf or any pre-rule/verdict computation above.
+// ---------------------------------------------------------------------------
+
+export function resolveBucket(
+  bucket: Bucket,
+  resolvedBy: string,
+  now: Instant,
+  winningAsserter: string | null = null,
+  note: string | null = null,
+): Resolution {
+  return {
+    bucket_key: bucket.referent,
+    asOf: bucket.asOf,
+    resolvedAt: now,
+    resolvedBy,
+    winningAsserter,
+    note,
+    claimIdsAtResolution: [...bucket.liveClaims.map((c) => c.claim_id)].sort(),
+  };
+}
+
+/**
+ * Same re-raise-on-change semantics as isSuppressed: a resolution recorded
+ * against one live-claim set no longer applies once that set changes —
+ * "resolved" isn't a stale label once the underlying disagreement has moved.
+ */
+export function isResolved(bucket: Bucket, resolutions: readonly Resolution[]): boolean {
+  const relevant = resolutions.filter((r) => r.bucket_key === bucket.referent);
+  if (relevant.length === 0) return false;
+  const currentLiveIds = [...bucket.liveClaims.map((c) => c.claim_id)].sort();
+  return relevant.some((r) => {
+    const resolvedIds = [...r.claimIdsAtResolution].sort();
+    return JSON.stringify(resolvedIds) === JSON.stringify(currentLiveIds);
+  });
 }
