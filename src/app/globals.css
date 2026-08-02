@@ -996,42 +996,11 @@ a { color: inherit; }
 }
 
 /* ---------------------------------------------------------------------
- * Reviewer layer — persistent dismissible banner + per-page collapsible
- * note. Deliberately visually distinct from the product content around it
- * (muted accent border, caption-sized type) so it reads as a separate
- * layer, not blended product copy.
+ * Reviewer layer — a per-page collapsible note at the foot of each page.
+ * Deliberately visually distinct from the product content above it (dashed
+ * top border, caption-sized type) so it reads as a separate layer, not
+ * blended product copy.
  * ------------------------------------------------------------------- */
-
-.reviewer-banner {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
-  border-bottom: 1px solid var(--rule);
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--size-caption);
-  color: var(--muted);
-}
-
-.reviewer-banner__link {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.reviewer-banner__dismiss {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  font: inherit;
-  flex: 0 0 auto;
-  padding: 0 0.3em;
-}
-
-.reviewer-banner__dismiss:hover {
-  color: var(--ink);
-}
 
 .reviewer-note {
   margin-top: var(--space-4);
