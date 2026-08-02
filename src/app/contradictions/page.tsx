@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AsOfControl, AS_OF_PRESETS } from "@/components/AsOfControl";
 import { BucketRow } from "@/components/BucketRow";
 import { SourcePanel, type SourcePanelTarget } from "@/components/SourcePanel";
@@ -72,6 +73,7 @@ export default function ContradictionsPage() {
     setAsOf(value);
     build(value);
   };
+
 
   async function dismiss(bucketKey: string) {
     await fetch("/api/ledger/suppress", {
@@ -154,9 +156,16 @@ export default function ContradictionsPage() {
           </span>
         )}
       </div>
-      <p className="claim-state-label" style={{ marginBottom: "var(--space-3)" }}>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-2)" }}>
         Not every topic changes between snapshots — some stay open with the same live positions across dates, so two
         dates can look alike.
+      </p>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-3)" }}>
+        Known gap: the launch-date item above is supposed to flip from Contradiction to Resolved between 15 and 18
+        Jul once the studio head&apos;s message lands — it doesn&apos;t reproduce on this interactive tab, because the
+        free model&apos;s read of that one message comes back truncated and is correctly rejected rather than
+        guessed at. The transition is real and verified on the eval path (<Link href="/evals">Evals</Link>); see
+        README §8, item 10 for the full explanation.
       </p>
 
       {beforeAfter && flagshipTitle && (

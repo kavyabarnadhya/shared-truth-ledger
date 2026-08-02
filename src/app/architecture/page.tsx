@@ -6,11 +6,50 @@ import { PipelineView } from "@/components/PipelineView";
 import { ToolBoundaryPanel } from "@/components/ToolBoundaryPanel";
 import { RoutingDiagram } from "@/components/RoutingDiagram";
 import { ReviewerNote } from "@/components/ReviewerNote";
-import type { LedgerSnapshot } from "@/core/types";
+import { VerdictChip } from "@/components/VerdictChip";
+import type { LedgerSnapshot, VerdictKind } from "@/core/types";
 
 interface LedgerApiResponse {
   snapshot: LedgerSnapshot | null;
 }
+
+const VERDICTS: Array<{ kind: VerdictKind; meaning: string; decidedBy: string }> = [
+  {
+    kind: "CONTRADICTION",
+    meaning: "Two live positions genuinely conflict.",
+    decidedBy: "Model only — no pre-rule ever emits this.",
+  },
+  {
+    kind: "COMPATIBLE",
+    meaning: "No real disagreement — one live claim, or the live claims already agree.",
+    decidedBy: "Code (R6/R6b/R7) when one of those settles it; the model otherwise.",
+  },
+  {
+    kind: "UPDATE",
+    meaning: "The same person changed their own answer; no one else has a live, differing claim.",
+    decidedBy: "Code (deterministic same-asserter check, src/core/ledger.ts).",
+  },
+  {
+    kind: "RESOLVED_BY_SUPERSESSION",
+    meaning: "A senior person's later claim overrides an earlier disagreement.",
+    decidedBy: "Code (R5).",
+  },
+  {
+    kind: "RESOLVED_BY_CORRECTION",
+    meaning: "Someone corrected themselves to match what someone else had already said.",
+    decidedBy: "Code (R4).",
+  },
+  {
+    kind: "AMBIGUOUS_REFERENT",
+    meaning: "Two different buckets may be the same real topic, phrased identically, disagreeing in value.",
+    decidedBy: "Code (ambiguity-pair detection, src/core/ledger.ts) — a different mechanism from CONTESTED below.",
+  },
+  {
+    kind: "CONTESTED",
+    meaning: "Hand-labelled as genuinely arguable either way; kept out of right/wrong scoring entirely.",
+    decidedBy: "Code (R8) — only for a referent in the hardcoded contested set, not a general judgment call.",
+  },
+];
 
 const STAGE_SENTENCES: Array<{ id: string; sentence: string }> = [
   { id: "noise_gate", sentence: "First, Quorum throws out anything that isn't a real person talking — a fixed 5-rule ladder (bot author, automation email address, gated channel, automation text signature, short social aside), all code, no model call." },
@@ -110,6 +149,30 @@ export default function ArchitecturePage() {
         <code>COMPATIBLE</code> only, enforced by a strict schema (<code>BinaryVerdictSchema</code>); Open allows all
         7 verdicts (<code>Full7VerdictSchema</code>) — see <code>src/core/schema/verdict.ts</code>.
       </p>
+
+      <div style={{ overflowX: "auto", marginBottom: "var(--space-3)" }}>
+      <table className="claim-table" style={{ minWidth: "36rem" }}>
+        <thead>
+          <tr>
+            <th>Verdict</th>
+            <th>Meaning</th>
+            <th>Decided by</th>
+          </tr>
+        </thead>
+        <tbody>
+          {VERDICTS.map((v) => (
+            <tr key={v.kind}>
+              <td>
+                <VerdictChip verdict={v.kind} />
+              </td>
+              <td>{v.meaning}</td>
+              <td className="claim-state-label">{v.decidedBy}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+
       <RoutingDiagram />
 
       <h2 className="section-heading" id="reviewer-appendix" style={{ marginTop: "var(--space-4)" }}>
@@ -142,7 +205,9 @@ export default function ArchitecturePage() {
           single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo;
           &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
           pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
-          logic against a smaller set of visible messages.
+          logic against a smaller set of visible messages. These rules are hand-authored, studio-specific business
+          logic (<code>src/core/prerules.ts</code>) — code, not model output, and not user-configurable in this
+          build.
         </p>
         <p>
           Two user-facing actions live on this page (<code>src/components/BucketRow.tsx</code>): Dismiss persists a{" "}
