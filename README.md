@@ -113,6 +113,18 @@ temporal model underneath it.
 | Real OAuth | Fixture-mode reads JSON; MCP server exists as a real protocol boundary (see §7) but nothing here authenticates against a live Slack/Gmail workspace |
 | Real-time streaming | Batch pipeline over a fixed corpus; no websocket/webhook ingestion |
 
+**What Stage 3 configuration would look like, demonstrated not wired.** A
+`/settings` page shows the surface a studio would actually configure once
+Stage 3 exists: model tier per pipeline stage, judge scope, authority ranks
+per role, noise-gate strictness, and the escalation threshold (kept for
+continuity — see below). It is a real form with real local state, persisted
+to `localStorage`, but every control is inert: nothing on that page writes to
+`ModelClient`, the recordings, or the Evals tab. Wiring it live would break
+the reproducibility guarantee the rest of the product depends on — the Evals
+tab promises byte-identical numbers for any reviewer, which only holds if
+inputs are fixed. The page proves the configuration surface is understood
+without taking that risk.
+
 **Omission detection is the biggest prize in Stage 3, and it is deliberately
 out of scope.** Detecting what was *not* said needs a task-state ground
 truth — a spec, a ticket, a checklist — that Slack and Gmail messages alone

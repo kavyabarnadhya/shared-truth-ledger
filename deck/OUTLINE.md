@@ -162,6 +162,11 @@ No hand-written rule was added in response to any of these numbers.
 4. Omission detection — the biggest prize, blocked on a task-state ground
    truth Slack and Gmail alone cannot provide.
 
+The `/settings` page demonstrates the configuration surface this stage would
+need (model tier, judge scope, authority ranks, noise-gate strictness) as a
+real form with real local state — not wired to inference, so the
+reproducibility guarantee above holds regardless.
+
 **Close on:** every assistant that captures and reminds eventually gets
 muted because it holds no model of what is true. The ledger is what makes
 those later features trustworthy — which is why it comes first.

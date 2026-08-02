@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/evals", label: "Evals", glyph: "✓" },
   { href: "/sandbox", label: "Try it", glyph: "▷" },
   { href: "/architecture", label: "Architecture", glyph: "◫" },
+  { href: "/settings", label: "Settings", glyph: "⚙" },
 ] as const;
 
 /**

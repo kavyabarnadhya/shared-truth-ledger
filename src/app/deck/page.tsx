@@ -198,6 +198,10 @@ function SlideProof() {
         <li>Reconciliation drafting — gated for human approval, never auto-sent.</li>
         <li>Omission detection — blocked on task-state ground truth this corpus doesn&apos;t have.</li>
       </ul>
+      <p className="claim-state-label">
+        <code>/settings</code> demonstrates this stage&apos;s configuration surface as a real form with real local
+        state — not wired to inference, so reproducibility above holds regardless.
+      </p>
     </section>
   );
 }
