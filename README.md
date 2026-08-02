@@ -114,16 +114,23 @@ temporal model underneath it.
 | Real-time streaming | Batch pipeline over a fixed corpus; no websocket/webhook ingestion |
 
 **What Stage 3 configuration would look like, demonstrated not wired.** A
-`/settings` page shows the surface a studio would actually configure once
-Stage 3 exists: model tier per pipeline stage, judge scope, authority ranks
-per role, noise-gate strictness, and the escalation threshold (kept for
-continuity — see below). It is a real form with real local state, persisted
-to `localStorage`, but every control is inert: nothing on that page writes to
-`ModelClient`, the recordings, or the Evals tab. Wiring it live would break
-the reproducibility guarantee the rest of the product depends on — the Evals
-tab promises byte-identical numbers for any reviewer, which only holds if
-inputs are fixed. The page proves the configuration surface is understood
-without taking that risk.
+`/settings` page shows the surface a workspace admin would actually configure
+once Stage 3 exists: model tier per pipeline stage, judge scope, model call
+parameters (temperature, max output tokens, the same-thread context window
+size, the MCP tools' search result limit), a reference view of the real
+extraction user-prompt (`renderUser()`'s literal output, not an editable
+template — there's no placeholder syntax in this system), authority ranks
+per role, noise-gate strictness, and the gated-channel list. Every control
+is real — named, traceable to a specific field or constant already in the
+codebase, not invented for the page. It is a real form with real local
+state, persisted to `localStorage`, but every control is inert: nothing on
+that page writes to `ModelClient`, the recordings, or the Evals tab. This is
+a genuine deferred capability, not a decorative one — it stays inert because
+wiring it live would break the reproducibility guarantee the rest of the
+product depends on (the Evals tab promises byte-identical numbers for any
+reviewer, which only holds if inputs are fixed) and because this build has
+no admin/end-user role separation to gate a live write safely. The page
+proves the configuration surface is understood without taking that risk.
 
 **Omission detection is the biggest prize in Stage 3, and it is deliberately
 out of scope.** Detecting what was *not* said needs a task-state ground
