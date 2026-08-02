@@ -42,12 +42,10 @@ export default function ProcessPage() {
 function Dimension({
   n,
   title,
-  ask,
   children,
 }: {
   n: number;
   title: string;
-  ask: string;
   children: React.ReactNode;
 }) {
   return (
@@ -55,9 +53,6 @@ function Dimension({
       <h2 className="section-heading" style={{ fontSize: "var(--size-h2, 1.3rem)" }}>
         {n}. {title}
       </h2>
-      <p className="claim-state-label" style={{ marginBottom: "var(--space-2)" }}>
-        What&apos;s being evaluated: {ask}
-      </p>
       {children}
     </section>
   );
@@ -68,7 +63,6 @@ function DimensionProblem() {
     <Dimension
       n={1}
       title="Problem structuring"
-      ask="did I actually pick a user, a trigger, and a way to tell if it worked, or just describe a vague pain point?"
     >
       <p>
         <strong>User:</strong> a PM at a mobile games studio running live ops. <strong>Trigger:</strong> a message
@@ -149,7 +143,6 @@ function DimensionScoping() {
     <Dimension
       n={2}
       title="Scoping in stages"
-      ask="what got built first, what got pushed to later, and what got dropped outright, and do those calls hold up?"
     >
       <div style={{ display: "flex", gap: "var(--space-3)", flexWrap: "wrap", marginBottom: "var(--space-3)" }}>
         {STAGES.map((s) => (
@@ -196,7 +189,6 @@ function DimensionMethodology() {
     <Dimension
       n={3}
       title="Applied AI methodology"
-      ask="model choice, context, tool calls, MCP: were these real decisions with a reason, or just terms used correctly?"
     >
       <div className="drilldown" style={{ padding: "var(--space-2)", marginBottom: "var(--space-3)" }}>
         <img
@@ -328,7 +320,6 @@ function DimensionEvals() {
     <Dimension
       n={4}
       title="Eval design"
-      ask="if I changed a prompt tomorrow, would I actually notice something broke?"
     >
       <p>
         Two graders, never merged. The extraction grader scores the pipeline&apos;s real predicted claims. The
@@ -380,7 +371,6 @@ function DimensionSystemDesign() {
     <Dimension
       n={5}
       title="System design accuracy"
-      ask="what happens on a restart, what happens when a call fails, and does the demo path actually match the real code path?"
     >
       <p>
         <code>npm ci && npm run eval</code> reproduces the same per-scenario numbers on any machine, offline, with
