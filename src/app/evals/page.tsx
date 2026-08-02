@@ -433,7 +433,7 @@ export default function EvalsPage() {
             One scenario is genuinely arguable either way — both readings may be true simultaneously. Reported here,
             never folded into the headline score as if it were simply right or wrong.
           </p>
-          <AdjudicationTable scores={report.contested} onViewMessages={viewMessages} />
+          <AdjudicationTable scores={report.contested} onViewMessages={viewMessages} idPrefix="contested-" />
 
           <h2 className="section-heading">Extraction (per scenario)</h2>
           <p className="claim-state-label">

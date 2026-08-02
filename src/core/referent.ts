@@ -324,20 +324,30 @@ export function detectAmbiguityPairs(
 // ---------------------------------------------------------------------------
 
 const MERGE_SIMILARITY_THRESHOLD = 0.5;
+// A much lower floor than MERGE_SIMILARITY_THRESHOLD — applied even when both
+// dates agree, purely to catch the coincidence case: two unrelated phrases
+// that happen to each contain a parseable day+month substring (e.g. "May" as
+// a verb, or an incidental date mention) but share essentially no other
+// vocabulary. Genuine same-topic phrasing with a matching date (the case
+// this whole function exists for) clears this floor easily — the repro
+// scores ~0.6, an order of magnitude above it.
+const DATE_MATCH_MIN_SIMILARITY = 0.15;
 
 /**
  * True when two claims that each minted their own referent (method
  * "new_referent" — neither matched the alias catalogue) are close enough to
  * be treated as the same real-world thing. Both must be in the same
  * thread/channel. If both raw phrases contain a parseable date ("12th
- * August"), that date agreeing is sufficient on its own — no time-window
+ * August"), that date agreeing is treated as strong evidence — no time-window
  * gate, since two explicit mentions of the same calendar date in the same
- * conversation are strong evidence regardless of how many hours apart they
- * were said. An explicit date *mismatch* vetoes a merge even if the
- * surrounding wording is similar (e.g. "12th August launch readiness" must
- * not fold into "14th readiness for QA" just because both say
- * "readiness"). Without a comparable date on both sides, fall back to the
- * same lexical similarity function used elsewhere in this module, gated to
+ * conversation are meaningful regardless of how many hours apart they were
+ * said — but still gated by DATE_MATCH_MIN_SIMILARITY as a sanity floor
+ * against pure date coincidence with otherwise-unrelated phrasing. An
+ * explicit date *mismatch* vetoes a merge even if the surrounding wording is
+ * similar (e.g. "12th August launch readiness" must not fold into "14th
+ * readiness for QA" just because both say "readiness"). Without a comparable
+ * date on both sides, fall back to the same lexical similarity function used
+ * elsewhere in this module at the higher MERGE_SIMILARITY_THRESHOLD, gated to
  * a tighter 24h window — wording-only evidence is weaker and more prone to
  * accidentally folding together unrelated topics in a long-running channel.
  */
@@ -345,14 +355,17 @@ function claimsMergeEligible(a: AmbiguityCandidateClaim, b: AmbiguityCandidateCl
   const sameContext = a.thread_id === b.thread_id || (!!a.channel && a.channel === b.channel);
   if (!sameContext) return false;
 
+  const aNorm = normalisePhrase(a.raw_referent);
+  const bNorm = normalisePhrase(b.raw_referent);
+
   const yearA = Number(a.timestamp.slice(0, 4));
   const yearB = Number(b.timestamp.slice(0, 4));
   const dateA = normaliseDateValue(a.raw_referent, yearA);
   const dateB = normaliseDateValue(b.raw_referent, yearB);
-  if (dateA && dateB) return dateA === dateB;
+  if (dateA && dateB) return dateA === dateB && similarity(aNorm, bNorm) >= DATE_MATCH_MIN_SIMILARITY;
 
   if (Math.abs(toEpochMs(a.timestamp) - toEpochMs(b.timestamp)) > TWENTY_FOUR_HOURS_MS) return false;
-  return similarity(normalisePhrase(a.raw_referent), normalisePhrase(b.raw_referent)) >= MERGE_SIMILARITY_THRESHOLD;
+  return similarity(aNorm, bNorm) >= MERGE_SIMILARITY_THRESHOLD;
 }
 
 function groupsMergeEligible(

@@ -57,9 +57,19 @@ function ScenarioLabel({ scenario, onViewMessages }: { scenario: string; onViewM
 export function AdjudicationTable({
   scores,
   onViewMessages,
+  idPrefix = "",
 }: {
   scores: AdjudicationScore[];
   onViewMessages?: (messageIds: string[]) => void;
+  /**
+   * Distinguishes row anchor ids when more than one AdjudicationTable is on
+   * the same page (headline + contested) — without this, two tables could
+   * in principle emit the same `id="scenario-X"` if a scenario id were ever
+   * reused across both, silently breaking `#scenario-X` deep links (the
+   * browser jumps to whichever renders first). Leave unset for the primary/
+   * headline table so its existing `#scenario-C4`-style links keep working.
+   */
+  idPrefix?: string;
 }) {
   return (
     <table className="eval-table">
@@ -77,7 +87,7 @@ export function AdjudicationTable({
       <tbody>
         {scores.flatMap((s) =>
           s.buckets.map((b, i) => (
-            <tr key={`${s.scenario}-${i}`} id={i === 0 ? `scenario-${s.scenario}` : undefined}>
+            <tr key={`${s.scenario}-${i}`} id={i === 0 ? `scenario-${idPrefix}${s.scenario}` : undefined}>
               <td>{i === 0 ? <ScenarioLabel scenario={s.scenario} onViewMessages={onViewMessages} /> : <span className="mono-cell">{s.scenario}</span>}</td>
               <td className="mono-cell">{b.bucket_key}</td>
               <td className="mono-cell">{b.asOf}</td>

@@ -341,3 +341,79 @@ test("mergeFreshReferents leaves unrelated single mints unchanged", () => {
   const remap = mergeFreshReferents(claims);
   assert.equal(remap.get("weather_forecast_for_the_office_picnic"), "weather_forecast_for_the_office_picnic");
 });
+
+test("mergeFreshReferents merges via the lexical-fallback path when neither phrase has a parseable date", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "success_criteria_definition",
+      raw_referent: "success criteria definition",
+      value: "session depth",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "definition_of_success_criteria",
+      raw_referent: "definition of success criteria",
+      value: "ARPDAU",
+      timestamp: parseInstant("2026-07-14T18:00:00+05:30"),
+      thread_id: "T-1",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.equal(remap.get("success_criteria_definition"), remap.get("definition_of_success_criteria"));
+});
+
+test("mergeFreshReferents does NOT merge via the lexical-fallback path when phrasing is dissimilar", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "tournament_scope_decision",
+      raw_referent: "tournament scope decision",
+      value: "in scope",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "art_capacity_allocation",
+      raw_referent: "art capacity allocation",
+      value: "two artists",
+      timestamp: parseInstant("2026-07-14T18:00:00+05:30"),
+      thread_id: "T-1",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("tournament_scope_decision"), remap.get("art_capacity_allocation"));
+});
+
+test("mergeFreshReferents does NOT merge on date coincidence alone when the rest of the phrasing is essentially unrelated", () => {
+  // Both phrases parse to the same date (12 August) but share almost no
+  // other vocabulary — the DATE_MATCH_MIN_SIMILARITY floor should veto this
+  // even though the date-match branch normally skips the 24h window check.
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "quarterly_roadmap_review",
+      raw_referent:
+        "quarterly roadmap review scheduled for 12 August covering platform migration headcount planning budget approvals vendor contracts",
+      value: "scheduled",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+      channel: "#general",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "payment_gateway_certificate_expiry",
+      raw_referent:
+        "12 August is when the new payment gateway certificate expires needs rotation security audit compliance",
+      value: "expires",
+      timestamp: parseInstant("2026-07-20T10:00:00+05:30"),
+      thread_id: "T-1",
+      channel: "#general",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("quarterly_roadmap_review"), remap.get("payment_gateway_certificate_expiry"));
+});
