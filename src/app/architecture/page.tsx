@@ -172,6 +172,10 @@ export default function ArchitecturePage() {
         </tbody>
       </table>
       </div>
+      <p className="claim-state-label" style={{ marginTop: "calc(-1 * var(--space-2))", marginBottom: "var(--space-3)" }}>
+        For what R4–R8 (and the other code-decided checks referenced above) actually do, see{" "}
+        <a href="#pre-rules">Signals page — pre-rules</a> below.
+      </p>
 
       <RoutingDiagram />
 
