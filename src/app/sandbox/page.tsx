@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SandboxEditor, type SandboxMessageInput } from "@/components/SandboxEditor";
 import { HighlightedMessage } from "@/components/ClaimRow";
 import { VerdictChip } from "@/components/VerdictChip";
@@ -80,6 +81,10 @@ export default function SandboxPage() {
       <p className="page-subtitle">
         Type two messages from different people about the same thing and see what Quorum does with them —
         extraction, then a plain conflict judgment, live.
+      </p>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-2)" }}>
+        Runs the exact same pipeline shown on <Link href="/architecture">Architecture</Link> — noise gate,
+        extraction, referent resolution, pre-rules, adjudication — not a simplified stand-in for it.
       </p>
 
       {cast.length > 0 && (

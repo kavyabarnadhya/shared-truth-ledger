@@ -83,6 +83,21 @@ export const SANDBOX_EXAMPLES: SandboxExample[] = [
       },
     ],
   },
+  {
+    label: "A plain status update",
+    description: "A single positive assertion, read alone — the baseline case, no blocker and no disagreement.",
+    messages: [
+      {
+        author: "sana.kulkarni",
+        author_role: "Art Lead",
+        text: "Level 40 art pack, first pass lands 24 July.",
+        timestamp: "2026-07-09T11:30:00+05:30",
+        channel: "#art-pipeline",
+        thread_id: "T3",
+        source_message_id: "M-100",
+      },
+    ],
+  },
 ];
 
 export function SandboxEditor({

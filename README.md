@@ -245,9 +245,18 @@ per-scenario table imply the model earned them.
 
 Referent resolution (`src/core/referent.ts`) is deterministic-first:
 normalisation, an alias table, then lexical similarity (token Jaccard +
-trigram Dice), with recorded embeddings consulted **only** inside an
-ambiguous similarity band, and only among candidates that survive discrete
-token gates first.
+trigram Dice), with an embedding tiebreak designed to apply **only** inside
+an ambiguous similarity band, and only among candidates that survive
+discrete token gates first.
+
+**In this build, that tiebreak path is unwired, not merely unused.** No
+embeddings were ever recorded for this corpus (`ctx.embeddings` is never
+populated anywhere in `pipeline.ts`), so every real run falls back to
+lexical-only — the `"embedding unavailable, lexical-only tiebreak"` note in
+`referent.ts` fires every time. The cosine-similarity code itself is real
+and unit-tested (`referent.test.ts`), but it has never actually run against
+this corpus. Said plainly rather than implied: this is an intentionally
+scoped gap, not a hidden capability.
 
 This is deliberate, not a shortcut. Cosine similarity between "Onam event
 go-live date" and "Independence Day event go-live date" is high — both are
@@ -628,6 +637,28 @@ during the build:
     materially larger build (real external-write integration, not just UI)
     than this pass covers — named here as the honest next gap, not silently
     missing and not built under time pressure.
+12. **Five items named as roadmap, not built, after a hands-on usability
+    pass** — each would need new backend logic this build has no admin or
+    multi-tenant layer for, not just a UI change:
+    - A model-generated recommendation for how to handle a given
+      disagreement (needs a new prompt and a new model call — the current
+      model is only ever asked "do these conflict?").
+    - Functionally live connector onboarding (`/settings` now shows named,
+      inactive sources — Linear, Notion, Jira — alongside Slack/Gmail, but
+      adding one for real means a new MCP-style tool and adapter, not a
+      toggle).
+    - A real date-range picker on Signals/Ledger — only three fixed
+      snapshot dates exist in the fixture data; a picker with nothing
+      behind most of the calendar would be decorative.
+    - User-editable topic/theme regrouping on the Ledger tab — bucket keys
+      are produced by the deterministic referent resolver
+      (`src/core/referent.ts`); letting a user reassign them by hand would
+      mean writing to state the reproducibility guarantee in §5 depends on.
+    - AI-suggested new Try-it scenarios — the sandbox's prefilled examples
+      are hand-curated instead (three now, covering a cross-source
+      contradiction, a negative-polarity single read, and a positive-
+      polarity single read), each verified against a committed recording
+      rather than generated on the fly.
 
 ---
 

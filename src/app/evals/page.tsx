@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AdjudicationTable, ExtractionTable } from "@/components/ScenarioTable";
 import { ReproducibilityPanel } from "@/components/GraderPanel";
 import { DiffPanel } from "@/components/DiffPanel";
@@ -13,7 +14,7 @@ import { parseInstant } from "@/core/time";
 import { MESSAGES as CORPUS_MESSAGES } from "@/corpus/bundled.generated";
 import goldClaimsData from "../../../evals/gold-claims.json";
 import goldVerdictsData from "../../../evals/gold-verdicts.json";
-import type { EvalReport, EvalDiff, GoldClaim, GoldVerdictRow, JudgeScope, Message, Bucket } from "@/core/types";
+import type { EvalReport, EvalDiff, GoldClaim, GoldVerdictRow, JudgeScope, Message, Bucket, TraceEntry, RejectedClaim, LedgerSnapshot } from "@/core/types";
 
 const GOLD_CLAIMS: GoldClaim[] = (goldClaimsData as GoldClaimsFile).claims;
 const GOLD_VERDICTS: GoldVerdictRow[] = (goldVerdictsData as GoldVerdictsFile).verdicts;
@@ -28,6 +29,15 @@ const GOLD_CLAIMS_SAMPLE = GOLD_CLAIMS.slice(0, 5);
  * corpus (same bundle the eval suite itself loads) is the only place that
  * mapping lives. */
 const THREAD_ID_BY_MESSAGE_ID = new Map(CORPUS_MESSAGES.map((m) => [m.id, m.thread_id]));
+const MESSAGES_BY_ID = new Map(CORPUS_MESSAGES.map((m) => [m.id, m]));
+
+const GATE_RULE_LABELS: Record<string, string> = {
+  G1_bot_author: "G1 — bot author",
+  G2_automation_address: "G2 — automation email address",
+  G3_gated_channel: "G3 — gated channel",
+  G4_automation_signature: "G4 — automation text signature",
+  G5_social_short: "G5 — short social aside",
+};
 
 interface GoldClaimsFile {
   claims: GoldClaim[];
@@ -137,11 +147,50 @@ export default function EvalsPage() {
   const [error, setError] = useState<string | null>(null);
   const [judgeScope, setJudgeScope] = useState<JudgeScope>("binary");
   const [sourceTarget, setSourceTarget] = useState<SourcePanelTarget | null>(null);
+  // Same pipeline, same corpus, same replay recordings as the eval run above
+  // — fetched separately only because EvalReport itself carries counts, not
+  // the underlying message/claim lists. Loaded lazily so a page view that
+  // never opens these drill-downs never pays for the extra request.
+  const [ledgerSnapshot, setLedgerSnapshot] = useState<LedgerSnapshot | null>(null);
+  const [ledgerLoading, setLedgerLoading] = useState(false);
+
+  async function loadDrillDownData() {
+    if (ledgerSnapshot || ledgerLoading) return;
+    setLedgerLoading(true);
+    try {
+      const res = await fetch("/api/ledger", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ judgeScope: "binary" }),
+      });
+      const json = (await res.json()) as { snapshot: LedgerSnapshot | null };
+      setLedgerSnapshot(json.snapshot);
+    } catch {
+      // Best-effort drill-down data; the counts above already stand on their own.
+    } finally {
+      setLedgerLoading(false);
+    }
+  }
 
   function viewMessages(messageIds: string[]) {
     const threadId = messageIds.map((id) => THREAD_ID_BY_MESSAGE_ID.get(id)).find((t): t is string => t !== undefined);
     if (threadId) setSourceTarget({ thread_id: threadId });
   }
+
+  const gatedMessages: Array<{ messageId: string; rulesFired: string[] }> = ledgerSnapshot
+    ? ledgerSnapshot.trace
+        .filter((t): t is TraceEntry & { detail: { gated: boolean; rulesFired: string[] } } =>
+          t.step.startsWith("noise_gate ") && !!t.detail && t.detail.gated === true,
+        )
+        .map((t) => ({ messageId: t.step.replace("noise_gate ", ""), rulesFired: t.detail.rulesFired }))
+    : [];
+  const rejectedClaims: RejectedClaim[] = ledgerSnapshot?.rejectedClaims ?? [];
+
+  const missedScenarios = report
+    ? Object.entries(report.headline.contradictionRecall.scenarios)
+        .filter(([, found]) => !found)
+        .map(([id]) => id)
+    : [];
 
   async function loadModules() {
     const [{ runEval }, { RECORDINGS }, { MESSAGES, CAST }, { getConfig }, { InMemoryRecordingStore }, goldClaimsModule] =
@@ -321,6 +370,16 @@ export default function EvalsPage() {
               <span className="headline-fraction">
                 {headline!.contradictionRecall.found}/{headline!.contradictionRecall.total}
               </span>
+              {missedScenarios.length > 0 && (
+                <span className="claim-state-label" style={{ display: "block", marginTop: "0.2em" }}>
+                  Missed: {missedScenarios.map((id, i) => (
+                    <span key={id}>
+                      <a href={`#scenario-${id}`}>{id}</a>
+                      {i < missedScenarios.length - 1 ? ", " : ""}
+                    </span>
+                  ))}{" "}— why, in the table below.
+                </span>
+              )}
             </div>
             <div className="headline-item">
               <span className="headline-item__label">Quote accuracy</span>
@@ -336,7 +395,9 @@ export default function EvalsPage() {
             {" "}{GOLD_CLAIMS_COUNT} claims) and <code>evals/gold-verdicts.json</code> ({GOLD_VERDICTS_COUNT} verdicts) —
             not against anything the model itself produced. One annotator (this project&apos;s author) labeled both
             files; there is no measured inter-annotator agreement. See README §8 (&ldquo;Known limitations&rdquo;) for
-            the full statement of that limitation — not restated differently here.
+            the full statement of that limitation — not restated differently here. The scenarios themselves are
+            hand-labelled fixtures in <code>src/core/eval/scenarios.ts</code>, part of this codebase — extending
+            coverage means adding an entry there, not a separate authoring tool.
           </p>
           <details className="drilldown">
             <summary>view a sample of the gold claims ({GOLD_CLAIMS_SAMPLE.length} of {GOLD_CLAIMS_COUNT})</summary>
@@ -372,7 +433,7 @@ export default function EvalsPage() {
             One scenario is genuinely arguable either way — both readings may be true simultaneously. Reported here,
             never folded into the headline score as if it were simply right or wrong.
           </p>
-          <AdjudicationTable scores={report.contested} onViewMessages={viewMessages} />
+          <AdjudicationTable scores={report.contested} onViewMessages={viewMessages} idPrefix="contested-" />
 
           <h2 className="section-heading">Extraction (per scenario)</h2>
           <p className="claim-state-label">
@@ -392,6 +453,10 @@ export default function EvalsPage() {
                 ))}
               </tbody>
             </table>
+            <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+              Each score is a simple ratio (items correct ÷ items scored) — 1 is perfect, 0 is a total miss, and
+              anything between (like 0.5) means partial credit: half the claims in that scenario were right.
+            </p>
           </details>
           <ExtractionTable scores={report.extraction} onViewMessages={viewMessages} />
 
@@ -399,12 +464,100 @@ export default function EvalsPage() {
           <table className="claim-table">
             <tbody>
               <tr><td>Messages</td><td className="mono-cell">{report.counts.messages}</td></tr>
-              <tr><td>Filtered out before reading (bots, newsletters)</td><td className="mono-cell">{report.counts.gated}</td></tr>
+              <tr>
+                <td>Filtered out before reading (bots, newsletters)</td>
+                <td className="mono-cell">
+                  {report.counts.gated}
+                  {report.counts.gated > 0 && (
+                    <>
+                      {" "}
+                      <a href="#gated-messages-detail" style={{ fontSize: "var(--size-caption)" }}>
+                        (which ones? →)
+                      </a>
+                    </>
+                  )}
+                </td>
+              </tr>
               <tr><td>Claims extracted</td><td className="mono-cell">{report.counts.claims}</td></tr>
-              <tr><td>Rejected</td><td className="mono-cell">{report.counts.rejected}</td></tr>
-              <tr><td>Topics</td><td className="mono-cell">{report.counts.buckets}</td></tr>
+              <tr>
+                <td>Rejected</td>
+                <td className="mono-cell">
+                  {report.counts.rejected}
+                  {report.counts.rejected > 0 && (
+                    <>
+                      {" "}
+                      <a href="#rejected-claims-detail" style={{ fontSize: "var(--size-caption)" }}>
+                        (why? →)
+                      </a>
+                    </>
+                  )}
+                </td>
+              </tr>
+              <tr><td>Topics</td><td className="mono-cell"><Link href="/ledger">{report.counts.buckets}</Link></td></tr>
             </tbody>
           </table>
+
+          <details id="gated-messages-detail" className="drilldown" onToggle={(e) => e.currentTarget.open && loadDrillDownData()}>
+            <summary>Which messages were filtered out, and why ({report.counts.gated})</summary>
+            <div style={{ marginTop: "var(--space-2)" }}>
+              {ledgerLoading && <p className="claim-state-label">Loading...</p>}
+              {!ledgerLoading && gatedMessages.length === 0 && ledgerSnapshot && (
+                <p className="claim-state-label">No gated messages in this ledger build.</p>
+              )}
+              {gatedMessages.length > 0 && (
+                <table className="claim-table">
+                  <thead>
+                    <tr>
+                      <th>Message</th>
+                      <th>Text</th>
+                      <th>Gate rule</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gatedMessages.map(({ messageId, rulesFired }) => (
+                      <tr key={messageId}>
+                        <td className="mono-cell">{messageId}</td>
+                        <td>{MESSAGES_BY_ID.get(messageId)?.text ?? "—"}</td>
+                        <td className="claim-state-label">
+                          {rulesFired.map((r) => GATE_RULE_LABELS[r] ?? r).join(", ")}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </details>
+
+          <details id="rejected-claims-detail" className="drilldown" onToggle={(e) => e.currentTarget.open && loadDrillDownData()}>
+            <summary>Which claims were rejected, and why ({report.counts.rejected})</summary>
+            <div style={{ marginTop: "var(--space-2)" }}>
+              {ledgerLoading && <p className="claim-state-label">Loading...</p>}
+              {!ledgerLoading && rejectedClaims.length === 0 && ledgerSnapshot && (
+                <p className="claim-state-label">No rejected claims in this ledger build.</p>
+              )}
+              {rejectedClaims.length > 0 && (
+                <table className="claim-table">
+                  <thead>
+                    <tr>
+                      <th>Message</th>
+                      <th>Reason</th>
+                      <th>Detail</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rejectedClaims.map((rc, i) => (
+                      <tr key={`${rc.message_id}-${i}`}>
+                        <td className="mono-cell">{rc.message_id}</td>
+                        <td className="mono-cell">{rc.reason}</td>
+                        <td className="claim-state-label">{rc.detail}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </details>
 
           <ReproducibilityPanel report={report} />
         </>
@@ -413,7 +566,8 @@ export default function EvalsPage() {
       <h2 className="section-heading">Deterministic rules (R1–R8)</h2>
       <p className="claim-state-label">
         Applied to every topic before any model is called. If a rule fully settles the question, the model is never
-        invoked for that topic at all.
+        invoked for that topic at all. These are hand-authored, studio-specific business rules (
+        <code>src/core/prerules.ts</code>) — code, not model output, and not user-configurable in this build.
       </p>
       <table className="claim-table">
         <tbody>

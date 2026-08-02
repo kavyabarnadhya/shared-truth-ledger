@@ -27,6 +27,17 @@ function explainRule(rule: string): string {
 }
 
 /**
+ * Collapses repeat firings of the same rule (e.g. R2 firing once per
+ * superseded claim) into one bullet with a firing count, so the same
+ * sentence never renders twice — each distinct rule that fired appears once.
+ */
+function dedupeFirings(firings: readonly { rule: string }[]): { rule: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const f of firings) counts.set(f.rule, (counts.get(f.rule) ?? 0) + 1);
+  return [...counts.entries()].map(([rule, count]) => ({ rule, count }));
+}
+
+/**
  * A conflict is a horizontal row, not a card — click expands in place. The
  * headline is the plain-English conflict statement (conflictTitle); the
  * machine key is demoted to a small mono caption underneath. Both sides of
@@ -120,8 +131,11 @@ export function BucketRow({
                 </p>
               ) : (
                 <ul className="prerule-list">
-                  {bucket.preRuleTrace.map((f, i) => (
-                    <li key={i}>{explainRule(f.rule)}</li>
+                  {dedupeFirings(bucket.preRuleTrace).map(({ rule, count }) => (
+                    <li key={rule}>
+                      {explainRule(rule)}
+                      {count > 1 && ` (applies to ${count} messages)`}
+                    </li>
                   ))}
                 </ul>
               )}

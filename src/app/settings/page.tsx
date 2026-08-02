@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { CONFIGS } from "@/core/model/config";
 import { EXTRACTION_PROMPT } from "@/core/prompts/extraction";
 import { parseInstant } from "@/core/time";
@@ -262,7 +263,9 @@ export default function SettingsPage() {
           reference, not an editor: <code>renderUser()</code> interpolates structured message data with real
           conditional logic (a context block, per-claim rows) — there is no placeholder syntax in this system, so
           nothing here can be edited and fed back into the pipeline. System-prompt editing is intentionally not
-          exposed on this page.
+          exposed on this page. The judgment (adjudication) prompt isn&apos;t shown here — see the{" "}
+          <Link href="/evals">Evals</Link> page, which renders both the Guardrailed and Open versions against a
+          worked example.
         </p>
         <PromptViewer system={EXTRACTION_PROMPT.SYSTEM} user={WORKED_EXTRACTION_USER} />
       </div>
@@ -348,6 +351,48 @@ export default function SettingsPage() {
             Add channel
           </button>
         </div>
+      </div>
+
+      <div className="drilldown" style={{ marginBottom: "var(--space-3)" }}>
+        <h2 className="section-heading" style={{ marginTop: 0 }}>Connectors</h2>
+        <p className="claim-state-label" style={{ marginTop: 0, marginBottom: "var(--space-2)" }}>
+          Same deferred-Stage-3 category as everything above — a real workspace admin would want to add sources
+          beyond the two this build reads from, not just retune existing ones.
+        </p>
+        <table className="claim-table">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Slack</td>
+              <td className="claim-state-label">Connected — demo workspace, read-only</td>
+            </tr>
+            <tr>
+              <td>Gmail</td>
+              <td className="claim-state-label">Connected — demo workspace, read-only</td>
+            </tr>
+            <tr>
+              <td>Linear</td>
+              <td className="claim-state-label">Not connected</td>
+            </tr>
+            <tr>
+              <td>Notion</td>
+              <td className="claim-state-label">Not connected</td>
+            </tr>
+            <tr>
+              <td>Jira</td>
+              <td className="claim-state-label">Not connected</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+          Adding a source means a new MCP-style tool (see <Link href="/architecture#architecture">Tool boundary</Link>)
+          plus a new adapter, not a config flag — this list names the idea, it doesn&apos;t wire it.
+        </p>
       </div>
 
       <p className="claim-state-label">{saved ? "Saved to this browser." : ""}</p>

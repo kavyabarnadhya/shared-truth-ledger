@@ -29,7 +29,7 @@ import type {
 import type { Instant } from "./time.ts";
 import { evaluateNoiseGate } from "./noise-gate.ts";
 import { validateSpan } from "./span.ts";
-import { resolveReferent } from "./referent.ts";
+import { resolveReferent, mergeFreshReferents, type AmbiguityCandidateClaim } from "./referent.ts";
 import { projectAsOf, buildAmbiguityBuckets, type ClaimContext } from "./ledger.ts";
 import { EXTRACTION_PROMPT } from "./prompts/extraction.ts";
 import { ADJUDICATION_PROMPT } from "./prompts/adjudication.ts";
@@ -231,6 +231,51 @@ export interface AdjudicationRunResult {
 }
 
 /**
+ * Resolves every claim's referent, then merges freshly-minted referents
+ * (claims whose raw phrasing didn't match the alias catalogue — see
+ * resolveReferent's "new_referent" method) that turn out to describe the
+ * same real-world thing in different words. See mergeFreshReferents() in
+ * referent.ts for why this exists: without it, two people disagreeing in
+ * freeform language never land in the same bucket.
+ */
+function resolveAndMergeReferents(
+  claims: readonly Claim[],
+  messagesById: ReadonlyMap<string, Message>,
+  contextByMessageId: ReadonlyMap<string, ClaimContext>,
+): Claim[] {
+  const freshMints: AmbiguityCandidateClaim[] = [];
+  const resolved = claims.map((c) => {
+    const message = messagesById.get(c.message_id);
+    if (!message) return { claim: c, resolvedKey: null as string | null };
+    const resolution = resolveReferent(c.raw_referent || c.referent, {
+      messageText: message.text,
+      sourceSpan: c.source_span,
+    });
+    if (resolution.method === "new_referent") {
+      const ctx = contextByMessageId.get(c.message_id);
+      if (ctx) {
+        freshMints.push({
+          claim_id: c.claim_id,
+          referent: resolution.resolved,
+          raw_referent: c.raw_referent || c.referent,
+          value: c.value,
+          timestamp: c.timestamp,
+          thread_id: ctx.thread_id,
+          channel: ctx.channel,
+        });
+      }
+    }
+    return { claim: c, resolvedKey: resolution.resolved };
+  });
+
+  const remap = mergeFreshReferents(freshMints);
+
+  return resolved.map(({ claim, resolvedKey }) =>
+    resolvedKey === null ? claim : { ...claim, referent: remap.get(resolvedKey) ?? resolvedKey },
+  );
+}
+
+/**
  * Resolution -> pre-rules -> adjudication over a caller-supplied claim set.
  * Called with GOLD claims by the eval harness's adjudication run (grader B),
  * and with the extractor's own predicted claims by the live app — same
@@ -263,22 +308,15 @@ export async function runAdjudicationPipeline(
   // mint a second, wrong bucket for it). `trustSuppliedReferent` lets the
   // caller assert the input's referent is already ground truth and skip
   // re-resolution entirely for that call.
+  const contextByMessageId = new Map<string, ClaimContext>();
+  for (const [id, m] of messagesById) contextByMessageId.set(id, { thread_id: m.thread_id, channel: m.channel });
+
   const resolvedClaims: Claim[] = trustSuppliedReferent
     ? claims.map((c) => ({ ...c, referent: c.raw_referent || c.referent }))
-    : claims.map((c) => {
-        const message = messagesById.get(c.message_id);
-        if (!message) return c;
-        const resolution = resolveReferent(c.raw_referent || c.referent, {
-          messageText: message.text,
-          sourceSpan: c.source_span,
-        });
-        return { ...c, referent: resolution.resolved };
-      });
+    : resolveAndMergeReferents(claims, messagesById, contextByMessageId);
 
   const { buckets, updateBucketKeys } = projectAsOf(resolvedClaims, asOf, cast, contestedReferents);
 
-  const contextByMessageId = new Map<string, ClaimContext>();
-  for (const [id, m] of messagesById) contextByMessageId.set(id, { thread_id: m.thread_id, channel: m.channel });
   const ambiguityBuckets = buildAmbiguityBuckets(buckets, asOf, contextByMessageId);
   const allBuckets = [...buckets, ...ambiguityBuckets].sort((a, b) => compareStrings(a.referent, b.referent));
 

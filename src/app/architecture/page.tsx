@@ -13,11 +13,11 @@ interface LedgerApiResponse {
 }
 
 const STAGE_SENTENCES: Array<{ id: string; sentence: string }> = [
-  { id: "noise_gate", sentence: "First, Quorum throws out anything that isn't a real person talking — bots, CI notifications, newsletters." },
+  { id: "noise_gate", sentence: "First, Quorum throws out anything that isn't a real person talking — a fixed 5-rule ladder (bot author, automation email address, gated channel, automation text signature, short social aside), all code, no model call." },
   { id: "extraction", sentence: "Then it reads every remaining message and pulls out the factual claims it makes, quoting the exact words rather than paraphrasing." },
   { id: "referent_resolution", sentence: "It groups claims that are about the same underlying topic — by exact match, known aliases, then wording similarity — without ever calling a model." },
-  { id: "pre_rules", sentence: "Before asking any model to judge anything, a fixed set of rules checks for the easy cases: someone updating their own earlier statement, someone correcting themselves, a senior person's final call." },
-  { id: "adjudication", sentence: "Only what's left after that — genuine live disagreement between different people, from the model's point of view — gets a single yes/no question to a model. If it isn't confident, a second, more careful pass runs." },
+  { id: "pre_rules", sentence: "Before asking any model to judge anything, a fixed set of rules checks for the easy cases: someone updating their own earlier statement, someone correcting themselves, a senior person's final call (R5)." },
+  { id: "adjudication", sentence: "Only what's left after that — genuine live disagreement between different people, from the model's point of view — gets exactly one question to a model: Guardrailed scope asks yes/no (“contradiction or compatible?”), Open scope lets it choose freely from the full verdict vocabulary." },
   { id: "ledger", sentence: "The result is written to a persistent ledger: today's beliefs, plus a full history of who changed their mind and when." },
 ];
 
@@ -106,7 +106,9 @@ export default function ArchitecturePage() {
       <p className="claim-state-label">
         The same six stages above, drawn as the actual branch points a message goes through — deterministic steps in
         one style, model calls in another, with the Guardrailed/Open judge-scope split shown as a real branch, not
-        prose.
+        prose. Concretely: Guardrailed restricts the model&apos;s output to <code>CONTRADICTION</code> or{" "}
+        <code>COMPATIBLE</code> only, enforced by a strict schema (<code>BinaryVerdictSchema</code>); Open allows all
+        7 verdicts (<code>Full7VerdictSchema</code>) — see <code>src/core/schema/verdict.ts</code>.
       </p>
       <RoutingDiagram />
 
@@ -134,7 +136,8 @@ export default function ArchitecturePage() {
         <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Signals page — pre-rules</h3>
         <p>
           Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
-          updates, self-corrections, and authority-based supersession are all decided by code, not by the model. Only
+          updates, self-corrections, and authority-based supersession (R5) are all decided by code, not by the
+          model. Only
           a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets a
           single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo;
           &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic

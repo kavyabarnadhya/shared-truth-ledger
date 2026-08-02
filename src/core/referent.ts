@@ -16,7 +16,7 @@
  */
 
 import { REFERENTS, AMBIGUITY_GROUPS, type ReferentDef } from "./aliases.ts";
-import { normalisePhrase, similarity, type NormalisedPhrase } from "./normalise.ts";
+import { normalisePhrase, similarity, normaliseDateValue, type NormalisedPhrase } from "./normalise.ts";
 import { toEpochMs, type Instant } from "./time.ts";
 import type { ReferentResolution } from "./types.ts";
 
@@ -317,4 +317,138 @@ export function detectAmbiguityPairs(
   // Deterministic order for downstream consumers.
   pairs.sort((x, y) => (x.bucketKey < y.bucketKey ? -1 : x.bucketKey > y.bucketKey ? 1 : 0));
   return pairs;
+}
+
+// ---------------------------------------------------------------------------
+// Fresh-referent merging (freeform phrasing about the same real-world thing)
+// ---------------------------------------------------------------------------
+
+const MERGE_SIMILARITY_THRESHOLD = 0.5;
+// A much lower floor than MERGE_SIMILARITY_THRESHOLD — applied even when both
+// dates agree, purely to catch the coincidence case: two unrelated phrases
+// that happen to each contain a parseable day+month substring (e.g. "May" as
+// a verb, or an incidental date mention) but share essentially no other
+// vocabulary. Genuine same-topic phrasing with a matching date (the case
+// this whole function exists for) clears this floor easily — the repro
+// scores ~0.6, an order of magnitude above it.
+const DATE_MATCH_MIN_SIMILARITY = 0.15;
+
+/**
+ * True when two claims that each minted their own referent (method
+ * "new_referent" — neither matched the alias catalogue) are close enough to
+ * be treated as the same real-world thing. Both must be in the same
+ * thread/channel. If both raw phrases contain a parseable date ("12th
+ * August"), that date agreeing is treated as strong evidence — no time-window
+ * gate, since two explicit mentions of the same calendar date in the same
+ * conversation are meaningful regardless of how many hours apart they were
+ * said — but still gated by DATE_MATCH_MIN_SIMILARITY as a sanity floor
+ * against pure date coincidence with otherwise-unrelated phrasing. An
+ * explicit date *mismatch* vetoes a merge even if the surrounding wording is
+ * similar (e.g. "12th August launch readiness" must not fold into "14th
+ * readiness for QA" just because both say "readiness"). Without a comparable
+ * date on both sides, fall back to the same lexical similarity function used
+ * elsewhere in this module at the higher MERGE_SIMILARITY_THRESHOLD, gated to
+ * a tighter 24h window — wording-only evidence is weaker and more prone to
+ * accidentally folding together unrelated topics in a long-running channel.
+ */
+function claimsMergeEligible(a: AmbiguityCandidateClaim, b: AmbiguityCandidateClaim): boolean {
+  const sameContext = a.thread_id === b.thread_id || (!!a.channel && a.channel === b.channel);
+  if (!sameContext) return false;
+
+  const aNorm = normalisePhrase(a.raw_referent);
+  const bNorm = normalisePhrase(b.raw_referent);
+
+  const yearA = Number(a.timestamp.slice(0, 4));
+  const yearB = Number(b.timestamp.slice(0, 4));
+  const dateA = normaliseDateValue(a.raw_referent, yearA);
+  const dateB = normaliseDateValue(b.raw_referent, yearB);
+  if (dateA && dateB) return dateA === dateB && similarity(aNorm, bNorm) >= DATE_MATCH_MIN_SIMILARITY;
+
+  if (Math.abs(toEpochMs(a.timestamp) - toEpochMs(b.timestamp)) > TWENTY_FOUR_HOURS_MS) return false;
+  return similarity(aNorm, bNorm) >= MERGE_SIMILARITY_THRESHOLD;
+}
+
+function groupsMergeEligible(
+  groupA: readonly AmbiguityCandidateClaim[],
+  groupB: readonly AmbiguityCandidateClaim[],
+): boolean {
+  for (const a of groupA) {
+    for (const b of groupB) {
+      if (claimsMergeEligible(a, b)) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Merges freshly-minted referents (see resolveReferent's "new_referent"
+ * method) that describe the same real-world thing in different words —
+ * without this, two people disagreeing in freeform, non-catalogue language
+ * never land in the same bucket and a real contradiction goes unseen (found
+ * live: "we are not ready for 12th August launch" / "we really need to push
+ * by 12th at any cost" minted three unrelated referents, each independently
+ * resolving COMPATIBLE by R6 since exactly one live claim occupied each).
+ *
+ * Returns a map from each input claim's original minted referent key to its
+ * canonical key after merging. Only operates on claims whose method is
+ * already "new_referent" — never touches a claim that matched the alias
+ * catalogue. Deliberately deterministic string/date comparison only; does
+ * not consult `ctx.embeddings` (unwired in this build, see README).
+ */
+export function mergeFreshReferents(items: readonly AmbiguityCandidateClaim[]): Map<string, string> {
+  const byReferent = new Map<string, AmbiguityCandidateClaim[]>();
+  for (const it of items) {
+    const arr = byReferent.get(it.referent);
+    if (arr) arr.push(it);
+    else byReferent.set(it.referent, [it]);
+  }
+  const keys = [...byReferent.keys()].sort();
+
+  const parent = new Map(keys.map((k) => [k, k]));
+  const find = (k: string): string => {
+    let r = k;
+    while (parent.get(r) !== r) r = parent.get(r)!;
+    return r;
+  };
+  const union = (a: string, b: string) => {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra !== rb) parent.set(rb, ra);
+  };
+
+  for (let i = 0; i < keys.length; i++) {
+    for (let j = i + 1; j < keys.length; j++) {
+      if (groupsMergeEligible(byReferent.get(keys[i]!)!, byReferent.get(keys[j]!)!)) {
+        union(keys[i]!, keys[j]!);
+      }
+    }
+  }
+
+  // Group by final root, then pick each group's canonical key from its
+  // earliest claim (tie-broken by claim_id) — the survivor reads as
+  // "whoever raised it first" rather than an arbitrary union-find root.
+  const membersByRoot = new Map<string, string[]>();
+  for (const k of keys) {
+    const root = find(k);
+    const arr = membersByRoot.get(root);
+    if (arr) arr.push(k);
+    else membersByRoot.set(root, [k]);
+  }
+
+  const remap = new Map<string, string>();
+  for (const memberKeys of membersByRoot.values()) {
+    if (memberKeys.length === 1) {
+      remap.set(memberKeys[0]!, memberKeys[0]!);
+      continue;
+    }
+    const allClaims = memberKeys.flatMap((k) => byReferent.get(k)!);
+    allClaims.sort((a, b) => {
+      const t = toEpochMs(a.timestamp) - toEpochMs(b.timestamp);
+      return t !== 0 ? t : a.claim_id < b.claim_id ? -1 : 1;
+    });
+    const canonicalKey = allClaims[0]!.referent;
+    for (const k of memberKeys) remap.set(k, canonicalKey);
+  }
+
+  return remap;
 }

@@ -69,7 +69,7 @@ export function PipelineView({ snapshot }: { snapshot: LedgerSnapshot }) {
       id: "referent_resolution",
       title: "3. Referent resolution",
       kind: "deterministic",
-      summary: "Normalisation, alias table, lexical similarity — 0 model calls. Embeddings consulted only as a tiebreak inside an ambiguous similarity band (see src/core/referent.ts and referent.test.ts for the per-case trace; ReferentResolution.notes is not persisted onto the ledger snapshot, so a live tiebreak count is not shown here rather than approximated).",
+      summary: "Normalisation, alias table, lexical similarity — 0 model calls. An embedding tiebreak exists for an ambiguous similarity band (see src/core/referent.ts and referent.test.ts) but is unwired in this build — no embeddings are recorded for this corpus, so every real run resolves lexical-only.",
       stats: [
         { label: "model calls", value: "0" },
         { label: "buckets resolved", value: String(snapshot.buckets.length) },

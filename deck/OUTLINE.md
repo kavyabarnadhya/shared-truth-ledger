@@ -73,9 +73,10 @@ studio data:
 **Architecture:**
 ```
 sources → noise gate → extraction → referent resolution → adjudication → ledger → surface
- (fixtures) (deterministic) (cheap model)  (deterministic +   (free model)  (persisted)  (4 tabs)
-                                             embeddings,
-                                             no LLM call)
+ (fixtures) (deterministic) (cheap model)  (deterministic —  (free model)  (persisted)  (4 tabs)
+                                             lexical sim;
+                                             embedding tiebreak
+                                             exists, unwired)
 ```
 
 **The deterministic/model split, concretely:** four of the seven possible

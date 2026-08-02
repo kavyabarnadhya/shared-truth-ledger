@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { resolveReferent, extractContextWindow, detectAmbiguityPairs } from "./referent.ts";
+import { resolveReferent, extractContextWindow, detectAmbiguityPairs, mergeFreshReferents } from "./referent.ts";
 import type { AmbiguityCandidateClaim } from "./referent.ts";
 import { parseInstant } from "./time.ts";
 
@@ -241,4 +241,179 @@ test("resolveReferent is deterministic: same input, same output across repeated 
   const a = resolve("go live date", "M-001", "we go live 12 August");
   const b = resolve("go live date", "M-001", "we go live 12 August");
   assert.deepEqual(a, b);
+});
+
+// ---------------------------------------------------------------------------
+// mergeFreshReferents — repro from the live Try-it sandbox bug: two people
+// disagreeing about "12th August" in freeform, non-catalogue phrasing minted
+// three unrelated referents instead of landing in one bucket.
+// ---------------------------------------------------------------------------
+
+test("mergeFreshReferents merges two freeform mints that both name the same date, same thread", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "12th_august_launch_readiness",
+      raw_referent: "12th August launch readiness",
+      value: "not ready",
+      timestamp: parseInstant("2026-07-22T17:40:00+05:30"),
+      thread_id: "T-sandbox",
+      channel: "#liveops-ludojunction",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "launch_by_12th_august",
+      raw_referent: "Launch by 12th August",
+      value: "needed at any cost",
+      timestamp: parseInstant("2026-07-24T12:00:00+05:30"),
+      thread_id: "T-sandbox",
+      channel: "#liveops-ludojunction",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.equal(remap.get("12th_august_launch_readiness"), remap.get("launch_by_12th_august"));
+  // Canonical key is the earlier claim's (CL-1, 22 Jul) own minted key.
+  assert.equal(remap.get("launch_by_12th_august"), "12th_august_launch_readiness");
+  assert.equal(remap.get("12th_august_launch_readiness"), "12th_august_launch_readiness");
+});
+
+test("mergeFreshReferents does NOT merge a same-thread mint about a different date", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "12th_august_launch_readiness",
+      raw_referent: "12th August launch readiness",
+      value: "not ready",
+      timestamp: parseInstant("2026-07-22T17:40:00+05:30"),
+      thread_id: "T-sandbox",
+      channel: "#liveops-ludojunction",
+    },
+    {
+      claim_id: "CL-3",
+      referent: "14th_readiness_for_qa",
+      raw_referent: "14th readiness for QA",
+      value: "ready by 14th",
+      timestamp: parseInstant("2026-07-22T17:40:00+05:30"),
+      thread_id: "T-sandbox",
+      channel: "#liveops-ludojunction",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("12th_august_launch_readiness"), remap.get("14th_readiness_for_qa"));
+});
+
+test("mergeFreshReferents does NOT merge mints from different threads/channels even with matching dates", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "12th_august_launch_readiness",
+      raw_referent: "12th August launch readiness",
+      value: "not ready",
+      timestamp: parseInstant("2026-07-22T17:40:00+05:30"),
+      thread_id: "T-a",
+      channel: "#liveops-ludojunction",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "launch_by_12th_august",
+      raw_referent: "Launch by 12th August",
+      value: "needed at any cost",
+      timestamp: parseInstant("2026-07-24T12:00:00+05:30"),
+      thread_id: "T-b",
+      channel: "#some-other-channel",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("12th_august_launch_readiness"), remap.get("launch_by_12th_august"));
+});
+
+test("mergeFreshReferents leaves unrelated single mints unchanged", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "weather_forecast_for_the_office_picnic",
+      raw_referent: "weather forecast for the office picnic",
+      value: "sunny",
+      timestamp: parseInstant("2026-07-22T17:40:00+05:30"),
+      thread_id: "T-1",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.equal(remap.get("weather_forecast_for_the_office_picnic"), "weather_forecast_for_the_office_picnic");
+});
+
+test("mergeFreshReferents merges via the lexical-fallback path when neither phrase has a parseable date", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "success_criteria_definition",
+      raw_referent: "success criteria definition",
+      value: "session depth",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "definition_of_success_criteria",
+      raw_referent: "definition of success criteria",
+      value: "ARPDAU",
+      timestamp: parseInstant("2026-07-14T18:00:00+05:30"),
+      thread_id: "T-1",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.equal(remap.get("success_criteria_definition"), remap.get("definition_of_success_criteria"));
+});
+
+test("mergeFreshReferents does NOT merge via the lexical-fallback path when phrasing is dissimilar", () => {
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "tournament_scope_decision",
+      raw_referent: "tournament scope decision",
+      value: "in scope",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "art_capacity_allocation",
+      raw_referent: "art capacity allocation",
+      value: "two artists",
+      timestamp: parseInstant("2026-07-14T18:00:00+05:30"),
+      thread_id: "T-1",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("tournament_scope_decision"), remap.get("art_capacity_allocation"));
+});
+
+test("mergeFreshReferents does NOT merge on date coincidence alone when the rest of the phrasing is essentially unrelated", () => {
+  // Both phrases parse to the same date (12 August) but share almost no
+  // other vocabulary — the DATE_MATCH_MIN_SIMILARITY floor should veto this
+  // even though the date-match branch normally skips the 24h window check.
+  const claims: AmbiguityCandidateClaim[] = [
+    {
+      claim_id: "CL-1",
+      referent: "quarterly_roadmap_review",
+      raw_referent:
+        "quarterly roadmap review scheduled for 12 August covering platform migration headcount planning budget approvals vendor contracts",
+      value: "scheduled",
+      timestamp: parseInstant("2026-07-14T10:00:00+05:30"),
+      thread_id: "T-1",
+      channel: "#general",
+    },
+    {
+      claim_id: "CL-2",
+      referent: "payment_gateway_certificate_expiry",
+      raw_referent:
+        "12 August is when the new payment gateway certificate expires needs rotation security audit compliance",
+      value: "expires",
+      timestamp: parseInstant("2026-07-20T10:00:00+05:30"),
+      thread_id: "T-1",
+      channel: "#general",
+    },
+  ];
+  const remap = mergeFreshReferents(claims);
+  assert.notEqual(remap.get("quarterly_roadmap_review"), remap.get("payment_gateway_certificate_expiry"));
 });
