@@ -5,7 +5,7 @@
   "mode": "replay",
   "evalAsOf": "2026-07-24T23:59:59+05:30",
   "corpusHash": "abece3c279db45fde66ae1616c52f60566a153982b02a419bac99e9c98277f53",
-  "recordingsHash": "ffc8caca6bae373072f74a71d08971c81635e1a70e9ca3c8dcaf7b9fbb3a0f3b",
+  "recordingsHash": "3de7b9cdde46295458921d1dab51609476b0138e693d18f79f0ccacb131529c7",
   "extraction": [
     {
       "scenario": "C1",
@@ -1326,7 +1326,7 @@
           "correct": true,
           "falsePositive": false,
           "decidedBy": "model",
-          "rationale": "Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 asserts ARPDAU lift over a 7-day window as the measure of success, while CL-011 explicitly rejects ARPDAU and instead defines success as session depth and returning players. These are mutually exclusive definitions of success for the same event."
+          "rationale": "Both claims define the success criteria for the same event (indep_event.success_criteria). CL-010 states success is ARPDAU lift over a 7-day window, while CL-011 explicitly rejects ARPDAU and states success should be session depth and returning players. These are mutually exclusive definitions of success for the same referent."
         }
       ],
       "verdictAccuracy": 1,
@@ -1361,8 +1361,8 @@
           "actual": "COMPATIBLE",
           "correct": false,
           "falsePositive": false,
-          "decidedBy": "model",
-          "rationale": "CL-030 reports D7 retention up 1.8pp week-over-week, while CL-031 reports D7 retention down 3pp since the 1.9.3 patch. These are different time comparisons (WoW vs. since a patch) and can both be true simultaneously — D7 retention could be rising week-over-week while still being lower than it was at the time of the 1.9.3 patch."
+          "decidedBy": "fallback",
+          "rationale": "model output failed schema/parse validation: no repair step produced valid JSON"
         }
       ],
       "verdictAccuracy": 0,
@@ -1380,7 +1380,7 @@
           "correct": true,
           "falsePositive": false,
           "decidedBy": "model",
-          "rationale": "CL-040 states the tournament scope is 'leaderboard only, brackets cut,' explicitly excluding brackets. CL-041 states work is underway on 'bracket seeding rules,' implying brackets are included in the scope. These cannot both be true simultaneously for the same tournament scope."
+          "rationale": "CL-040 states the tournament scope is 'leaderboard only, brackets cut,' while CL-041 states the tournament 'includes bracket seeding.' These are mutually exclusive: one explicitly removes brackets, the other explicitly includes them."
         }
       ],
       "verdictAccuracy": 1,
@@ -1397,8 +1397,8 @@
           "actual": "COMPATIBLE",
           "correct": false,
           "falsePositive": false,
-          "decidedBy": "pre_rule",
-          "rationale": "exactly one live claim remains -> COMPATIBLE"
+          "decidedBy": "fallback",
+          "rationale": "model output failed schema/parse validation: no repair step produced valid JSON"
         }
       ],
       "verdictAccuracy": 0,
@@ -1430,14 +1430,14 @@
           "bucket_key": "art_capacity.allocation",
           "asOf": "2026-07-24T23:59:59+05:30",
           "expected": "CONTRADICTION",
-          "actual": "COMPATIBLE",
-          "correct": false,
+          "actual": "CONTRADICTION",
+          "correct": true,
           "falsePositive": false,
-          "decidedBy": "fallback",
-          "rationale": "model output failed schema/parse validation: no repair step produced valid JSON"
+          "decidedBy": "model",
+          "rationale": "CL-071 states art is 'fully committed' to Independence assets, implying all available art capacity is allocated there. CL-070 states 2 artists are being moved to the Onam board set. If capacity is fully allocated to Independence, it cannot simultaneously be reallocated to Onam."
         }
       ],
-      "verdictAccuracy": 0,
+      "verdictAccuracy": 1,
       "isMustNotFlag": false,
       "excludedFromHeadline": false
     },
@@ -1470,7 +1470,7 @@
           "correct": true,
           "falsePositive": false,
           "decidedBy": "model",
-          "rationale": "Both claims refer to the number of tiers in reward_config.tiers. CL-190 states 12 tiers (design doc), while CL-191 states 8 tiers (built config). These are mutually exclusive counts for the same entity."
+          "rationale": "Both claims are about reward_config.tiers but assert different values (12 vs 8). CL-190 claims 12 tiers in the design doc, while CL-191 claims only 8 tiers are built in the config. Since the referent is the same (reward_config.tiers) and the values differ, they cannot both be true simultaneously."
         },
         {
           "bucket_key": "reward_config.tiers",
@@ -1735,7 +1735,7 @@
           "correct": true,
           "falsePositive": false,
           "decidedBy": "pre_rule",
-          "rationale": "(no bucket produced by pipeline at this as-of; treated as no contradiction)"
+          "rationale": "exactly one live claim remains -> COMPATIBLE"
         },
         {
           "bucket_key": "config_freeze.owner",
@@ -1761,7 +1761,7 @@
       "flaggedScenarios": []
     },
     "contradictionRecall": {
-      "found": 5,
+      "found": 6,
       "total": 8,
       "scenarios": {
         "C1": true,
@@ -1771,7 +1771,7 @@
         "C5": true,
         "C6": false,
         "C7": true,
-        "C8": false
+        "C8": true
       }
     },
     "spanValidity": {
@@ -1792,7 +1792,7 @@
           "correct": true,
           "falsePositive": false,
           "decidedBy": "model",
-          "rationale": "CL-081 states the new reward config is live since the 18th, which means the old Holi reward table should no longer be visible. CL-080 states players are still seeing the old Holi reward table. These cannot both be true simultaneously."
+          "rationale": "CL-080 reports that the old Holi reward table is still visible in the shop, implying the old config is live. CL-081 states the new reward config has been live since the 18th. Both cannot be true at the same time for the same live_state referent."
         }
       ],
       "verdictAccuracy": 1,
@@ -1805,8 +1805,8 @@
     "gated": 7,
     "claims": 65,
     "rejected": 21,
-    "buckets": 62
+    "buckets": 64
   },
   "generatedAt": "2026-07-24T23:59:59+05:30",
-  "reportHash": "9c13014855149dfd3c4b7f6de1eb49fdabd8a379905fcd2217a2bb8456b84905"
+  "reportHash": "3cfde8dac169629bf6987469754ecb19e70ef27794d6c2e3488bbe46539bfbff"
 }

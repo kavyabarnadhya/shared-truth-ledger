@@ -34,7 +34,6 @@ import { projectAsOf, buildAmbiguityBuckets, type ClaimContext } from "./ledger.
 import { EXTRACTION_PROMPT } from "./prompts/extraction.ts";
 import { ADJUDICATION_PROMPT } from "./prompts/adjudication.ts";
 import { parseExtractionResponse, parseAdjudicationResponse } from "./parse/json-repair.ts";
-import { shouldEscalate } from "./router.ts";
 import { compareStrings } from "./util/stable-sort.ts";
 import { ReplayMissError, PromptDriftError } from "./model/client.ts";
 
@@ -245,21 +244,36 @@ export async function runAdjudicationPipeline(
   asOf: Instant,
   judgeScope: JudgeScope,
   model: ModelClient,
+  trustSuppliedReferent = false,
 ): Promise<AdjudicationRunResult> {
   const trace: TraceEntry[] = [];
 
-  // Re-resolve referents fresh (gold claims carry a referent already, but
-  // resolution must still run so raw_referent-driven ambiguity detection has
-  // something to key off; for gold input this is a fast no-op match).
-  const resolvedClaims: Claim[] = claims.map((c) => {
-    const message = messagesById.get(c.message_id);
-    if (!message) return c;
-    const resolution = resolveReferent(c.raw_referent || c.referent, {
-      messageText: message.text,
-      sourceSpan: c.source_span,
-    });
-    return { ...c, referent: resolution.resolved };
-  });
+  // Re-resolve referents fresh from each claim's raw_referent + message
+  // context — necessary for the extractor's own predicted claims, whose
+  // raw_referent is a model-emitted phrase that still needs disambiguating
+  // into a canonical key (this is also what drives ambiguity-pair
+  // detection below). GOLD claims are different: a human already assigned
+  // the ground-truth referent, and gold claims don't carry a real
+  // source_span (see goldClaimToClaim in eval/run-eval.ts), so re-running
+  // resolution against a synthesized whole-message window can incorrectly
+  // gate out a claim whose gold referent is correct but whose message text
+  // doesn't happen to repeat the referent's required keyword (e.g. C6:
+  // "ships with the event" is correctly labelled leaderboard.readiness in
+  // gold, but never says "leaderboard", so the window-gated resolver would
+  // mint a second, wrong bucket for it). `trustSuppliedReferent` lets the
+  // caller assert the input's referent is already ground truth and skip
+  // re-resolution entirely for that call.
+  const resolvedClaims: Claim[] = trustSuppliedReferent
+    ? claims.map((c) => ({ ...c, referent: c.raw_referent || c.referent }))
+    : claims.map((c) => {
+        const message = messagesById.get(c.message_id);
+        if (!message) return c;
+        const resolution = resolveReferent(c.raw_referent || c.referent, {
+          messageText: message.text,
+          sourceSpan: c.source_span,
+        });
+        return { ...c, referent: resolution.resolved };
+      });
 
   const { buckets, updateBucketKeys } = projectAsOf(resolvedClaims, asOf, cast, contestedReferents);
 
@@ -325,8 +339,7 @@ export async function runAdjudicationPipeline(
       });
       trace.push(modelTrace);
 
-      let parsed = parseAdjudicationResponse(response.text, judgeScope);
-      let finalModelTrace = modelTrace;
+      const parsed = parseAdjudicationResponse(response.text, judgeScope);
       if (!parsed.ok) {
         verdicts.push({
           bucket_key: bucket.referent, asOf, judgeScope, verdict: "COMPATIBLE",
@@ -336,44 +349,12 @@ export async function runAdjudicationPipeline(
         continue;
       }
 
-      // Confidence-gated escalation router (binary scope only — the
-      // escalated prompt shares the binary schema, and full7's judge-scope
-      // comparison is a separate, deliberately unmodified configuration).
-      // If the primary call self-reported a confidence below the threshold,
-      // issue a second call with the richer step-by-step prompt and let its
-      // verdict win if it parses. Both calls stay in trace[] either way, so
-      // escalation is visible in the drill-down rather than only asserted.
-      if (judgeScope === "binary" && shouldEscalate(parsed.confidence)) {
-        const { response: escResponse, trace: escTrace } = await model.call({
-          tier: "adjudication",
-          model: model.config.models.adjudication,
-          system: ADJUDICATION_PROMPT.BINARY_ESCALATED_SYSTEM,
-          user,
-          temperature: model.config.temperature,
-          maxOutputTokens: model.config.maxOutputTokens,
-          inputKey,
-          step: `adjudicate ${bucket.referent}@${asOf} [escalated]`,
-          judgeScope,
-          promptVersion: ADJUDICATION_PROMPT.ESCALATED_PROMPT_VERSION,
-        });
-        trace.push(escTrace);
-        const escParsed = parseAdjudicationResponse(escResponse.text, judgeScope);
-        if (escParsed.ok) {
-          parsed = escParsed;
-          finalModelTrace = escTrace;
-        }
-        // If the escalated call fails to parse, the primary verdict stands
-        // (already in `parsed`) — escalation can only replace a verdict
-        // with a better one, never silently drop to fallback.
-      }
-
       const verdict: VerdictKind = bucket.contested ? "CONTESTED" : parsed.verdict;
       verdicts.push({
         bucket_key: bucket.referent, asOf, judgeScope, verdict,
         rationale: parsed.rationale, decidedBy: "model",
         conflictingClaimIds: [...parsed.conflictingClaimIds].sort(),
-        preRuleTrace: bucket.preRuleTrace, modelCall: finalModelTrace,
-        confidence: parsed.confidence,
+        preRuleTrace: bucket.preRuleTrace, modelCall: modelTrace,
       });
     } catch (err) {
       if (isHardReplayError(err)) throw err;

@@ -33,9 +33,9 @@ export function ReviewerBanner({ onDismiss }: { onDismiss: () => void }) {
 /**
  * Collapsible "How this page works (for reviewers)" note at the foot of a
  * page. `children` carries that surface's specific engineering explanation
- * (pre-rules, the escalation router, temporal projection, the eval
- * protocol, etc. — see each page for what it covers); `readmeHref` links to
- * the relevant README section rather than duplicating its content here.
+ * (pre-rules, temporal projection, the eval protocol, etc. — see each page
+ * for what it covers); `readmeHref` links to the relevant README section
+ * rather than duplicating its content here.
  */
 export function ReviewerNote({
   title = "How this page works (for reviewers)",

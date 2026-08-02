@@ -97,18 +97,16 @@ export default function ArchitecturePage() {
           This page and the SourcePanel are the two places the MCP boundary is actually exercised rather than just
           documented: <code>src/adapters/workspace.ts</code> is the single implementation; <code>mcp-server/src/adapter.ts</code>{" "}
           re-exports it for the stdio MCP server, and <code>src/app/api/workspace/route.ts</code> calls it in-process
-          for the web app — never an HTTP round trip to the MCP server itself. The confidence-gated escalation router
-          (<code>src/core/router.ts</code>) and its measured effect on real buckets are on the Evals page, not
-          asserted here. Model selection, hooks, and agent hand-offs are documented in full in the README sections
-          this note links to.
+          for the web app — never an HTTP round trip to the MCP server itself. Model selection, hooks, and agent
+          hand-offs are documented in full in the README sections this note links to.
         </p>
       </ReviewerNote>
 
       <h2 className="section-heading" id="routing-diagram">The routing decision, diagrammed</h2>
       <p className="claim-state-label">
         The same six stages above, drawn as the actual branch points a message goes through — deterministic steps in
-        one style, model calls in another, with the Guardrailed/Open judge-scope split and the confidence-gated
-        escalation router shown as real branches, not prose.
+        one style, model calls in another, with the Guardrailed/Open judge-scope split shown as a real branch, not
+        prose.
       </p>
       <RoutingDiagram />
 
@@ -138,9 +136,8 @@ export default function ArchitecturePage() {
           Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
           updates, self-corrections, and authority-based supersession are all decided by code, not by the model. Only
           a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets a
-          single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo; If that call
-          self-reports low confidence, a confidence-gated escalation router issues a second, richer call — see the
-          routing diagram above for the live counts. &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
+          single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo;
+          &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
           pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
           logic against a smaller set of visible messages.
         </p>

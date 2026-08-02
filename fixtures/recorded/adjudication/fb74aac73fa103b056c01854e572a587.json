@@ -1,0 +1,25 @@
+{
+  "key": "fb74aac73fa103b056c01854e572a587",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate leaderboard.readiness@2026-07-15T23:59:59+05:30",
+  "promptSha": "6c79c706cd59ad78e6e4413350efddbca42de46ff722a34ea08a4451606ed93d",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: leaderboard.readiness\n\nLive claims:\n- CL-051 | meera.iyer | 6 Jul 2026, 11:15 AM IST | value: \"ships with event\" | span: \"Theme is tricolour board skins and a token set, plus a limited-time Tiranga tournament mode shipping with the event.\"\n- CL-050 | vikram.shetty | 14 Jul 2026, 10:05 AM IST | value: \"2026-08-25 earliest\" | span: \"Leaderboard migration for tournament mode depends on the new shard rollout. That's three weeks minimum, so the earliest date I'd call safe is 25 August.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "Let me analyze these two claims to determine if they are mutually incompatible.\n\nCL-051 (meera.iyer, 6 Jul 2026): States that the theme includes tricolour board skins, a token set, and a limited-time Tiranga tournament mode that ships with the event.\n\nCL-050 (vikram.shetty, 14 Jul 2026): States that leaderboard migration for tournament mode depends on a new shard rollout, and the earliest safe date is 2026-08-25, which is three weeks minimum.\n\nThe referent is \"leaderboard.readiness.\"\n\nCL-051 talks about the tournament mode shipping with the event (which seems to be the Tiranga event). It mentions the theme and tournament mode as part of the event content.\n\nCL-050 talks about leaderboard migration for tournament mode depending on shard rollout, with an earliest safe date of 2026-08-25.\n\nNow, are these incompatible? CL-051 says the tournament mode ships with the event. CL-050 says leaderboard migration for tournament mode can't happen before 2026-08-25. \n\nThe key question: does CL-051 imply the tournament mode (and its leaderboard) is ready/available now (or at event time), while CL-050 says the leaderboard migration won't be ready until 2026-08-25?\n\nCL-051 is dated 6 Jul 2026, and CL-050 is dated 14 Jul 2026. CL-050 says \"three weeks minimum\" from some point, giving 25 August as the earliest safe date.\n\nIf the event (Tiranga) is happening around early July, then CL-051 says the tournament mode ships with it, but CL-050 says the leaderboard migration for that tournament mode won't be ready until August 25. This creates a tension - the tournament mode ships with the event but its leaderboard migration depends on infrastructure that won't be ready until August.\n\nHowever, the question is about \"leaderboard.readiness\" specifically. CL-051 mentions the tournament mode shipping with the event but doesn't explicitly address leaderboard readiness. CL-050 explicitly addresses leaderboard migration timing.\n\nActually, let me reconsider. CL-051 says the tournament mode ships with the event. If the event is the Tiranga event happening around early July, then the tournament mode is available now. But CL-050 says leaderboard migration for tournament mode depends on shard rollout and the earliest safe date is August 25. This means the leaderboard infrastructure for the tournament mode isn't ready yet and won't be until August.\n\nThese could be seen as incompatible if CL-051 implies the tournament mode (including its leaderboard) is ready to ship with the event, while CL-050 says the leaderboard migration won't be ready until August.\n\nBut wait - CL-051 says \"shipping with the event\" - it's about the tournament mode content shipping, not necessarily about leaderboard readiness. The leaderboard migration could be a separate concern.\n\nHmm, but the referent is \"leaderboard.readiness\" - so both claims are about whether the leaderboard is ready.\n\nCL-051: The tournament mode (with its leaderboard presumably) ships with the event (which is happening now/soon, given the date of 6 Jul 2026).\nCL-050: Leaderboard migration for tournament mode won't be ready until",
+    "usage": {
+      "inputTokens": 368,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 2864,
+  "recordedAt": "2026-08-02T07:12:34.166+00:00"
+}

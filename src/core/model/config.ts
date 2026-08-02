@@ -26,16 +26,10 @@ export const FREE_CONFIG: ModelConfig = {
 };
 
 /**
- * The paid-tier swap-in — documented, not run. For this assignment every
- * recorded number, including the confidence-gated escalation rung added on
- * top of the primary binary adjudication call (see router.ts and
- * pipeline.ts's runAdjudicationPipeline), stays on the free model. No real
- * call to `anthropic/claude-sonnet-5` is made or claimed anywhere in this
- * build. Swapping `adjudication` to it here — for either or both rungs — is
- * the one-line production change this config exists to demonstrate. No
- * recordings exist for this config; replay mode fails loudly ("no
- * recordings for config 'strong'") rather than silently falling back to
- * `free`'s recordings.
+ * Plumbed, not run. Adjudication only — extraction stays on the free tier
+ * per the build plan's phased model strategy. No recordings exist for this
+ * config; replay mode fails loudly ("no recordings for config 'strong'")
+ * rather than silently falling back to `free`'s recordings.
  */
 export const STRONG_CONFIG: ModelConfig = {
   id: "strong",

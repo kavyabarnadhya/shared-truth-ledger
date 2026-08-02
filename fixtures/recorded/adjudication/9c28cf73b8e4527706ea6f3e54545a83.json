@@ -1,0 +1,25 @@
+{
+  "key": "9c28cf73b8e4527706ea6f3e54545a83",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate build_194.release_readiness@2026-07-24T23:59:59+05:30",
+  "promptSha": "3bf0bf3cff53556c0f6e99a6831085eb258c537e2d3ce454fd8bcbfb6efd5fda",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: build_194.release_readiness\n\nLive claims:\n- M-060#0 | farah.qureshi | 22 Jul 2026, 5:40 PM IST | value: \"has an open P1 — token animation desyncs on reconnect\" | span: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\n- M-061#1 | priya.raghunathan | 23 Jul 2026, 9:15 AM IST | value: \"already in the store review queue\" | span: \"It's already in the store review queue.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "Let me analyze these two claims to determine if they are mutually incompatible.\n\nClaim M-060#0: \"Build 1.9.4 has an open P1 — token animation desyncs on reconnect.\"\nClaim M-061#1: \"It's already in the store review queue.\"\n\nThe first claim states there is an open P1 bug (token animation desyncs on reconnect) in Build 1.9.4.\nThe second claim states that something (presumably the build or the fix) is already in the store review queue.\n\nThese two claims are about the same referent (build_194.release_readiness). \n\nCan both be true at the same time?\n- A build can have an open P1 bug AND be in the store review queue simultaneously. Being in the store review queue doesn't necessarily mean all bugs are fixed.\n- However, if the context implies that \"it\" in M-061 refers to the fix for the P1 bug, then having the fix in the store review queue while the bug is still \"open\" could be contradictory depending on interpretation.\n\nBut wait - the question says \"Differences in emphasis, scope, or wording are not incompatibility.\" The key question is whether they cannot both be true at the same time.\n\nM-060 says there's an open P1 bug. M-061 says something is in the store review queue. These could both be true - the build could have an open bug and still be in the review queue (perhaps the bug is known and being tracked separately, or the review queue is for a different aspect).\n\nActually, let me reconsider. The referent is \"build_194.release_readiness.\" \n\nM-060 says the build has an open P1 (which would typically block release readiness).\nM-061 says it's already in the store review queue (which implies it's ready for release or at least in the release pipeline).\n\nThese could be contradictory if having an open P1 means it shouldn't be in the store review queue yet. But the question is about whether they \"cannot both be true at the same time.\"\n\nA build can technically be in the store review queue while having an open P1 - maybe the P1 was just discovered, or maybe the review queue is for a different component. They don't necessarily contradict.\n\nBut actually, in the context of release readiness, having an open P1 bug and being in the store review queue could be seen as contradictory if the P1 blocks release. However, the claims don't explicitly state that the P1 prevents the build from being in the review queue.\n\nI think these are actually compatible - both could be true simultaneously. The build has an open P1 bug, and separately, it's in the store review queue.\n\nWait, let me reconsider what \"it\" refers to in M-061. If \"it\" refers to the fix for the P1 bug, then having the fix in the store review queue while the bug is still \"open\" might be contradictory. But M-061 just says \"It's already in the store review queue\" - \"it\" could refer to the build itself.\n\nGiven the ambiguity, and the instruction that \"Differences in emphasis, scope, or wording are not incompatibility,\" I think these are COMPATIBLE because both can be true at the same time.\n\nActually, let me reconsider once more. The referent is \"build_194.release_readiness.\" \n\nM-060: The build has an open P1 bug - this suggests it's NOT ready for release.\nM-061: It's already in the store review queue -",
+    "usage": {
+      "inputTokens": 354,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 5546,
+  "recordedAt": "2026-08-02T07:32:38.773+00:00"
+}

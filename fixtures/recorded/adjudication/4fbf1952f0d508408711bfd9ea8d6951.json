@@ -1,0 +1,25 @@
+{
+  "key": "4fbf1952f0d508408711bfd9ea8d6951",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "full7",
+  "step": "adjudicate leaderboard.readiness@2026-07-18T23:59:59+05:30",
+  "promptSha": "9e5a3531b2336bc3f68c78eb31363ae801d6dd6be2da4e89c59d3cb5c0622cef",
+  "request": {
+    "system": "Decide the relationship between a set of live claims about the same referent.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see.\n\nChoose exactly one verdict:\n- \"CONTRADICTION\": two or more live claims from different people conflict and neither has been resolved.\n- \"UPDATE\": a single person's claim has simply been revised over time.\n- \"RESOLVED_BY_SUPERSESSION\": a higher-authority person's claim has settled an earlier conflict.\n- \"RESOLVED_BY_CORRECTION\": someone withdrew their own claim in favor of someone else's.\n- \"AMBIGUOUS_REFERENT\": the claims only appear to conflict because they are actually about different things.\n- \"COMPATIBLE\": the live claims do not conflict.\n- \"CONTESTED\": reasonable people could disagree about whether this is a conflict at all.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"UPDATE\"|\"RESOLVED_BY_SUPERSESSION\"|\"RESOLVED_BY_CORRECTION\"|\"AMBIGUOUS_REFERENT\"|\"COMPATIBLE\"|\"CONTESTED\", \"rationale\": string, \"conflicting_claim_ids\": string[]}",
+    "user": "Referent: leaderboard.readiness\n\nLive claims:\n- CL-051 | meera.iyer | 6 Jul 2026, 11:15 AM IST | value: \"ships with event\" | span: \"Theme is tricolour board skins and a token set, plus a limited-time Tiranga tournament mode shipping with the event.\"\n- CL-050 | vikram.shetty | 14 Jul 2026, 10:05 AM IST | value: \"2026-08-25 earliest\" | span: \"Leaderboard migration for tournament mode depends on the new shard rollout. That's three weeks minimum, so the earliest date I'd call safe is 25 August.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-051 (meera.iyer) claims leaderboard readiness ships with the event (implying immediate/upcoming availability), while CL-050 (vikram.shetty",
+    "usage": {
+      "inputTokens": 462,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 3304,
+  "recordedAt": "2026-08-02T07:27:29.922+00:00"
+}

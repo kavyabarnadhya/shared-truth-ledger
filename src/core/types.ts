@@ -295,16 +295,6 @@ export interface ModelRequest {
   step: string;
   /** Which vocabulary the adjudicator must use. Irrelevant for extraction/embedding. */
   judgeScope?: JudgeScope;
-  /**
-   * Overrides the ModelClient's own constructor-supplied promptVersion for
-   * this call's cache key only. Exists for the escalated adjudication
-   * prompt variant (see prompts/adjudication.ts's ESCALATED_PROMPT_VERSION),
-   * which shares a ModelClient instance with the primary binary call but
-   * needs a distinct cache key so bumping one never invalidates the other.
-   * Absent on every other call site — falls back to the client's own
-   * promptVersion, so this is fully backward compatible.
-   */
-  promptVersion?: number;
 }
 
 export interface ModelResponse {
@@ -465,19 +455,6 @@ export interface EvalReport {
   };
   contested: AdjudicationScore[]; // C9, its own section
   counts: { messages: number; gated: number; claims: number; rejected: number; buckets: number };
-  /**
-   * Confidence-gated escalation router's measured effect (see router.ts,
-   * pipeline.ts's runAdjudicationPipeline). Computed from the real trace of
-   * this run's gold-claims adjudication pass — never asserted, never tuned
-   * to look a particular way. `escalated` counts buckets whose primary
-   * binary call self-reported confidence below ESCALATION_CONFIDENCE_THRESHOLD
-   * and therefore received a second, richer call; `verdictChanged` counts
-   * how many of those had a different verdict after escalation than before.
-   * Present only for judgeScope "binary" (full7 never asks for confidence,
-   * so escalation never fires there) — null in that case, not zero, so a
-   * reviewer can't misread "not applicable" as "measured and zero".
-   */
-  escalation: { escalated: number; verdictChanged: number; escalatedBuckets: string[] } | null;
   generatedAt: Instant;
   reportHash: string;
 }

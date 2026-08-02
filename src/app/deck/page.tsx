@@ -134,7 +134,7 @@ function SlideApproach() {
 
       <h2 className="section-heading">Architecture</h2>
       <pre className="mono" style={{ whiteSpace: "pre-wrap", fontSize: "var(--size-caption)" }}>
-        sources → noise gate → extraction → referent resolution → pre-rules → adjudication (+ escalation router) → ledger → surface
+        sources → noise gate → extraction → referent resolution → pre-rules → adjudication → ledger → surface
       </pre>
 
       <h2 className="section-heading">The deterministic/model split</h2>
@@ -147,9 +147,7 @@ function SlideApproach() {
 
       <h2 className="section-heading">Model selection</h2>
       <p>
-        Both tiers on <code>inclusionai/ling-3.0-flash-free</code> — including a confidence-gated escalation router:
-        when the primary binary call self-reports confidence below a fixed threshold, a second call with a
-        step-by-step reasoning prompt runs and its verdict wins if produced. A <code>strong</code> config
+        Both tiers on <code>inclusionai/ling-3.0-flash-free</code>. A <code>strong</code> config
         (Claude Sonnet 5 for adjudication) is fully plumbed but unrecorded — no strong-model numbers are claimed.
       </p>
 
@@ -165,7 +163,7 @@ function SlideProof() {
       <h1 className="page-title">3. Proof and what&apos;s next</h1>
       <p className="claim-state-label">
         Per-scenario results, never averaged. Reproducible via <code>npm run eval</code>. See the Evals tab for the
-        live, browser-run version of this exact table, including the escalation router&apos;s measured effect.
+        live, browser-run version of this exact table.
       </p>
 
       <h2 className="section-heading">Headline</h2>
@@ -176,7 +174,7 @@ function SlideProof() {
         </div>
         <div className="headline-item">
           <span className="headline-item__label">Contradiction recall</span>
-          <span className="headline-fraction">5/8</span>
+          <span className="headline-fraction">6/8</span>
         </div>
         <div className="headline-item">
           <span className="headline-item__label">Span validity</span>
@@ -188,21 +186,10 @@ function SlideProof() {
       <ul className="prerule-list">
         <li>Predicted N7/N8 (reported speech, negative polarity) would be the free model&apos;s weak points — wrong; both worked correctly.</li>
         <li>What actually went wrong: the free model over-segments messages and paraphrases values enough that exact-match scoring correctly refuses several matches — a precision problem, not a modality/polarity problem.</li>
-        <li>One message (M-070) returned prose instead of JSON; the repair ladder correctly rejected it and fell back to COMPATIBLE — the deliberately conservative failure mode, working as designed.</li>
+        <li>C6 had a real referent-resolution bug (fixed — see README); what remains is the free model&apos;s rationale for that bucket consistently exceeding the 400-char schema cap, falling back to COMPATIBLE — the deliberately conservative failure mode, working as designed.</li>
         <li>N3 is an open miss with no clean explanation yet — reported as a genuine gap, not rationalised.</li>
       </ul>
       <p className="claim-state-label">No hand-written rule was added in response to any of these numbers.</p>
-
-      <h2 className="section-heading">Escalation router — measured, not asserted</h2>
-      <p>
-        Across the full recorded set, 0 buckets self-reported confidence below the fixed 0.6 threshold, so the
-        escalated call never fired — the honest result, not adjusted to force a nonzero count. Re-recording the
-        binary prompt to add that self-report surfaced one prompt-induced regression on a previously-correct bucket
-        (<code>reward_config.tiers</code>): the new response came back confidently wrong (confidence 0.9,{" "}
-        <code>COMPATIBLE</code> instead of <code>CONTRADICTION</code>), which the router cannot rescue since 0.9 is
-        above threshold. Found, not hidden — the baseline above was deliberately not re-frozen over it, and fixing
-        the regression is unresolved follow-up work.
-      </p>
 
       <h2 className="section-heading">Roadmap</h2>
       <ul className="prerule-list">

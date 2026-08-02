@@ -215,9 +215,8 @@ export default function ContradictionsPage() {
           Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
           updates, self-corrections, and authority-based supersession are all decided by code, not by the model.
           Only a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets
-          a single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo; If that call
-          self-reports low confidence, a confidence-gated escalation router issues a second, richer call — see the
-          Architecture page for the live counts. &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
+          a single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo;
+          &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
           pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
           logic against a smaller set of visible messages.
         </p>

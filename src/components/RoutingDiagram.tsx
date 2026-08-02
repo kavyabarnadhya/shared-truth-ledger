@@ -1,8 +1,8 @@
 /**
  * Part C: the two-model-route diagram, translating the user's hand-drawn
  * Excalidraw flow into the product's actual technical routing — verified
- * against src/core/pipeline.ts's runAdjudicationPipeline and
- * src/core/router.ts before drawing a single box, not guessed at.
+ * against src/core/pipeline.ts's runAdjudicationPipeline before drawing a
+ * single box, not guessed at.
  *
  * Rendering choice: this repo has zero markdown/diagram-rendering
  * dependencies (see package.json) and the prior passes' established
@@ -26,7 +26,7 @@ export function RoutingDiagram() {
     <div className="drilldown" style={{ padding: "var(--space-2)" }}>
       <img
         src="/diagrams/routing-diagram.svg"
-        alt="Flowchart: a message arrives from Slack or Gmail and passes through a deterministic noise gate (bots and CI are dropped before extraction). Surviving messages go through a model extraction call, then deterministic referent resolution, then the deterministic pre-rules ladder (R0-R9). If a pre-rule settles the question, the verdict (UPDATE, RESOLVED_BY_SUPERSESSION, RESOLVED_BY_CORRECTION, AMBIGUOUS_REFERENT, or COMPATIBLE) is decided by code with no model call. If undecided (two or more live claims from different people, no rule fires), the judge scope branches: Guardrailed (binary) sends exactly one CONTRADICTION-or-COMPATIBLE question to the model, which self-reports confidence; if that confidence is below 0.6, a confidence-gated escalation router issues a second, richer model call, and the escalated verdict wins if it parses, otherwise the primary verdict stands. Open (full7) instead lets the model choose freely from the full seven-way verdict vocabulary in one call. Every path converges on the ledger, which persists claims, verdicts, suppressions, and the watermark."
+        alt="Flowchart: a message arrives from Slack or Gmail and passes through a deterministic noise gate (bots and CI are dropped before extraction). Surviving messages go through a model extraction call, then deterministic referent resolution, then the deterministic pre-rules ladder (R0-R9). If a pre-rule settles the question, the verdict (UPDATE, RESOLVED_BY_SUPERSESSION, RESOLVED_BY_CORRECTION, AMBIGUOUS_REFERENT, or COMPATIBLE) is decided by code with no model call. If undecided (two or more live claims from different people, no rule fires), the judge scope branches: Guardrailed (binary) sends exactly one CONTRADICTION-or-COMPATIBLE question to the model in one call. Open (full7) instead lets the model choose freely from the full seven-way verdict vocabulary in one call. Every path converges on the ledger, which persists claims, verdicts, suppressions, and the watermark."
         style={{ width: "100%", height: "auto", display: "block" }}
       />
       <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
@@ -36,7 +36,7 @@ export function RoutingDiagram() {
         </a>{" "}
         (Mermaid syntax, committed alongside the SVG) via <code>npx @mermaid-js/mermaid-cli</code> — a dev-time tool
         only, not a runtime or npm dependency of this app. Verified against <code>src/core/pipeline.ts</code>&apos;s{" "}
-        <code>runAdjudicationPipeline</code> and <code>src/core/router.ts</code>, not hand-drawn from memory.
+        <code>runAdjudicationPipeline</code>, not hand-drawn from memory.
       </p>
     </div>
   );

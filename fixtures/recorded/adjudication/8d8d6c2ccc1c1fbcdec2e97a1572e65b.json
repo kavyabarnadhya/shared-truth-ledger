@@ -1,0 +1,25 @@
+{
+  "key": "8d8d6c2ccc1c1fbcdec2e97a1572e65b",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate d7_retention.trend@2026-07-24T23:59:59+05:30",
+  "promptSha": "c2fd9574593d0e217e9d27542a9567e145d97c3079d756212d9bf9b5e9ffaaf8",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: d7_retention.trend\n\nLive claims:\n- M-030#0 | neha.bhatt | 20 Jul 2026, 9:30 AM IST | value: \"up 1.8pp week on week, driven mostly by the returning-player cohort\" | span: \"D7 retention is up 1.8pp week on week, driven mostly by the returning-player cohort.\"\n- M-031#1 | arjun.rao | 21 Jul 2026, 3:12 PM IST | value: \"off 3pp since the 1.9.3 patch\" | span: \"My cut on paid installs has seven-day retention off 3pp since the 1.9.3 patch.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"COMPATIBLE\", \"rationale\": \"M-030#0 reports D7 retention up 1.8pp week-on-week, while M-031#1 reports D7 retention down 3pp since the 1.9.3 patch. These measure different baselines (sequential week vs. patch date) and can both be true simultaneously — e.g., retention could be recovering week-over-week after a patch-induced drop, yet still be below pre-patch levels.\", \"conflicting_claim_ids\": []}",
+    "usage": {
+      "inputTokens": 376,
+      "outputTokens": 445
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2358,
+  "recordedAt": "2026-08-02T07:32:47.135+00:00"
+}

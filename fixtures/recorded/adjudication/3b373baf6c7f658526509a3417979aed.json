@@ -1,0 +1,25 @@
+{
+  "key": "3b373baf6c7f658526509a3417979aed",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate tournament.scope@2026-07-24T23:59:59+05:30",
+  "promptSha": "bb700c0553d0ef96c1f5d08077afc3248baeb00252b8b9f32e47269c9e1bed24",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: tournament.scope\n\nLive claims:\n- CL-040 | meera.iyer | 14 Jul 2026, 4:44 PM IST | value: \"leaderboard only, brackets cut\" | span: \"On tournament mode, we cut the bracket system for v1. It's a flat leaderboard only.\"\n- CL-041 | rohan.desai | 18 Jul 2026, 12:30 PM IST | value: \"includes bracket seeding\" | span: \"Spent this morning on bracket seeding rules for the Tiranga tournament. Should have the seeding logic ready for review by Tuesday.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"CL-040 states the tournament scope is 'leaderboard only, brackets cut,' while CL-041 states the tournament 'includes bracket seeding.' These are mutually exclusive: one explicitly removes brackets, the other explicitly includes them.\", \"conflicting_claim_ids\": [\"CL-040\", \"CL-041\"]}",
+    "usage": {
+      "inputTokens": 348,
+      "outputTokens": 208
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 1594,
+  "recordedAt": "2026-08-02T07:17:53.982+00:00"
+}
