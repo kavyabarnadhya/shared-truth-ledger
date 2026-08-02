@@ -15,9 +15,8 @@ export function ReviewerBanner({ onDismiss }: { onDismiss: () => void }) {
   return (
     <div className="reviewer-banner" role="note">
       <span>
-        <strong>Reviewer view:</strong> this is an assignment POC. The product above is built for a PM; the
-        engineering behind it — agents, tool calls, MCP integration, model selection, evals — is documented at the
-        foot of every page and on the{" "}
+        <strong>Reviewer view:</strong> the product above is built for a PM. The engineering behind it — agents,
+        tool calls, MCP integration, model selection, evals — is documented at the foot of every page and on the{" "}
         <Link href="/architecture" className="reviewer-banner__link">
           Architecture
         </Link>{" "}
