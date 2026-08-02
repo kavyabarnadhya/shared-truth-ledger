@@ -64,6 +64,13 @@ export default function OverviewPage() {
 
   const flagship = openBuckets.find((b) => b.referent === "indep_event.launch_date") ?? openBuckets[0];
 
+  // Same definitions Signals uses: dismissed = a contradiction-shaped bucket
+  // hidden from the open list; resolved = an in-place "who won" annotation
+  // that doesn't remove a bucket from Open/Dismissed. Neither appears in
+  // openBuckets above, so they're invisible here unless surfaced explicitly.
+  const dismissedCount = snapshot?.buckets.filter((b) => suppressedKeys.has(b.referent)).length ?? 0;
+  const resolvedCount = snapshot?.resolutions.length ?? 0;
+
   return (
     <main className="page">
       <h1 className="page-title">Quorum</h1>
@@ -91,7 +98,7 @@ export default function OverviewPage() {
             <div className="drilldown" style={{ marginBottom: "var(--space-2)" }}>
               <p style={{ margin: 0, fontWeight: 600 }}>{conflictTitle(flagship, flagship.claims.map((bc) => bc.claim))}</p>
               <p className="claim-state-label" style={{ marginTop: "0.3em" }}>
-                Start here — this is the clearest example of what Quorum catches.
+                Featured — the clearest example of what Quorum catches.
               </p>
               <Link href="/contradictions">Look at it →</Link>
             </div>
@@ -107,12 +114,23 @@ export default function OverviewPage() {
           <div className="stat-row">
             <div className="stat-item">
               <span className="stat-item__value">{topicsTracked ?? "—"}</span>
-              <span className="stat-item__label">Topics being tracked</span>
+              <span className="stat-item__label">
+                Topics being tracked — <Link href="/ledger">see them all</Link>
+              </span>
             </div>
             <div className="stat-item">
               <span className="stat-item__value">{openBuckets.length}</span>
               <span className="stat-item__label">Open disagreements</span>
             </div>
+            {(dismissedCount > 0 || resolvedCount > 0) && (
+              <div className="stat-item">
+                <span className="stat-item__value">{dismissedCount + resolvedCount}</span>
+                <span className="stat-item__label">
+                  {dismissedCount} dismissed, {resolvedCount} resolved — see{" "}
+                  <Link href="/contradictions">Signals</Link> for detail
+                </span>
+              </div>
+            )}
           </div>
 
           <p>

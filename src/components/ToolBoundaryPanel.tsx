@@ -74,10 +74,9 @@ export function ToolBoundaryPanel() {
         </li>
       </ul>
       <p className="claim-state-label">
-        This is a bonus surface, evidenced here rather than something a
-        reviewer is expected to run — attaching an MCP client needs a
-        terminal, which the primary hosted-link path doesn&apos;t require.
-        See README §7 for the detailed version.
+        This page shows what the MCP surface exposes without requiring you to
+        run one — connecting a real MCP client needs a terminal, which
+        nothing else on this site does. See README §7 to try it yourself.
       </p>
     </div>
   );

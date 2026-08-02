@@ -77,7 +77,7 @@ export function AdjudicationTable({
       <tbody>
         {scores.flatMap((s) =>
           s.buckets.map((b, i) => (
-            <tr key={`${s.scenario}-${i}`}>
+            <tr key={`${s.scenario}-${i}`} id={i === 0 ? `scenario-${s.scenario}` : undefined}>
               <td>{i === 0 ? <ScenarioLabel scenario={s.scenario} onViewMessages={onViewMessages} /> : <span className="mono-cell">{s.scenario}</span>}</td>
               <td className="mono-cell">{b.bucket_key}</td>
               <td className="mono-cell">{b.asOf}</td>

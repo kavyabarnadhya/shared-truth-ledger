@@ -135,7 +135,18 @@ export default function ContradictionsPage() {
         Gmail, not from a status meeting.
       </p>
 
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "var(--space-3)", flexWrap: "wrap", gap: "var(--space-2)" }}>
+      <details className="drilldown" style={{ marginBottom: "var(--space-2)" }}>
+        <summary>What&apos;s a &ldquo;referent&rdquo;?</summary>
+        <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+          The thing two people are disagreeing about — a launch date, a sign-off owner, a scope decision. The small
+          mono text under each headline (like <code>indep_event.launch_date</code>) is that topic&apos;s internal
+          key — system-generated from a fixed vocabulary the team&apos;s topics are catalogued against, not
+          something anyone typed in. Not every topic Quorum notices is catalogued; auto-detected ones are tagged
+          &ldquo;auto-detected&rdquo; and use whatever phrase the message itself used.
+        </p>
+      </details>
+
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "var(--space-1)", flexWrap: "wrap", gap: "var(--space-2)" }}>
         <AsOfControl value={asOf} onChange={handleAsOfChange} />
         {data?.storeInfo && (
           <span className="claim-state-label">
@@ -143,6 +154,10 @@ export default function ContradictionsPage() {
           </span>
         )}
       </div>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-3)" }}>
+        Not every topic changes between snapshots — some stay open with the same live positions across dates, so two
+        dates can look alike.
+      </p>
 
       {beforeAfter && flagshipTitle && (
         <div className="banner" style={{ borderColor: "var(--settled)" }}>

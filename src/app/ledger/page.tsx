@@ -82,6 +82,10 @@ export default function LedgerPage() {
         Every topic Quorum is tracking, the current position, who holds it, and how it got there — independently
         useful even when nothing is in dispute.
       </p>
+      <p className="claim-state-label" style={{ marginBottom: "var(--space-2)" }}>
+        The small mono text under each topic name (like <code>indep_event.launch_date</code>) is that topic&apos;s
+        internal key — system-generated from a fixed vocabulary, not typed in by anyone.
+      </p>
 
       {loading && <p className="claim-state-label">Loading...</p>}
 
