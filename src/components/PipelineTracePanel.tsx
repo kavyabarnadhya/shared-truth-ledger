@@ -35,6 +35,7 @@ export function PipelineTracePanel({
   result,
   onRetryLive,
   retrying = false,
+  retryError = null,
 }: {
   open: boolean;
   onClose: () => void;
@@ -42,6 +43,8 @@ export function PipelineTracePanel({
   /** Undefined when live mode isn't available on this deployment — no retry offered then, since it has nothing to retry with. */
   onRetryLive?: () => void;
   retrying?: boolean;
+  /** A failed retry never clears `result` (see sandbox/page.tsx's run()) — this is how that failure surfaces instead. */
+  retryError?: { message: string; code?: string } | null;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -110,6 +113,12 @@ export function PipelineTracePanel({
           pipeline, so it isn&apos;t shown here. The one place raw output genuinely survives is an extraction call
           that failed to parse, shown below.
         </p>
+
+        {retryError && (
+          <div className="banner banner--warn" style={{ marginTop: "var(--space-2)" }}>
+            Retry failed: {retryError.message}
+          </div>
+        )}
 
         <TraceTable entries={result.trace} />
 

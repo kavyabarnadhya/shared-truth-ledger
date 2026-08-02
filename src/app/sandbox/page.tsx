@@ -37,6 +37,11 @@ export default function SandboxPage() {
   const [liveAvailable, setLiveAvailable] = useState(false);
   const [liveUnavailableReason, setLiveUnavailableReason] = useState<string | null>(null);
   const [tracePanelOpen, setTracePanelOpen] = useState(false);
+  // Separate from `error`: a failed retry must not clear the result the
+  // panel is showing (see run()'s isRetry branch) — surfaced inline in the
+  // panel instead of the page-level banner, which would be hidden behind
+  // the panel's scrim anyway.
+  const [retryError, setRetryError] = useState<{ message: string; code?: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/cast")
@@ -55,10 +60,14 @@ export default function SandboxPage() {
       });
   }, []);
 
-  async function run(inputMessages: SandboxMessageInput[], live: boolean, maxOutputTokens?: number) {
+  async function run(inputMessages: SandboxMessageInput[], live: boolean, maxOutputTokens?: number, isRetry = false) {
     setRunning(true);
-    setError(null);
-    setMessages(inputMessages);
+    if (isRetry) {
+      setRetryError(null);
+    } else {
+      setError(null);
+      setMessages(inputMessages);
+    }
     try {
       const res = await fetch("/api/sandbox", {
         method: "POST",
@@ -71,16 +80,34 @@ export default function SandboxPage() {
           const reason = liveAvailable
             ? "This exact text isn't in the recorded set. Try enabling live mode, or use one of the examples below."
             : "This exact text isn't in the recorded set, and live mode is off on this deployment — try one of the examples below.";
-          setError({ message: reason, code: json.code });
+          if (isRetry) {
+            // A failed retry keeps the original result and panel intact —
+            // it has more to lose (the trace data the user opened the panel
+            // to inspect) than a first run does, and a fallback-to-replay
+            // after a bumped-token live call will almost always miss (the
+            // recording is keyed at the default 800), so this is the
+            // expected shape of a retry failure, not an edge case.
+            setRetryError({ message: reason, code: json.code });
+          } else {
+            setError({ message: reason, code: json.code });
+            setResult(null);
+          }
+        } else if (isRetry) {
+          setRetryError({ message: json.error ?? `request failed (${res.status})`, code: json.code });
         } else {
           setError({ message: json.error ?? `request failed (${res.status})`, code: json.code });
+          setResult(null);
         }
-        setResult(null);
         return;
       }
       setResult(json);
     } catch (err) {
-      setError({ message: err instanceof Error ? err.message : String(err) });
+      const message = err instanceof Error ? err.message : String(err);
+      if (isRetry) {
+        setRetryError({ message });
+      } else {
+        setError({ message });
+      }
     } finally {
       setRunning(false);
     }
@@ -176,8 +203,9 @@ export default function SandboxPage() {
         open={tracePanelOpen}
         onClose={() => setTracePanelOpen(false)}
         result={result}
-        onRetryLive={liveAvailable ? () => run(messages, true, RETRY_MAX_OUTPUT_TOKENS) : undefined}
+        onRetryLive={liveAvailable ? () => run(messages, true, RETRY_MAX_OUTPUT_TOKENS, true) : undefined}
         retrying={running}
+        retryError={retryError}
       />
     </main>
   );
