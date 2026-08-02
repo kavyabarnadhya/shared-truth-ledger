@@ -7,21 +7,96 @@ import { ToolBoundaryPanel } from "@/components/ToolBoundaryPanel";
 import { RoutingDiagram } from "@/components/RoutingDiagram";
 import { ReviewerNote } from "@/components/ReviewerNote";
 import { VerdictChip } from "@/components/VerdictChip";
-import type { LedgerSnapshot, VerdictKind } from "@/core/types";
+import { PromptViewer } from "@/components/DrillDown";
+import goldClaimsData from "../../../evals/gold-claims.json";
+import { EXTRACTION_PROMPT } from "@/core/prompts/extraction";
+import { systemFor as adjudicationSystemFor } from "@/core/prompts/adjudication";
+import { MESSAGES as CORPUS_MESSAGES } from "@/corpus/bundled.generated";
+import { parseInstant } from "@/core/time";
+import { renderUser as renderAdjudicationUser } from "@/core/prompts/adjudication";
+import type { Bucket, GoldClaim, LedgerSnapshot, Message, VerdictKind } from "@/core/types";
 
 interface LedgerApiResponse {
   snapshot: LedgerSnapshot | null;
 }
 
+interface GoldClaimsFile {
+  claims: GoldClaim[];
+}
+
+const GOLD_CLAIMS: GoldClaim[] = (goldClaimsData as GoldClaimsFile).claims;
+const GOLD_CLAIMS_COUNT = GOLD_CLAIMS.length;
+
+const MESSAGE_TEXT_BY_ID = new Map(CORPUS_MESSAGES.map((m) => [m.id, m.text]));
+
+/** Same 10-rule ladder shown on Evals (evals/page.tsx's PRE_RULES). Kept here as a direct copy rather than a
+ * cross-page import, so this page's bundle doesn't pull in Evals' own page-local state. */
+const PRE_RULES: Array<{ id: string; description: string }> = [
+  { id: "R1", description: "Someone relaying what another person said doesn't count as their own claim. Excluded from the disagreement." },
+  { id: "R1b", description: "A hedge, a proposal, or a question isn't a statement of fact. Excluded." },
+  { id: "R2", description: "The same person said something different later. Their earlier message is retired in favour of the later one." },
+  { id: "R3", description: "Someone explicitly said what something is NOT. Checked against their own other positions rather than read as a fact itself." },
+  { id: "R4", description: "Someone corrected themselves to match what someone else already said. Read as a correction, not an open conflict." },
+  { id: "R5", description: "The most senior person in the thread made the final call. It overrides the earlier disagreement." },
+  { id: "R6", description: "Only one current position remains. Nothing left to disagree about." },
+  { id: "R6b", description: "More than one current position, but they all agree. Not a conflict." },
+  { id: "R7", description: "No current position remains at all. Nothing to disagree about." },
+  { id: "R8", description: "Genuinely arguable both ways. Kept in its own \"contested\" bucket rather than scored as right or wrong." },
+];
+
+const WORKED_EXAMPLE_MESSAGE: Message = {
+  id: "M-001",
+  source: "slack",
+  channel: "#liveops-ludojunction",
+  thread_id: "T1",
+  author: "meera.iyer",
+  author_name: "Meera Iyer",
+  author_role: "Product Manager",
+  timestamp: parseInstant("2026-07-06T10:12:00+05:30"),
+  text: "Kicking off planning for the Independence Day event. Working assumption is we go live 12 August, config frozen by the 5th so QA gets a clean week.",
+  participants: ["meera.iyer"],
+  is_load_bearing: true,
+};
+
+const WORKED_EXTRACTION_USER = EXTRACTION_PROMPT.renderUser({ message: WORKED_EXAMPLE_MESSAGE, contextMessages: [] });
+
+const WORKED_ADJUDICATION_BUCKET: Bucket = {
+  referent: "indep_event.launch_date",
+  claims: [],
+  liveClaims: [
+    {
+      claim_id: "M-001#0", message_id: "M-001", referent: "indep_event.launch_date", raw_referent: "go live",
+      predicate: "value", value: "2026-08-12", raw_value: "12 August", asserter: "meera.iyer",
+      modality: "assertion", polarity: "positive", attributed_to: null,
+      timestamp: parseInstant("2026-07-06T10:12:00+05:30"),
+      source_span: "we go live 12 August", span_valid: true, span_offset: 75,
+    },
+    {
+      claim_id: "M-002#0", message_id: "M-002", referent: "indep_event.launch_date", raw_referent: "Go-live",
+      predicate: "value", value: "2026-08-15", raw_value: "15 August", asserter: "priya.raghunathan",
+      modality: "assertion", polarity: "positive", attributed_to: null,
+      timestamp: parseInstant("2026-07-15T18:22:00+05:30"),
+      source_span: "Go-live is 15 August", span_valid: true, span_offset: 57,
+    },
+  ],
+  asOf: parseInstant("2026-07-15T23:59:59+05:30"),
+  preRuleTrace: [],
+  preRuleVerdict: null,
+  linkedReferents: [],
+  contested: false,
+};
+
+const WORKED_ADJUDICATION_USER_BINARY = renderAdjudicationUser({ bucket: WORKED_ADJUDICATION_BUCKET, judgeScope: "binary" });
+
 const VERDICTS: Array<{ kind: VerdictKind; meaning: string; decidedBy: string }> = [
   {
     kind: "CONTRADICTION",
     meaning: "Two live positions genuinely conflict.",
-    decidedBy: "Model only — no pre-rule ever emits this.",
+    decidedBy: "Model only. No pre-rule ever emits this.",
   },
   {
     kind: "COMPATIBLE",
-    meaning: "No real disagreement — one live claim, or the live claims already agree.",
+    meaning: "No real disagreement: one live claim, or the live claims already agree.",
     decidedBy: "Code (R6/R6b/R7) when one of those settles it; the model otherwise.",
   },
   {
@@ -42,21 +117,21 @@ const VERDICTS: Array<{ kind: VerdictKind; meaning: string; decidedBy: string }>
   {
     kind: "AMBIGUOUS_REFERENT",
     meaning: "Two different buckets may be the same real topic, phrased identically, disagreeing in value.",
-    decidedBy: "Code (ambiguity-pair detection, src/core/ledger.ts) — a different mechanism from CONTESTED below.",
+    decidedBy: "Code (ambiguity-pair detection, src/core/ledger.ts). A different mechanism from CONTESTED below.",
   },
   {
     kind: "CONTESTED",
     meaning: "Hand-labelled as genuinely arguable either way; kept out of right/wrong scoring entirely.",
-    decidedBy: "Code (R8) — only for a referent in the hardcoded contested set, not a general judgment call.",
+    decidedBy: "Code (R8). Only for a referent in the hardcoded contested set, not a general judgment call.",
   },
 ];
 
 const STAGE_SENTENCES: Array<{ id: string; sentence: string }> = [
-  { id: "noise_gate", sentence: "First, Quorum throws out anything that isn't a real person talking — a fixed 5-rule ladder (bot author, automation email address, gated channel, automation text signature, short social aside), all code, no model call." },
+  { id: "noise_gate", sentence: "First, Quorum throws out anything that isn't a real person talking. A fixed 5-rule ladder (bot author, automation email address, gated channel, automation text signature, short social aside), all code, no model call." },
   { id: "extraction", sentence: "Then it reads every remaining message and pulls out the factual claims it makes, quoting the exact words rather than paraphrasing." },
-  { id: "referent_resolution", sentence: "It groups claims that are about the same underlying topic — by exact match, known aliases, then wording similarity — without ever calling a model." },
+  { id: "referent_resolution", sentence: "It groups claims that are about the same underlying topic, by exact match, known aliases, then wording similarity, without ever calling a model." },
   { id: "pre_rules", sentence: "Before asking any model to judge anything, a fixed set of rules checks for the easy cases: someone updating their own earlier statement, someone correcting themselves, a senior person's final call (R5)." },
-  { id: "adjudication", sentence: "Only what's left after that — genuine live disagreement between different people, from the model's point of view — gets exactly one question to a model: Guardrailed scope asks yes/no (“contradiction or compatible?”), Open scope lets it choose freely from the full verdict vocabulary." },
+  { id: "adjudication", sentence: "Only what's left after that, genuine live disagreement between different people from the model's point of view, gets exactly one question to a model: Guardrailed scope asks yes/no (“contradiction or compatible?”), Open scope lets it choose freely from the full verdict vocabulary." },
   { id: "ledger", sentence: "The result is written to a persistent ledger: today's beliefs, plus a full history of who changed their mind and when." },
 ];
 
@@ -64,7 +139,7 @@ const STAGE_SENTENCES: Array<{ id: string; sentence: string }> = [
  * Turns the pipeline into something a reviewer can watch happen: a plain
  * sentence per stage above the numbers (computed live off a real
  * LedgerSnapshot.trace, never hand-drawn), then the Slack/Gmail/MCP tool
- * boundary the assignment specifically asks to see — with a working link
+ * boundary the assignment specifically asks to see, with a working link
  * into the same SourcePanel a reviewer has already used on Signals/Ledger,
  * so "MCP integration" is demonstrated, not just described.
  */
@@ -86,7 +161,7 @@ export default function ArchitecturePage() {
       <h1 className="page-title">How Quorum works</h1>
       <p className="page-subtitle">
         Six stages, from your Slack and Gmail through to the ledger. Every number below is read live off the current
-        ledger snapshot&apos;s trace — not hand-drawn.
+        ledger snapshot&apos;s trace, not hand-drawn.
       </p>
 
       <nav className="page-toc" aria-label="On this page">
@@ -99,7 +174,7 @@ export default function ArchitecturePage() {
 
       <h2 className="section-heading" id="data-source">Where the data comes from</h2>
       <p>
-        Quorum reads Slack and Gmail through an MCP-style tool layer — the same four tools (search Slack, get a
+        Quorum reads Slack and Gmail through an MCP-style tool layer. The same four tools (search Slack, get a
         Slack thread, search Gmail, get a Gmail thread) are exposed both to an MCP client over stdio and to this web
         app in-process, from one shared adapter module. You&apos;ve already used this: every &ldquo;view the
         message&rdquo; link on Signals or the Ledger opens that exact tool call. See the tool boundary below for the
@@ -127,7 +202,7 @@ export default function ArchitecturePage() {
 
       <h2 className="section-heading" id="architecture">Tool boundary</h2>
       <p className="claim-state-label">
-        Four tools, one shared adapter, two callers — an MCP server over stdio, and this web app in-process.
+        Four tools, one shared adapter, two callers: an MCP server over stdio, and this web app in-process.
       </p>
       <ToolBoundaryPanel />
 
@@ -136,18 +211,18 @@ export default function ArchitecturePage() {
           This page and the SourcePanel are the two places the MCP boundary is actually exercised rather than just
           documented: <code>src/adapters/workspace.ts</code> is the single implementation; <code>mcp-server/src/adapter.ts</code>{" "}
           re-exports it for the stdio MCP server, and <code>src/app/api/workspace/route.ts</code> calls it in-process
-          for the web app — never an HTTP round trip to the MCP server itself. Model selection, hooks, and agent
+          for the web app, never an HTTP round trip to the MCP server itself. Model selection, hooks, and agent
           hand-offs are documented in full in the README sections this note links to.
         </p>
       </ReviewerNote>
 
       <h2 className="section-heading" id="routing-diagram">The routing decision, diagrammed</h2>
       <p className="claim-state-label">
-        The same six stages above, drawn as the actual branch points a message goes through — deterministic steps in
+        The same six stages above, drawn as the actual branch points a message goes through: deterministic steps in
         one style, model calls in another, with the Guardrailed/Open judge-scope split shown as a real branch, not
         prose. Concretely: Guardrailed restricts the model&apos;s output to <code>CONTRADICTION</code> or{" "}
         <code>COMPATIBLE</code> only, enforced by a strict schema (<code>BinaryVerdictSchema</code>); Open allows all
-        7 verdicts (<code>Full7VerdictSchema</code>) — see <code>src/core/schema/verdict.ts</code>.
+        7 verdicts (<code>Full7VerdictSchema</code>). See <code>src/core/schema/verdict.ts</code>.
       </p>
 
       <div style={{ overflowX: "auto", marginBottom: "var(--space-3)" }}>
@@ -173,8 +248,8 @@ export default function ArchitecturePage() {
       </table>
       </div>
       <p className="claim-state-label" style={{ marginTop: "calc(-1 * var(--space-2))", marginBottom: "var(--space-3)" }}>
-        For what R4–R8 (and the other code-decided checks referenced above) actually do, see{" "}
-        <a href="#pre-rules">Signals page — pre-rules</a> below.
+        For what R4-R8 (and the other code-decided checks referenced above) actually do, see{" "}
+        <a href="#pre-rules">Signals page, pre-rules</a> below.
       </p>
 
       <RoutingDiagram />
@@ -183,7 +258,7 @@ export default function ArchitecturePage() {
         Reviewer appendix
       </h2>
       <p className="claim-state-label">
-        The engineering detail each page&apos;s &ldquo;How this page works&rdquo; note links back to — one section
+        The engineering detail each page&apos;s &ldquo;How this page works&rdquo; note links back to. One section
         per page, kept here instead of a repo-root README route Vercel can&apos;t serve directly.
       </p>
 
@@ -191,40 +266,53 @@ export default function ArchitecturePage() {
         <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Overview page</h3>
         <p>
           &ldquo;Topics being tracked&rdquo; counts only catalogued referents (see the Ledger page&apos;s &ldquo;other
-          topics detected automatically&rdquo; split) — internal identifiers like <code>indep_event.launch_date</code>{" "}
+          topics detected automatically&rdquo; split). Internal identifiers like <code>indep_event.launch_date</code>{" "}
           and extractor-minted noise both live in the same underlying <code>Bucket[]</code>, but only the former is a
           real tracked topic from a product point of view. The false positive rate and contradiction recall figures
-          live entirely on the Evals page, computed by the same in-browser eval suite you can run yourself there —
-          the Overview page does not duplicate that computation.
+          live entirely on the Evals page, computed by the same in-browser eval suite you can run yourself there.
+          The Overview page does not duplicate that computation.
         </p>
       </div>
 
       <div className="reviewer-appendix__section" id="pre-rules">
-        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Signals page — pre-rules</h3>
+        <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Signals page, pre-rules</h3>
         <p>
-          Each row runs through a deterministic pre-rule ladder (R0–R9) before any model is called — same-asserter
-          updates, self-corrections, and authority-based supersession (R5) are all decided by code, not by the
-          model. Only
-          a bucket with two or more live claims from different people, with no pre-rule able to settle it, gets a
-          single binary model call: &ldquo;do these live positions genuinely conflict?&rdquo;
-          &ldquo;Rewind the ledger&rdquo; re-runs the same deterministic
-          pipeline as of an earlier point in time; it does not re-ask the model a new question, it replays the same
-          logic against a smaller set of visible messages. These rules are hand-authored, studio-specific business
-          logic (<code>src/core/prerules.ts</code>) — code, not model output, and not user-configurable in this
-          build.
+          Each bucket runs through this deterministic ladder before any model is called. Only a bucket with two or
+          more live claims from different people, with no rule below able to settle it, gets a single binary model
+          call: &ldquo;do these live positions genuinely conflict?&rdquo; &ldquo;Rewind the ledger&rdquo; re-runs the
+          same deterministic pipeline as of an earlier point in time. It does not re-ask the model a new question,
+          it replays the same logic against a smaller set of visible messages. These rules are hand-authored,
+          studio-specific business logic (<code>src/core/prerules.ts</code>): code, not model output, and not
+          user-configurable in this build.
         </p>
+        <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>What it checks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PRE_RULES.map((r) => (
+              <tr key={r.id}>
+                <td className="mono-cell">{r.id}</td>
+                <td>{r.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <p>
           Two user-facing actions live on this page (<code>src/components/BucketRow.tsx</code>): Dismiss persists a{" "}
-          <code>Suppression</code> and Mark-as-resolved persists a <code>Resolution</code> — same shape, same
+          <code>Suppression</code> and Mark-as-resolved persists a <code>Resolution</code>. Same shape, same
           store, same &ldquo;survives a restart&rdquo; guarantee (<code>src/core/ledger.ts</code>&apos;s{" "}
           <code>dismissBucket</code>/<code>resolveBucket</code>, written via{" "}
           <code>/api/ledger/suppress</code>/<code>/api/ledger/resolve</code>). Both re-raise automatically the
-          moment the bucket&apos;s live claim set changes (<code>isSuppressed</code>/<code>isResolved</code>) — a
+          moment the bucket&apos;s live claim set changes (<code>isSuppressed</code>/<code>isResolved</code>). A
           dismissal or a resolution is never a silent, permanent hide. Neither touches{" "}
           <code>projectAsOf</code> or verdict computation: a resolution is a human annotation recorded alongside the
           system&apos;s own verdict, not a replacement for it. <strong>Explicitly out of scope for this pass:</strong>{" "}
           real notifications (Slack-reply/email-send) when a conflict is dismissed or resolved, assigning a conflict
-          to a specific person, and a comment thread on a bucket — real product needs, not silently missing, just a
+          to a specific person, and a comment thread on a bucket. Real product needs, not silently missing, just a
           materially larger build (external-write integration, not just UI) than this pass covers.
         </p>
       </div>
@@ -236,7 +324,7 @@ export default function ArchitecturePage() {
           <code>src/core/ledger.ts</code>): superseded/withdrawn claims stay visible, not hidden, so a reviewer can
           see what was ruled out and why. The watermark (<code>snapshot.watermark</code>) tracks which messages have
           already been processed, making re-runs idempotent. Suppression (dismiss/restore on the Signals tab)
-          re-raises a bucket only if its live claim set actually changes — a dismissal isn&apos;t silently permanent.
+          re-raises a bucket only if its live claim set actually changes. A dismissal isn&apos;t silently permanent.
         </p>
       </div>
 
@@ -244,28 +332,128 @@ export default function ArchitecturePage() {
         <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Evals page</h3>
         <p>
           <code>npm run eval -- --print-hash</code> against the same committed recordings prints the same report hash
-          offline — that is the actual reproducibility guarantee, not just the on-screen claim on that page. The
+          offline. That is the actual reproducibility guarantee, not just the on-screen claim on that page. The
           regression protocol treats any single-scenario regression as a failure even if the average improves; the
           diff panel there implements exactly that rule, not an aggregate pass/fail. See{" "}
           <code>src/core/eval/diff.ts</code> and <code>src/core/eval/run-eval.ts</code> for the scoring
           implementation, and <code>src/core/eval/scenarios.ts</code> for the full scenario registry (C1-C9, N1-N18)
           that page&apos;s tables are driven from.
         </p>
+        <p>
+          The adjudication grader scores every run against these gold claims, not against anything the model itself
+          produced. One person (this project&apos;s author) hand-labeled them, with no measured agreement from a
+          second annotator. That&apos;s a real limitation, stated here rather than smoothed over. See README §8
+          (&ldquo;Known limitations&rdquo;) for the full statement.
+        </p>
+        <p>
+          A predicted value doesn&apos;t need to match a gold value byte-for-byte to count as correct. Dates and
+          numbers are normalized before comparing, and free text is allowed to differ if it still shares at least
+          60% of its words with the gold value (a token-set overlap check, not an edit distance). Referent, modality,
+          and polarity are graded as three separate axes, not folded into one pass/fail recall number. See{" "}
+          <code>src/core/eval/extraction-grader.ts</code> and <code>src/core/eval/adjudication-grader.ts</code> for
+          the exact rules.
+        </p>
+        <details className="drilldown">
+          <summary>All {GOLD_CLAIMS_COUNT} gold claims</summary>
+          <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+            <thead>
+              <tr>
+                <th>Claim id</th>
+                <th>Message</th>
+                <th>Referent</th>
+                <th>Value</th>
+                <th>Asserter</th>
+              </tr>
+            </thead>
+            <tbody>
+              {GOLD_CLAIMS.map((c) => (
+                <tr key={c.claim_id}>
+                  <td className="mono-cell">{c.claim_id}</td>
+                  <td className="mono-cell">{c.message_id}</td>
+                  <td className="mono-cell">{c.referent}</td>
+                  <td>{c.value}</td>
+                  <td className="mono-cell">{c.asserter}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+            Same data as <code>evals/gold-claims.json</code>. Click any claim below to see every field plus the
+            real source message it was labeled from.
+          </p>
+        </details>
+        <details className="drilldown" style={{ marginTop: "var(--space-2)" }}>
+          <summary>Look up one gold claim in full</summary>
+          <GoldClaimLookup />
+        </details>
+
+        <h4 style={{ marginTop: "var(--space-3)", marginBottom: "var(--space-1)" }}>The actual prompts sent to the model</h4>
+        <p className="claim-state-label">
+          Same worked example as Evals: the literal output of <code>renderUser()</code> for M-001, the flagship
+          bucket&apos;s opening message, exactly as the model receives it. No scenario-specific hints, no few-shot
+          examples encoding the right answer.
+        </p>
+        <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>Extraction, system prompt:</p>
+        <PromptViewer system={EXTRACTION_PROMPT.SYSTEM} user={WORKED_EXTRACTION_USER} />
+        <p className="claim-state-label" style={{ marginTop: "var(--space-2)" }}>
+          Judgment, Guardrailed (binary) scope, system prompt:
+        </p>
+        <PromptViewer system={adjudicationSystemFor("binary")} user={WORKED_ADJUDICATION_USER_BINARY} />
       </div>
 
       <div className="reviewer-appendix__section" id="sandbox">
         <h3 className="section-heading" style={{ fontSize: "var(--size-body)" }}>Try it page</h3>
         <p>
           Every run goes through the same <code>runExtractionPipeline</code>/<code>runAdjudicationPipeline</code> the
-          ledger and Signals pages use — this is not a simplified demo path. In replay mode, novel input that
+          ledger and Signals pages use. This is not a simplified demo path. In replay mode, novel input that
           doesn&apos;t match a committed recording&apos;s cache key returns a clear &ldquo;no recording for this
           input&rdquo; error rather than a fabricated result (see <code>ReplayMissError</code> in{" "}
-          <code>src/core/model/client.ts</code>). Live mode calls the Vercel AI Gateway server-side only — the API
-          key never reaches the browser — and is rate-limited to 10 calls per session per 10 minutes, with an
+          <code>src/core/model/client.ts</code>). Live mode calls the Vercel AI Gateway server-side only. The API
+          key never reaches the browser, and it is rate-limited to 10 calls per session per 10 minutes, with an
           automatic fallback to replay on a 429. See &ldquo;Enabling live mode&rdquo; below for how to turn it on for
           a deployment.
         </p>
       </div>
     </main>
+  );
+}
+
+/** Type-a-claim-id lookup: every field on one gold claim, plus the real source message it was labeled from. */
+function GoldClaimLookup() {
+  const [query, setQuery] = useState("");
+  const trimmed = query.trim().toUpperCase();
+  const match = trimmed ? GOLD_CLAIMS.find((c) => c.claim_id.toUpperCase() === trimmed) : undefined;
+  const sourceText = match ? MESSAGE_TEXT_BY_ID.get(match.message_id) : undefined;
+
+  return (
+    <div style={{ marginTop: "var(--space-2)" }}>
+      <input
+        type="text"
+        placeholder="Claim id, e.g. CL-001"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{ width: "100%", maxWidth: "16rem" }}
+      />
+      {trimmed && !match && <p className="claim-state-label" style={{ marginTop: "var(--space-1)" }}>No gold claim with that id.</p>}
+      {match && (
+        <table className="claim-table" style={{ marginTop: "var(--space-2)" }}>
+          <tbody>
+            <tr><td>Claim id</td><td className="mono-cell">{match.claim_id}</td></tr>
+            <tr><td>Message id</td><td className="mono-cell">{match.message_id}</td></tr>
+            <tr><td>Referent</td><td className="mono-cell">{match.referent}</td></tr>
+            <tr><td>Value</td><td>{match.value}</td></tr>
+            <tr><td>Asserter</td><td className="mono-cell">{match.asserter}</td></tr>
+            <tr><td>Modality</td><td>{match.modality}</td></tr>
+            <tr><td>Polarity</td><td>{match.polarity}</td></tr>
+            <tr><td>Attributed to</td><td className="mono-cell">{match.attributed_to ?? "n/a"}</td></tr>
+            {match.notes && <tr><td>Notes</td><td>{match.notes}</td></tr>}
+            <tr>
+              <td>Source message</td>
+              <td>{sourceText ?? "not found in the bundled corpus"}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 }
