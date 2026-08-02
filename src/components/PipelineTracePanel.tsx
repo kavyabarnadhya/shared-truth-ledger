@@ -125,8 +125,42 @@ export function PipelineTracePanel({
         {result.trace.map((entry) => (
           <TraceStep key={entry.id} entry={entry} result={result} onRetryLive={onRetryLive} retrying={retrying} />
         ))}
+
+        {result.verdicts
+          .filter((v) => v.modelCall === null)
+          .map((v) => (
+            <NoCallVerdictStep key={v.bucket_key} verdict={v} />
+          ))}
       </div>
     </>
+  );
+}
+
+/**
+ * A verdict can be decided without ever calling the model — a pre-rule
+ * shortcut, the "fewer than 2 live claims" guard, or a caught call
+ * failure (pipeline.ts) — and none of those push a TraceEntry, so they
+ * have no step in result.trace to render alongside the real adjudicate
+ * blocks above. Shown here instead, so the verdict list at the bottom of
+ * the panel isn't missing entries the step-by-step view above it skipped.
+ */
+function NoCallVerdictStep({ verdict }: { verdict: Verdict }) {
+  const explanation =
+    verdict.decidedBy === "pre_rule"
+      ? "Decided by a deterministic pre-rule — no model call was made for this bucket."
+      : verdict.rationale.startsWith("model call failed")
+        ? "The model call failed, so this fell back to a default verdict."
+        : "Not enough live claims from distinct people to adjudicate — decided without a model call.";
+  return (
+    <div className="drilldown" style={{ marginTop: "var(--space-2)" }}>
+      <h3 className="section-heading" style={{ marginTop: 0, fontSize: "var(--size-body)" }}>
+        Adjudication — <span className="mono-cell">{verdict.bucket_key}</span>
+      </h3>
+      <p className="claim-state-label">{explanation}</p>
+      <p>
+        <VerdictChip verdict={verdict.verdict} /> {verdict.rationale}
+      </p>
+    </div>
   );
 }
 
