@@ -63,6 +63,16 @@ const SandboxMessageSchema = z.object({
 const SandboxRequestSchema = z.object({
   messages: z.array(SandboxMessageSchema).min(1).max(MAX_MESSAGES),
   live: z.boolean().default(false),
+  /**
+   * User-triggered retry only (never sent on a normal run) — gives the live
+   * model more room to finish when a prior attempt came back truncated. Live
+   * calls at temperature 0 are deterministic, so retrying with the same
+   * budget would just reproduce the same truncation; this is the one
+   * request field that can actually change that. Does not touch config.ts's
+   * committed default or any recording — replay mode and every other live
+   * call are unaffected.
+   */
+  maxOutputTokens: z.number().int().min(100).max(4000).optional(),
 });
 
 const SESSION_COOKIE = "stl_session";
@@ -170,11 +180,16 @@ export async function POST(request: Request) {
   });
 
   const config = getConfig("free");
+  // Only the live call gets a bumped budget, when explicitly requested by a
+  // user-triggered retry — the replay client (both the normal path and the
+  // fallback-on-429 path) stays on the committed 800-token config, since
+  // every recording is keyed at that value.
+  const liveConfig = parsed.data.maxOutputTokens ? { ...config, maxOutputTokens: parsed.data.maxOutputTokens } : config;
   const recordings = loadRecordingsFromDisk();
   const replayClient = new ReplayModelClient(config, recordings, EXTRACTION_PROMPT.PROMPT_VERSION);
 
   const extractionModel = wantsLive
-    ? new FallbackModelClient(new LiveModelClient(config, getApiKeyOrEmpty()), replayClient)
+    ? new FallbackModelClient(new LiveModelClient(liveConfig, getApiKeyOrEmpty()), replayClient)
     : replayClient;
 
   try {
@@ -183,7 +198,7 @@ export async function POST(request: Request) {
 
     const adjReplayClient = new ReplayModelClient(config, recordings, ADJUDICATION_PROMPT_VERSION);
     const adjModel = wantsLive
-      ? new FallbackModelClient(new LiveModelClient(config, getApiKeyOrEmpty()), adjReplayClient)
+      ? new FallbackModelClient(new LiveModelClient(liveConfig, getApiKeyOrEmpty()), adjReplayClient)
       : adjReplayClient;
 
     const adjudication = await runAdjudicationPipeline(

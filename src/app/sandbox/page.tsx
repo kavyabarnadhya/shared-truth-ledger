@@ -6,15 +6,25 @@ import { SandboxEditor, type SandboxMessageInput } from "@/components/SandboxEdi
 import { HighlightedMessage } from "@/components/ClaimRow";
 import { VerdictChip } from "@/components/VerdictChip";
 import { ReviewerNote } from "@/components/ReviewerNote";
+import { PipelineTracePanel } from "@/components/PipelineTracePanel";
 import { referentLabel } from "@/lib/display";
-import type { CastEntry, Claim, Bucket, Verdict } from "@/core/types";
+import type { CastEntry, Claim, Bucket, Verdict, RejectedClaim, TraceEntry } from "@/core/types";
+
+/**
+ * Live calls run at temperature 0 (config.ts), so a plain retry with the
+ * same request would just reproduce the same truncation — this is
+ * double the committed default (800), used only when the user explicitly
+ * asks for a retry, never on a normal run.
+ */
+const RETRY_MAX_OUTPUT_TOKENS = 1600;
 
 interface SandboxResult {
   claims: Claim[];
-  rejectedClaims: Array<{ message_id: string; reason: string; detail: string }>;
+  rejectedClaims: RejectedClaim[];
   gatedMessageIds: string[];
   buckets: Bucket[];
   verdicts: Verdict[];
+  trace: TraceEntry[];
   liveModeUsed: boolean;
 }
 
@@ -26,6 +36,7 @@ export default function SandboxPage() {
   const [messages, setMessages] = useState<SandboxMessageInput[]>([]);
   const [liveAvailable, setLiveAvailable] = useState(false);
   const [liveUnavailableReason, setLiveUnavailableReason] = useState<string | null>(null);
+  const [tracePanelOpen, setTracePanelOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/cast")
@@ -44,7 +55,7 @@ export default function SandboxPage() {
       });
   }, []);
 
-  async function run(inputMessages: SandboxMessageInput[], live: boolean) {
+  async function run(inputMessages: SandboxMessageInput[], live: boolean, maxOutputTokens?: number) {
     setRunning(true);
     setError(null);
     setMessages(inputMessages);
@@ -52,7 +63,7 @@ export default function SandboxPage() {
       const res = await fetch("/api/sandbox", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ messages: inputMessages.filter((m) => m.text.trim()), live }),
+        body: JSON.stringify({ messages: inputMessages.filter((m) => m.text.trim()), live, maxOutputTokens }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -99,6 +110,10 @@ export default function SandboxPage() {
 
       {result && (
         <>
+          <p style={{ marginTop: "var(--space-2)" }}>
+            <button onClick={() => setTracePanelOpen(true)}>See what happened, step by step →</button>
+          </p>
+
           <h2 className="section-heading">What it read</h2>
           {result.claims.length === 0 && <p className="claim-state-label">No claims found in either message.</p>}
           {result.claims.map((claim) => {
@@ -156,6 +171,14 @@ export default function SandboxPage() {
           automatic fallback to replay on a 429.
         </p>
       </ReviewerNote>
+
+      <PipelineTracePanel
+        open={tracePanelOpen}
+        onClose={() => setTracePanelOpen(false)}
+        result={result}
+        onRetryLive={liveAvailable ? () => run(messages, true, RETRY_MAX_OUTPUT_TOKENS) : undefined}
+        retrying={running}
+      />
     </main>
   );
 }
