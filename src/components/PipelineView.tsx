@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PromptViewer } from "@/components/DrillDown";
 import type { LedgerSnapshot } from "@/core/types";
 
 interface StageStat {
@@ -40,8 +39,6 @@ export function PipelineView({ snapshot }: { snapshot: LedgerSnapshot }) {
   const totalVerdicts = snapshot.verdicts.length;
 
   const adjudicationEntries = trace.filter((t) => t.kind === "model" && t.tier === "adjudication");
-  const primaryAdjEntries = adjudicationEntries.filter((t) => !t.step.includes("[escalated]"));
-  const escalatedAdjEntries = adjudicationEntries.filter((t) => t.step.includes("[escalated]"));
   const adjudicationModel = adjudicationEntries[0]?.model ?? "n/a";
 
   const stages: Stage[] = [
@@ -92,11 +89,10 @@ export function PipelineView({ snapshot }: { snapshot: LedgerSnapshot }) {
       id: "adjudication",
       title: "5. Adjudication",
       kind: "model",
-      summary: "Binary judge scope: exactly one question per bucket. Confidence-gated escalation router issues a second, richer call when the primary's self-reported confidence comes back below the fixed threshold.",
+      summary: "Binary judge scope: exactly one question per bucket.",
       stats: [
         { label: "model", value: adjudicationModel },
-        { label: "primary calls", value: String(primaryAdjEntries.length) },
-        { label: "escalated calls", value: String(escalatedAdjEntries.length) },
+        { label: "calls", value: String(adjudicationEntries.length) },
       ],
     },
     {
@@ -139,14 +135,6 @@ export function PipelineView({ snapshot }: { snapshot: LedgerSnapshot }) {
           {expanded === stage.id && (
             <div className="bucket-row__details">
               <p>{stage.summary}</p>
-              {stage.id === "adjudication" && escalatedAdjEntries.length > 0 && (
-                <div>
-                  <p className="claim-state-label">Escalated calls in this trace:</p>
-                  {escalatedAdjEntries.map((e) => (
-                    <PromptViewer key={e.id} system={e.promptRef?.system ?? ""} user={e.promptRef?.user ?? ""} />
-                  ))}
-                </div>
-              )}
             </div>
           )}
         </div>

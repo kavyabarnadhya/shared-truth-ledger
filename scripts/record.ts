@@ -12,23 +12,11 @@
  * Records BOTH judge scopes (binary, full7) for adjudication, since the
  * judge-scope comparison is a first-class recorded configuration per the
  * build plan, not an afterthought.
- *
- * Confidence-gated escalation (router.ts): runAdjudicationPipeline's binary
- * path now self-triggers a second, richer-reasoning call for any bucket
- * whose primary response reports confidence below
- * ESCALATION_CONFIDENCE_THRESHOLD (see core/router.ts). Because that router
- * lives inside runAdjudicationPipeline itself, every pass below that calls
- * it in binary scope (the gold-claims pass and the live-app-claims pass)
- * automatically issues and records escalated calls wherever they're
- * triggered live — no separate recording pass needed. This script tallies
- * and prints how many buckets escalated and whether the escalated verdict
- * differed from the primary one, so that number is measured, not asserted.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { runExtractionPipeline, runAdjudicationPipeline } from "../src/core/pipeline.ts";
-import { ESCALATION_CONFIDENCE_THRESHOLD } from "../src/core/router.ts";
 import { SCENARIOS, CONTESTED_REFERENTS } from "../src/core/eval/scenarios.ts";
 import { LiveModelClient, getGatewayApiKey } from "../src/server/live-client.ts";
 import { computeCacheKey, promptSha } from "../src/core/model/cache-key.ts";
@@ -138,7 +126,7 @@ class RecordingModelClient implements ModelClient {
       model: req.model,
       temperature: req.temperature,
       maxOutputTokens: req.maxOutputTokens,
-      promptVersion: req.promptVersion ?? this.promptVersion,
+      promptVersion: this.promptVersion,
       judgeScope: req.judgeScope ?? null,
       system: req.system,
       inputKey: req.inputKey,
@@ -197,29 +185,6 @@ class RecordingModelClient implements ModelClient {
   }
 }
 
-/**
- * Scans a completed adjudication run's trace for escalated calls (step
- * ending in " [escalated]") and, for each, checks whether the final verdict
- * for that bucket differs from what the primary trace entry's parsed
- * response would have produced. We can't re-parse the primary response text
- * cheaply here without duplicating parse logic, so instead: an escalation
- * "changed the verdict" is inferred whenever the escalated call is present
- * AND decidedBy === "model" for that bucket's final verdict (i.e. the
- * escalated call successfully parsed and therefore won, per pipeline.ts's
- * router) — reported per-bucket so the honest count is auditable by hand
- * against the trace, not just asserted as a summary number.
- */
-function tallyEscalations(
-  result: { verdicts: import("../src/core/types.ts").Verdict[]; trace: import("../src/core/types.ts").TraceEntry[] },
-): { bucketKey: string; asOf: string }[] {
-  const escalated: { bucketKey: string; asOf: string }[] = [];
-  for (const t of result.trace) {
-    const m = /^adjudicate (.+)@(.+) \[escalated\]$/.exec(t.step);
-    if (m) escalated.push({ bucketKey: m[1]!, asOf: m[2]! });
-  }
-  return escalated;
-}
-
 async function main(): Promise<void> {
   const configId = process.argv.includes("--config=strong") ? "strong" : "free";
   const config = getConfig(configId);
@@ -257,8 +222,6 @@ async function main(): Promise<void> {
   const distinctAsOfs = new Set<Instant>();
   for (const s of SCENARIOS) for (const b of s.buckets) distinctAsOfs.add(b.asOf);
 
-  const allEscalations: { bucketKey: string; asOf: string; verdictAfter: string; source: string }[] = [];
-
   for (const judgeScope of ["binary", "full7"] as JudgeScope[]) {
     console.log("");
     console.log(`=== Adjudication (judgeScope=${judgeScope}) ===`);
@@ -266,21 +229,11 @@ async function main(): Promise<void> {
     const adjRecorder = new RecordingModelClient(adjLive, sink, ADJUDICATION_PROMPT_VERSION);
     let adjFailures = 0;
     for (const asOf of distinctAsOfs) {
-      const result = await runAdjudicationPipeline(goldAsClaims, messagesById, cast, CONTESTED_REFERENTS, asOf, judgeScope, adjRecorder);
+      const result = await runAdjudicationPipeline(goldAsClaims, messagesById, cast, CONTESTED_REFERENTS, asOf, judgeScope, adjRecorder, true);
       for (const v of result.verdicts) {
         if (v.decidedBy === "fallback") {
           adjFailures++;
           console.log(`  FAILED: adjudicate ${v.bucket_key}@${asOf}: ${v.rationale}`);
-        }
-      }
-      if (judgeScope === "binary") {
-        for (const esc of tallyEscalations(result)) {
-          const finalVerdict = result.verdicts.find((v) => v.bucket_key === esc.bucketKey);
-          allEscalations.push({
-            bucketKey: esc.bucketKey, asOf: esc.asOf,
-            verdictAfter: finalVerdict?.verdict ?? "unknown", source: "gold-claims pass",
-          });
-          console.log(`  ESCALATED: ${esc.bucketKey}@${esc.asOf} -> final verdict after escalation: ${finalVerdict?.verdict ?? "unknown"}`);
         }
       }
     }
@@ -324,26 +277,8 @@ async function main(): Promise<void> {
         console.log(`  FAILED: adjudicate ${v.bucket_key}@${liveAppAsOf}: ${v.rationale}`);
       }
     }
-    for (const esc of tallyEscalations(liveAppResult)) {
-      const finalVerdict = liveAppResult.verdicts.find((v) => v.bucket_key === esc.bucketKey);
-      allEscalations.push({
-        bucketKey: esc.bucketKey, asOf: esc.asOf,
-        verdictAfter: finalVerdict?.verdict ?? "unknown", source: "live-app pass",
-      });
-      console.log(`  ESCALATED: ${esc.bucketKey}@${esc.asOf} -> final verdict after escalation: ${finalVerdict?.verdict ?? "unknown"}`);
-    }
   }
   console.log(`Adjudication (live-app path, all as-ofs): ${liveAppAdjRecorder.recorded} recorded, ${liveAppAdjRecorder.skipped} skipped (already on disk), ${liveAppFailures} failed`);
-
-  console.log("");
-  console.log("=== Escalation router summary ===");
-  console.log(`${allEscalations.length} bucket(s) escalated (primary binary confidence < ${ESCALATION_CONFIDENCE_THRESHOLD}):`);
-  for (const esc of allEscalations) {
-    console.log(`  ${esc.bucketKey}@${esc.asOf} (${esc.source}) -> ${esc.verdictAfter}`);
-  }
-  if (allEscalations.length === 0) {
-    console.log("  (none — every primary binary call reported confidence >= threshold, or omitted it)");
-  }
 
   console.log("");
   console.log("Done. Run `npm run gen:bundles` to regenerate the committed bundle modules.");

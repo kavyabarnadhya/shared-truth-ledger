@@ -145,15 +145,14 @@ which this project does not have access to and does not fabricate.
 
 ```
 sources ──▶ noise gate ──▶ extraction ──▶ referent resolution ──▶ pre-rules ──▶ adjudication ──▶ ledger ──▶ surface
- (Slack/     (deterministic,  (cheap model,   (deterministic +      (deterministic,  (free model,     (persisted     (Overview /
-  Gmail       no model call)   per-message)    embeddings,           R0–R9)           both rungs,      claims,         Signals /
-  fixtures)                                    no LLM call)                           incl. the        verdicts,       Ledger / Evals /
-                                                                                       confidence-      suppressions,   Sandbox /
-                                                                                       gated escalation  watermark)     Architecture)
-                                                                                       router)
+ (Slack/     (deterministic,  (cheap model,   (deterministic +      (deterministic,  (free model)     (persisted     (Overview /
+  Gmail       no model call)   per-message)    embeddings,           R0–R9)                            claims,         Signals /
+  fixtures)                                    no LLM call)                                            verdicts,       Ledger / Evals /
+                                                                                                         suppressions,   Sandbox /
+                                                                                                         watermark)     Architecture)
 ```
 
-This six-stage pipeline is also rendered live, from the real `LedgerSnapshot.trace` (not hand-drawn), on the **Architecture** tab (`/architecture`) — each stage shows real call counts, pre-rule decisions, and escalation counts for whatever ledger is currently loaded, plus a static panel on the MCP/adapter tool boundary (see §7).
+This six-stage pipeline is also rendered live, from the real `LedgerSnapshot.trace` (not hand-drawn), on the **Architecture** tab (`/architecture`) — each stage shows real call counts and pre-rule decisions for whatever ledger is currently loaded, plus a static panel on the MCP/adapter tool boundary (see §7).
 
 ### Named hooks
 
@@ -225,56 +224,6 @@ versus decided by code — is what gets reported. **Under `binary`, scenarios
 N1, N2, N3, and N10 pass by construction, not by model skill** — those four
 verdicts are the ones pre-rules own. Say so plainly here rather than let the
 per-scenario table imply the model earned them.
-
-### Confidence-gated escalation router — real model selection, free tier only
-
-A concrete second axis of model selection, not just prose: the primary
-binary adjudication call now self-reports a confidence (0–1) alongside its
-verdict. When that number is present and below a fixed, named constant
-(`ESCALATION_CONFIDENCE_THRESHOLD = 0.6`, `src/core/router.ts` — not tuned
-per-scenario, not tuned after seeing eval results), `runAdjudicationPipeline`
-(`src/core/pipeline.ts`) issues a second call using a richer prompt variant
-(`BINARY_ESCALATED_SYSTEM`, `src/core/prompts/adjudication.ts`) that asks the
-model to reason step by step before committing to a verdict. The escalated
-verdict wins if it parses; both calls land in `trace[]` regardless, so
-escalation is visible in the drill-down (and on the Architecture tab, §3
-above), not just asserted. **Both rungs stay on `inclusionai/ling-3.0-flash-free`
-— no call to any paid model is made or claimed anywhere in this router,
-including the escalated rung.** `STRONG_CONFIG` in `model/config.ts` documents
-the one-line production swap-in; it is not run.
-
-**Measured, not asserted:** across the full recorded set (every scored
-adjudication bucket, gold-claims pass, both judge scopes' underlying binary
-calls, plus the live-app pass on the extractor's own claims), **0 buckets
-self-reported confidence below the threshold, so the escalated call never
-fired.** This is the honest result of this recording run — the threshold was
-not lowered to force a nonzero escalation count, and the router unit tests
-(`src/core/pipeline.test.ts`) verify the gating logic itself works correctly
-(a synthetic low-confidence primary response does trigger the escalated call
-and its verdict wins; a high-confidence or confidence-omitting response does
-not) independent of what any particular recorded run happened to produce.
-
-**An honest regression, found and not hidden.** Re-recording the binary
-adjudication prompt to add the confidence self-report (`PROMPT_VERSION`
-bumped from 1 to 2 in `prompts/adjudication.ts`) necessarily re-ran every
-binary-scope call against the live free-tier model. On one previously-correct
-bucket — `reward_config.tiers@2026-07-10T11:20:00+05:30` (feeding scenario
-N10's first sub-case) — the newly recorded response came back **confidently
-wrong**: `COMPATIBLE` with self-reported `confidence: 0.9`, versus the old
-prompt's correct `CONTRADICTION` on the exact same gold claims. Because 0.9
-is well above the 0.6 threshold, the escalation router structurally cannot
-catch this — it is a case of the underlying free model giving a different,
-worse answer to a reworded prompt, not a router bug. **This regression was
-verified against the frozen baseline (`npm run eval`, byte-identical
-`reportHash` across two runs) and the baseline was deliberately *not*
-re-frozen over it** — every number elsewhere in this README, and the
-`reportHash` cited in `deck/OUTLINE.md`, is still the last known-good,
-reproducible baseline that predates this router's re-recording. Fixing this
-specific prompt-induced regression is unresolved follow-up work, not patched
-around under time pressure. (One other bucket, `d7_retention.trend` /
-scenario C4, moved the other direction — from a documented miss to correct —
-in the same re-recorded run; reported here for completeness, not as an offset
-against the regression above.)
 
 ### Why embeddings are a tiebreak, not the mechanism
 
@@ -456,9 +405,9 @@ span — the anti-hallucination check never had to reject one for this run.
 | C3 | `liveops_calendar.signoff_owner` | CONTRADICTION | CONTRADICTION | OK |
 | C4 | `d7_retention.trend` | CONTRADICTION | COMPATIBLE | **MISMATCH** |
 | C5 | `tournament.scope` | CONTRADICTION | CONTRADICTION | OK |
-| C6 | `leaderboard.readiness` | CONTRADICTION | COMPATIBLE | **MISMATCH** |
+| C6 | `leaderboard.readiness` | CONTRADICTION | COMPATIBLE | **MISMATCH — see note below** |
 | C7 | `build_194.release_readiness` | CONTRADICTION | CONTRADICTION | OK |
-| C8 | `art_capacity.allocation` | CONTRADICTION | COMPATIBLE | **MISMATCH** |
+| C8 | `art_capacity.allocation` | CONTRADICTION | CONTRADICTION | OK |
 | C9 (contested) | `reward_config.live_state` | CONTESTED | CONTESTED | OK — excluded from headline |
 | N1 | `level40_art.eta` | UPDATE | UPDATE | OK |
 | N2 | `indep_event.launch_date`@18Jul | RESOLVED_BY_SUPERSESSION | RESOLVED_BY_SUPERSESSION | **OK — the flagship transition** |
@@ -476,12 +425,34 @@ span — the anti-hallucination check never had to reject one for this run.
 pre-rule ladder, with zero involvement from the model. This is the single
 result this project cares most about getting right, and it holds.
 
-This table is the frozen, committed baseline above — it predates the
-confidence-gated escalation router's recordings and is deliberately left
-as-is (see §3's "Confidence-gated escalation router" subsection for why: the
-router's own re-recording surfaced a real, honestly-reported regression on
-`reward_config.tiers`/N10 that has not yet been fixed, so the regressed
-numbers are not presented here as the new baseline).
+This table is the frozen, committed baseline above.
+
+**C6 — a real referent-resolution bug found and fixed, followed by a separate
+model-quality miss that remains.** `leaderboard.readiness`'s two gold claims
+(CL-050, CL-051) previously landed in two different buckets: CL-051's source
+message never contains the literal word "leaderboard" (it describes the
+Tiranga tournament mode "shipping with the event"), so the resolver's
+`requiredAny` token gate rejected the gold-supplied referent and minted a
+second, wrong bucket key for it — pre-rule R6 ("exactly one live claim
+remains") then fired independently in each single-claim bucket, so the model
+was never even asked about this pair. Root cause: `runAdjudicationPipeline`
+(`src/core/pipeline.ts`) re-resolved every claim's referent from scratch,
+including GOLD claims that already carry a human-assigned, ground-truth
+referent — correct for the extractor's own predicted claims (whose
+`raw_referent` is a model-emitted phrase that genuinely needs resolving), but
+wrong for gold input, which should be trusted rather than re-derived. Fixed
+via a `trustSuppliedReferent` parameter on `runAdjudicationPipeline`, set only
+by the two gold-claims call sites (`src/core/eval/run-eval.ts`,
+`scripts/record.ts`'s gold-claims pass); the live app's extractor-driven
+adjudication is untouched. **Both claims now correctly land in one bucket and
+reach the model** — verified directly. What remains: the free-tier model's
+rationale for this specific bucket has, across every recorded attempt, either
+exceeded the schema's 400-character `rationale` cap or been truncated by the
+800-token output budget before the JSON closed, so `parseAdjudicationResponse`
+correctly rejects it and the pipeline falls back to `COMPATIBLE` — the same
+honest, conservative failure mode as C8's `art_capacity.allocation` case.
+This is a model-quality limitation, not patched around by loosening the
+schema or raising the token budget for one bucket.
 
 **Extraction, per scenario** (claims and spans only; modality/polarity
 scored **separately** from recall, per the design):

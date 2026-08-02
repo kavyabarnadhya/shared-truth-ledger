@@ -364,17 +364,6 @@ export default function EvalsPage() {
             </table>
           </details>
 
-          {report.escalation && (
-            <>
-              <h2 className="section-heading">Confidence-gated escalation</h2>
-              <p className="claim-state-label">
-                {report.escalation.escalated === 0
-                  ? "No topic in this run self-reported low confidence — the escalation path did not fire. Reported as-is, not tuned to look otherwise."
-                  : `${report.escalation.escalated} topic${report.escalation.escalated === 1 ? "" : "s"} self-reported low confidence and got a second, more careful look. That changed the outcome in ${report.escalation.verdictChanged} of ${report.escalation.escalated}.`}
-              </p>
-            </>
-          )}
-
           <h2 className="section-heading">Judgment (headline scenarios)</h2>
           <AdjudicationTable scores={report.adjudication} onViewMessages={viewMessages} />
 

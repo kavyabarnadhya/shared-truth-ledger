@@ -1,0 +1,25 @@
+{
+  "key": "c7a206b0ec216dc8e6cef2f9816c5bc3",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate liveops_calendar.signoff_owner@2026-07-24T23:59:59+05:30",
+  "promptSha": "29f8210a20ffb345ee9c3a0358c71e215115eec13a73657532de153f19dab90e",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: liveops_calendar.signoff_owner\n\nLive claims:\n- M-020#0 | priya.raghunathan | 16 Jul 2026, 12:00 PM IST | value: \"held by Priya Raghunathan as producer\" | span: \"I'll hold final sign-off on the live ops calendar\"\n- M-021#0 | meera.iyer | 17 Jul 2026, 11:05 AM IST | value: \"sits with me\" | span: \"Calendar sign-off sits with me.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "{\"verdict\": \"CONTRADICTION\", \"rationale\": \"Both claims refer to the same referent (liveops_calendar.signoff_owner). M-020#0 states the sign-off is held by Priya Raghunathan, while M-021#0 states the sign-off sits with Meera Iyer. These cannot both be true simultaneously.\", \"conflicting_claim_ids\": [\"M-020#0\", \"M-021#0\"]}",
+    "usage": {
+      "inputTokens": 338,
+      "outputTokens": 365
+    },
+    "finishReason": "stop"
+  },
+  "latencyMs": 2229,
+  "recordedAt": "2026-08-02T07:33:03.658+00:00"
+}

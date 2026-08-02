@@ -25,8 +25,6 @@ import { sha256Hex } from "../util/sha256.ts";
 import { stableStringify, round4, compareStrings } from "../util/stable-sort.ts";
 import { EXTRACTION_PROMPT } from "../prompts/extraction.ts";
 import { PROMPT_VERSION as ADJUDICATION_PROMPT_VERSION } from "../prompts/adjudication.ts";
-import { parseAdjudicationResponse } from "../parse/json-repair.ts";
-import type { TraceEntry } from "../types.ts";
 
 export interface RunEvalArgs {
   corpus: Message[];
@@ -84,43 +82,6 @@ function goldClaimToClaim(
   return { claim, spanValid: true };
 }
 
-/**
- * Measures the confidence-gated escalation router's real effect on this
- * run, from the trace alone — never asserted, never tuned to look a
- * particular way. `trace` entries carry a `cacheKey` (set by
- * ReplayModelClient.call()) but not the raw response text, so both the
- * primary and escalated verdict are recovered here by looking each call's
- * cacheKey back up in the same RecordingStore the pipeline just replayed
- * from, then parsing with the same parseAdjudicationResponse the pipeline
- * itself uses — this reads the recordings, it does not re-derive verdicts
- * by any different logic than production already applied.
- */
-function summariseEscalation(trace: readonly TraceEntry[], recordings: RecordingStore): EvalReport["escalation"] {
-  const escalatedEntries = trace.filter((t) => t.kind === "model" && t.tier === "adjudication" && t.step.endsWith("[escalated]"));
-  if (escalatedEntries.length === 0) return { escalated: 0, verdictChanged: 0, escalatedBuckets: [] };
-
-  const escalatedBuckets: string[] = [];
-  let verdictChanged = 0;
-  for (const escEntry of escalatedEntries) {
-    const primaryStep = escEntry.step.replace(/ \[escalated\]$/, "");
-    const primaryEntry = trace.find((t) => t.step === primaryStep && t.kind === "model" && t.tier === "adjudication" && !t.step.endsWith("[escalated]"));
-    const bucketKey = primaryStep.replace(/^adjudicate /, "").replace(/@.*$/, "");
-    escalatedBuckets.push(bucketKey);
-
-    if (!primaryEntry?.cacheKey || !escEntry.cacheKey) continue;
-    const primaryRecorded = recordings.get(primaryEntry.cacheKey);
-    const escRecorded = recordings.get(escEntry.cacheKey);
-    if (!primaryRecorded || !escRecorded) continue;
-
-    const primaryParsed = parseAdjudicationResponse(primaryRecorded.response.text, "binary");
-    const escParsed = parseAdjudicationResponse(escRecorded.response.text, "binary");
-    if (primaryParsed.ok && escParsed.ok && primaryParsed.verdict !== escParsed.verdict) {
-      verdictChanged++;
-    }
-  }
-  return { escalated: escalatedEntries.length, verdictChanged, escalatedBuckets: escalatedBuckets.sort() };
-}
-
 export async function runEval(args: RunEvalArgs): Promise<EvalReport> {
   const evalAsOf = args.evalAsOf ?? EVAL_AS_OF_DEFAULT;
   const messagesById = new Map(args.corpus.map((m) => [m.id, m]));
@@ -154,6 +115,7 @@ export async function runEval(args: RunEvalArgs): Promise<EvalReport> {
       asOf,
       args.judgeScope,
       adjudicationClient,
+      true, // trustSuppliedReferent: gold claims' referent is ground truth, not a phrase to re-resolve
     );
     adjudicationRunsByAsOf.set(asOf, run);
   }
@@ -210,9 +172,6 @@ export async function runEval(args: RunEvalArgs): Promise<EvalReport> {
   const corpusHash = sha256Hex(stableStringify(sortedCorpus.map((m) => ({ id: m.id, text: m.text, timestamp: m.timestamp }))));
   const recordingsHash = sha256Hex(stableStringify(args.recordings.keys()));
 
-  const allAdjudicationTrace = [...adjudicationRunsByAsOf.values()].flatMap((r) => r.trace);
-  const escalation = args.judgeScope === "binary" ? summariseEscalation(allAdjudicationTrace, args.recordings) : null;
-
   const report: Omit<EvalReport, "reportHash"> = {
     schemaVersion: 1,
     configId: args.config.id,
@@ -232,7 +191,6 @@ export async function runEval(args: RunEvalArgs): Promise<EvalReport> {
       rejected: extractionRun.rejectedClaims.length,
       buckets: [...adjudicationRunsByAsOf.values()].reduce((sum, r) => sum + r.buckets.length, 0),
     },
-    escalation,
     generatedAt: evalAsOf,
   };
 

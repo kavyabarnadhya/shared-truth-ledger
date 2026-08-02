@@ -115,15 +115,13 @@ export interface BuildDepsOptions {
 /**
  * Two ReplayModelClient instances, one per tier — mirrors
  * core/eval/run-eval.ts's extractionClient/adjudicationClient split.
- * ReplayModelClient's cache key falls back to its constructor-supplied
- * promptVersion whenever a request doesn't pass one explicitly (only the
- * escalated adjudication call in pipeline.ts does), so a single shared
- * client here would silently key every adjudication call on the extraction
- * prompt's version — wrong whenever the two diverge, and it did diverge
- * this session when the adjudication prompt was bumped to add the
- * confidence self-report. `deps.model` stays a single ModelClient from the
- * caller's point of view: PipelineDeps.model is one field, and both
- * pipelines index into request.tier via this router.
+ * ReplayModelClient's cache key is keyed on its constructor-supplied
+ * promptVersion, so a single shared client here would silently key every
+ * adjudication call on the extraction prompt's version — wrong whenever the
+ * two diverge, since extraction.ts and adjudication.ts each own their own
+ * PROMPT_VERSION independently. `deps.model` stays a single ModelClient
+ * from the caller's point of view: PipelineDeps.model is one field, and
+ * both pipelines index into request.tier via this router.
  */
 class TieredReplayClient implements ModelClient {
   readonly mode = "replay" as const;

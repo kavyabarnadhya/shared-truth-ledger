@@ -98,7 +98,7 @@ async function buildSyntheticRecordings(): Promise<InMemoryRecordingStore> {
     );
     await runAdjudicationPipeline(
       goldAsClaims, messagesById, cast, CONTESTED_REFERENTS,
-      asOf as import("../time.ts").Instant, "binary", adjModel,
+      asOf as import("../time.ts").Instant, "binary", adjModel, true,
     );
   }
 

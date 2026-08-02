@@ -1,0 +1,25 @@
+{
+  "key": "0facfaf9e620ea6bf2eed56b0bbdf50a",
+  "tier": "adjudication",
+  "model": "inclusionai/ling-3.0-flash-free",
+  "configId": "free",
+  "judgeScope": "binary",
+  "step": "adjudicate reward_config.tiers@2026-07-15T23:59:59+05:30",
+  "promptSha": "9f1b4db0c1cb611cc8e6d1f30eea64e38013bac869ec5661bbfce5a1515d4369",
+  "request": {
+    "system": "Decide whether a set of live claims are mutually incompatible statements about the same thing.\n\nTwo claims are incompatible if they cannot both be true at the same time. Differences in emphasis, scope, or wording are not incompatibility.\n\nYou are told which claims are live. Claims that were superseded, withdrawn, or reported have already been removed from what you see — do not reason about them or try to reconstruct them.\n\nOutput \"CONTRADICTION\" if the live claims conflict, \"COMPATIBLE\" if they do not.\n\nOutput JSON only, matching this schema exactly:\n{\"verdict\": \"CONTRADICTION\"|\"COMPATIBLE\", \"rationale\": string, \"conflicting_claim_ids\": string[]}\n\"conflicting_claim_ids\" should list the claim ids that are in conflict, or an empty array if COMPATIBLE.",
+    "user": "Referent: reward_config.tiers\n\nLive claims:\n- M-190#0 | rohan.desai | 10 Jul 2026, 11:00 AM IST | value: \"12 tiers\" | span: \"Reward table has 12 tiers in the design doc.\"\n- M-191#0 | meera.iyer | 10 Jul 2026, 11:20 AM IST | value: \"8 tiers built\" | span: \"Config only has 8 tiers built.\"",
+    "temperature": 0,
+    "maxOutputTokens": 800
+  },
+  "response": {
+    "text": "The two claims are about the same referent (reward_config.tiers). M-190#0 says there are 12 tiers in the design doc, while M-191#0 says only 8 tiers are built in the config. These are about different things (design doc vs. built config), so they are not necessarily contradictory. However, if we interpret \"reward_config.tiers\" as referring to the actual configuration, then M-190#0's claim of 12 tiers in the design doc could be about a planned or different version. But the question is whether they are mutually incompatible statements about the same thing.\n\nThe referent is \"reward_config.tiers\". M-190#0 says the reward table has 12 tiers in the design doc. M-191#0 says the config only has 8 tiers built. These could be about different stages (design vs. implementation) or different versions. They are not necessarily contradictory if the design doc has 12 tiers but only 8 have been built so far. However, if both are referring to the same thing (the current state of reward_config.tiers), then 12 vs 8 is a contradiction.\n\nGiven the phrasing, M-190#0 refers to \"design doc\" and M-191#0 refers to \"config\". These are different artifacts. But the referent is \"reward_config.tiers\" — the config itself. M-190#0 says the design doc has 12 tiers (which might be the intended config), M-191#0 says the config has 8 tiers built. These could be compatible if the design is ahead of implementation.\n\nBut wait — the question says \"mutually incompatible statements about the same thing.\" The referent is the same: reward_config.tiers. If the design doc says 12 tiers and the config says 8 tiers, and both are referring to the same thing (the number of tiers in reward_config.tiers), then they contradict. But one says \"design doc\" and the other says \"config\" — these could be different things.\n\nActually, looking more carefully: M-190#0 says \"Reward table has 12 tiers in the design doc\" — this is about the design doc. M-191#0 says \"Config only has 8 tiers built\" — this is about the config. These are different artifacts, so they are not necessarily contradictory. The design doc could have 12 tiers planned while only 8 are built in the config.\n\nBut the referent is \"reward_config.tiers\" — which is the config. So M-190#0 is saying the design doc (which presumably describes the config) has 12 tiers, while M-191#0 says the config has 8 tiers. If the design doc is supposed to match the config, then 12 ≠ 8 is a contradiction.\n\nI think the most natural reading is that both are making claims about the number of tiers in reward_config.tiers, and 12 ≠ 8, so they are contradictory.\n\nLet me reconsider: the question says \"Differences in emphasis, scope, or wording are not incompatibility.\" So if one says \"12 tiers in design doc\" and the other says \"8 tiers built,\" the difference in scope (design doc vs. built config) might be considered a difference in scope, not incompatibility.\n\nHmm, but the referent is the same: reward_config.tiers. The design doc describes the config. If the design doc says 12 and the config says 8, that's a contradiction about the same thing.\n\nI'll go with CONTRADICTION because",
+    "usage": {
+      "inputTokens": 326,
+      "outputTokens": 800
+    },
+    "finishReason": "length"
+  },
+  "latencyMs": 5690,
+  "recordedAt": "2026-08-02T07:27:49.399+00:00"
+}
